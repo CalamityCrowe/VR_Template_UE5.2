@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Pawn.h"
+#include "GameFramework/Character.h"
 #include "Base_VR_Character.generated.h"
 
 UCLASS()
-class VR_TEMPLATE_API ABase_VR_Character : public APawn
+class VR_TEMPLATE_API ABase_VR_Character : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -26,4 +26,6 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+protected:
+	
 };
