@@ -6,15 +6,7 @@
 #include "GameFramework/Character.h"
 #include "Base_VR_Character.generated.h"
 
-UENUM() 
-enum class HandStates: uint8
-{
-	None UMETA(DisplayName = "None"),
-	Free UMETA(DisplayName = "Free"),
-	Snap UMETA(DisplayName = "Snap"),
-	Custom UMETA(DisplayName = "Custom")
 
-};
 
 UCLASS()
 class VR_TEMPLATE_API ABase_VR_Character : public ACharacter
