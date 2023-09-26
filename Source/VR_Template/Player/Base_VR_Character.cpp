@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Player/Base_VR_Character.h"
+#include "Base_VR_Character.h"
 
 // Sets default values
 ABase_VR_Character::ABase_VR_Character()
