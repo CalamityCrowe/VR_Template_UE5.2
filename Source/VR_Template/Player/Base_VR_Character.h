@@ -27,5 +27,10 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 protected:
-	
+	UPROPERTY(Category = "Motion Controllers", VisibleAnywhere, BlueprintReadOnly)
+		TObjectPtr<class UMotionControllerComponent> m_RightController;
+	UPROPERTY(Category = "Motion Controllers", VisibleAnywhere, BlueprintReadOnly)
+		TObjectPtr<class UMotionControllerComponent> m_LeftController;
+	UPROPERTY(Category = "Camera", VisibleAnywhere, BlueprintReadOnly)
+		TObjectPtr<class UCameraComponent> m_Camera;
 };
