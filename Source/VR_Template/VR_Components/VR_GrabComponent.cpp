@@ -100,12 +100,48 @@ bool UVR_GrabComponent::TryGrab(UMotionControllerComponent* MotionController)
 	return true;
 }
 
-void UVR_GrabComponent::TryRelease()
+bool UVR_GrabComponent::TryRelease()
 {
+	switch(m_GrabType)
+	{
+	case GrabType::None:
+		break; 
+	case GrabType::Custom:
+		break; 
+	default:
+		if (isSimulatedOnDrop) 
+		{
+			SetPrimativeCompPhysics(true); 
+		}
+		else
+		{
+			GetAttachParent()->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform); 
+		}
+		break; 
+	}
+		isHeld = false;
+
+	if (isHeld) 
+	{
+		return false; 
+	}
+	else 
+	{
+		// call on dropped delegate
+
+		return true; 
+	}
 }
 
 void UVR_GrabComponent::SetShouldSimulateDrop()
 {
+	if (UPrimitiveComponent* PrimComponent = Cast<UPrimitiveComponent>(GetAttachParent()))
+	{
+		if (PrimComponent->IsAnySimulatingPhysics()) 
+		{
+			isSimulatedOnDrop = true; 
+		}
+	}
 }
 
 void UVR_GrabComponent::SetPrimativeCompPhysics(bool isSimulated)
@@ -128,7 +164,11 @@ EControllerHand UVR_GrabComponent::GetHeldByHand()
 	}
 }
 
-void UVR_GrabComponent::AttachParentToController(UMotionControllerComponent*)
+void UVR_GrabComponent::AttachParentToController(UMotionControllerComponent* MotionController)
 {
+	if (AttachToComponent(MotionController, FAttachmentTransformRules::KeepWorldTransform, FName(TEXT("None"))))
+	{
+
+	}
 }
 

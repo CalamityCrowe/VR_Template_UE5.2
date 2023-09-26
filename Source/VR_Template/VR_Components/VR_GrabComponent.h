@@ -40,7 +40,7 @@ public:
 protected:
 
 	bool TryGrab(class UMotionControllerComponent* MotionCOntroller);
-	void TryRelease();
+	bool TryRelease();
 	void SetShouldSimulateDrop();
 	void SetPrimativeCompPhysics(bool isSimulated);
 	EControllerHand GetHeldByHand();
