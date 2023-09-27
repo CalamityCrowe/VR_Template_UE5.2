@@ -172,3 +172,11 @@ void UVR_GrabComponent::AttachParentToController(UMotionControllerComponent* Mot
 	}
 }
 
+void UVR_GrabComponent::OnGrabbed()
+{
+}
+
+void UVR_GrabComponent::OnDropped()
+{
+}
+
