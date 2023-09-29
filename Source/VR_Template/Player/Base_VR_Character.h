@@ -21,7 +21,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -30,9 +30,15 @@ public:
 
 protected:
 	UPROPERTY(Category = "Motion Controllers", VisibleAnywhere, BlueprintReadOnly)
-		TObjectPtr<class UMotionControllerComponent> m_RightController;
+	TObjectPtr<class UMotionControllerComponent> m_RightController;
 	UPROPERTY(Category = "Motion Controllers", VisibleAnywhere, BlueprintReadOnly)
-		TObjectPtr<class UMotionControllerComponent> m_LeftController;
+	TObjectPtr<class UMotionControllerComponent> m_LeftController;
 	UPROPERTY(Category = "Camera", VisibleAnywhere, BlueprintReadOnly)
-		TObjectPtr<class UCameraComponent> m_Camera;
+	TObjectPtr<class UCameraComponent> m_Camera;
+
+	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
+	TObjectPtr<class UInputMappingContext> m_InputMappingContext;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
+	TObjectPtr<class UInputConfigData> m_InputActions; // this is a custom data config that holds a list of pointers that will get assigned in the engine to pull the input actions in
+
 };

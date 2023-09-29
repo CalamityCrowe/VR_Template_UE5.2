@@ -57,5 +57,10 @@ protected:
 		TObjectPtr<class UHapticFeedbackEffect_Base> OnGrabHapticFeedback; // this gets assigned in the engine and helps register that the player has interacted in the world
 	
 	TObjectPtr<UMotionControllerComponent> MotionControllerReference;
+public: 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnGrabbed(); 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnDropped(); 
 
 };
