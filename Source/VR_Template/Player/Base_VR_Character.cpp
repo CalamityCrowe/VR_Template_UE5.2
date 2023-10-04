@@ -17,6 +17,9 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 
+#include "VR_Template/VR_Components/Mannequin_Hands.h"
+
+
 #pragma endregion
 
 // Sets default values
@@ -33,6 +36,15 @@ ABase_VR_Character::ABase_VR_Character()
 	m_LeftController->MotionSource = FName(TEXT("Left"));
 	m_RightController->MotionSource = FName(TEXT("Right"));
 
+	m_HandLeft = CreateOptionalDefaultSubobject<UMannequin_Hands>(TEXT("Left Hand Mesh")); 
+	m_HandLeft->SetupAttachment(m_LeftController); 
+	m_HandLeft->mb_isMirrored = true; 
+
+	m_HandRight = CreateOptionalDefaultSubobject<UMannequin_Hands>(TEXT("Right Hand Mesh")); 
+	m_HandRight->SetupAttachment(m_RightController);
+	m_HandRight->mb_isMirrored = false; 
+
+	GetMesh()->DestroyComponent(); 
 
 }
 
@@ -93,9 +105,48 @@ void ABase_VR_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 #pragma endregion
 
 
-		//PEI->BindAction(InputActions->m_InputMove, ETriggerEvent::Triggered, this, &ATemplateCharacter::Move); // binds an action to the input component
-		//PEI->BindAction(InputActions->m_InputLook, ETriggerEvent::Triggered, this, &ATemplateCharacter::TurnCamera); // binds an action to the input component
+		PEI->BindAction(m_InputActions->m_InputLeftAnalog, ETriggerEvent::Triggered, this, &ABase_VR_Character::MovePlayer); // binds an action to the input component
+		PEI->BindAction(m_InputActions->m_InputRightAnalog, ETriggerEvent::Triggered, this, &ABase_VR_Character::TurnPlayer); // binds an action to the input component
 	}
 
+}
+
+void ABase_VR_Character::MovePlayer(const FInputActionValue& Value)
+{
+	if (Controller) // checks that the controller is actually valid before it is used
+	{
+		const FVector2D MoveValue = Value.Get<FVector2D>(); // this gets the axis values for the input 
+		const FRotator MovementRotation = FRotator(0, Controller->GetControlRotation().Yaw, 0);
+
+		if (MoveValue.Y != 0) // checks that the controller has in put in the Y axis (forward or backwards)
+		{
+			FVector ForwardDir = MovementRotation.RotateVector(FVector::ForwardVector); // gets the forward vector so it knows the  direction it should move the player in
+			AddMovementInput(ForwardDir, MoveValue.Y);  // applies the movement to the player
+		}
+
+		if (MoveValue.X != 0) // checks that the controller has an input on the X axis of the input (left or right)
+		{
+			FVector RightDir = MovementRotation.RotateVector(FVector::RightVector);  // gets the right vector so it knows the directions it should move the player
+			AddMovementInput(RightDir, MoveValue.X);  // Applies the movement to the player
+		}
+
+	}
+}
+
+void ABase_VR_Character::TurnPlayer(const FInputActionValue& Value)
+{
+	if (Controller) // checks if the controller is valid
+	{
+		const FVector2D TurnRate = Value.Get<FVector2D>(); // gets the vector 2d from the input action 
+
+		if (TurnRate.Y != 0) // checks if the y axis is not 0, this means that the mouse or whatever the input is has moved slightly for it to register a vertical input
+		{
+			AddControllerPitchInput(TurnRate.Y); // applies the vertical input of the mouse into the controller pitch input
+		}
+		if (TurnRate.X != 0)  // checks if the x axis is not 0, this means that the mouse or whatever the input is has moved slightly for it to register a horizontal input
+		{
+			AddControllerYawInput(TurnRate.X); // applies the horizontal input of the mouse into the controller yaw input
+		}
+	}
 }
 
