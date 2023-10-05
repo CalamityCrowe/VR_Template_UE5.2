@@ -39,8 +39,6 @@ public:
 
 protected:
 
-	bool TryGrab(class UMotionControllerComponent* MotionCOntroller);
-	bool TryRelease();
 	void SetShouldSimulateDrop();
 	void SetPrimativeCompPhysics(bool isSimulated);
 	EControllerHand GetHeldByHand();
@@ -63,4 +61,6 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnDropped(); 
 
+	bool TryGrab(class UMotionControllerComponent* MotionCOntroller);
+	bool TryRelease();
 };

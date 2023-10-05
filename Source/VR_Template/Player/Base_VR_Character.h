@@ -28,32 +28,52 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	UFUNCTION()
-		void MovePlayer(const FInputActionValue& Value);
+	void MovePlayer(const FInputActionValue& Value);
 	UFUNCTION()
-		void TurnPlayer(const FInputActionValue& Value);
+	void TurnPlayer(const FInputActionValue& Value);
+	UFUNCTION()
+	void GrabObjectLeft(const FInputActionValue& Value);
+	UFUNCTION()
+	void GrabObjectRight(const FInputActionValue& Value);
+	UFUNCTION()
+	void ReleaseObjectLeft(const FInputActionValue& Value); 
+	UFUNCTION()
+	void ReleaseObjectRight(const FInputActionValue& Value); 
+
+	UFUNCTION()
+	class UVR_GrabComponent* GetGrabComponentNearController(UMotionControllerComponent* controllerReference); 
+
+
 
 protected:
 
 
 	UPROPERTY(Category = "Camera", VisibleAnywhere, BlueprintReadOnly)
-		TObjectPtr<class UCameraComponent> m_Camera;
+	TObjectPtr<class UCameraComponent> m_Camera;
 
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
-		TObjectPtr<class UInputMappingContext> m_InputMappingContext;
+	TObjectPtr<class UInputMappingContext> m_InputMappingContext;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
-		TObjectPtr<class UInputConfigData> m_InputActions; // this is a custom data config that holds a list of pointers that will get assigned in the engine to pull the input actions in
+	TObjectPtr<class UInputConfigData> m_InputActions; // this is a custom data config that holds a list of pointers that will get assigned in the engine to pull the input actions in
 
 	UPROPERTY(Category = "Motion Controllers", VisibleAnywhere, BlueprintReadOnly)
-		TObjectPtr<class UMotionControllerComponent> m_RightController;
+	TObjectPtr<class UMotionControllerComponent> m_RightController;
 	UPROPERTY(Category = "Motion Controllers", VisibleAnywhere, BlueprintReadOnly)
-		TObjectPtr<UMotionControllerComponent> m_LeftController;
+	TObjectPtr<UMotionControllerComponent> m_LeftController;
 	UPROPERTY(Category = "Motion Controllers", EditDefaultsOnly, BlueprintReadOnly)
-		TObjectPtr<class UMannequin_Hands> m_HandRight;
+	TObjectPtr<class UMannequin_Hands> m_HandRight;
 	UPROPERTY(Category = "Motion Controllers", EditDefaultsOnly, BlueprintReadOnly)
-		TObjectPtr<UMannequin_Hands> m_HandLeft;
+	TObjectPtr<UMannequin_Hands> m_HandLeft;
 	UPROPERTY(Category = "Motion Controllers", EditDefaultsOnly, BlueprintReadOnly)
-		TObjectPtr<class UVR_GrabComponent> m_HeldRight;
+	TObjectPtr<class UVR_GrabComponent> m_HeldRight;
 	UPROPERTY(Category = "Motion Controllers", EditDefaultsOnly, BlueprintReadOnly)
-		TObjectPtr<UVR_GrabComponent> m_HeldLeft;
+	TObjectPtr<UVR_GrabComponent> m_HeldLeft;
 
+	UPROPERTY(EditDefaultsOnly, BluePrintReadWrite, Category = "Motion Controllers")
+	float m_GrabRadius; 
+	UPROPERTY(EditDefaultsOnly, BluePrintReadWrite, Category = "Motion Controllers")
+	float m_LocalNearestDistance;
+
+
+ 
 };

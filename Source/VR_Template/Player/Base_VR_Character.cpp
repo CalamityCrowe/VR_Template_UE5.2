@@ -18,14 +18,16 @@
 #include "InputMappingContext.h"
 
 #include "VR_Template/VR_Components/Mannequin_Hands.h"
+#include "VR_Template/VR_Components/VR_GrabComponent.h"
 
+#include "Kismet/KismetSystemLibrary.h"
 
 #pragma endregion
 
 // Sets default values
 ABase_VR_Character::ABase_VR_Character()
 {
- 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	m_Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
@@ -36,15 +38,15 @@ ABase_VR_Character::ABase_VR_Character()
 	m_LeftController->MotionSource = FName(TEXT("Left"));
 	m_RightController->MotionSource = FName(TEXT("Right"));
 
-	m_HandLeft = CreateOptionalDefaultSubobject<UMannequin_Hands>(TEXT("Left Hand Mesh")); 
-	m_HandLeft->SetupAttachment(m_LeftController); 
-	m_HandLeft->mb_isMirrored = true; 
+	m_HandLeft = CreateOptionalDefaultSubobject<UMannequin_Hands>(TEXT("Left Hand Mesh"));
+	m_HandLeft->SetupAttachment(m_LeftController);
+	m_HandLeft->mb_isMirrored = true;
 
-	m_HandRight = CreateOptionalDefaultSubobject<UMannequin_Hands>(TEXT("Right Hand Mesh")); 
+	m_HandRight = CreateOptionalDefaultSubobject<UMannequin_Hands>(TEXT("Right Hand Mesh"));
 	m_HandRight->SetupAttachment(m_RightController);
-	m_HandRight->mb_isMirrored = false; 
+	m_HandRight->mb_isMirrored = false;
 
-	GetMesh()->DestroyComponent(); 
+	GetMesh()->DestroyComponent();
 
 }
 
@@ -52,7 +54,7 @@ ABase_VR_Character::ABase_VR_Character()
 void ABase_VR_Character::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called every frame
@@ -67,7 +69,7 @@ void ABase_VR_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	if(APlayerController* PC = Cast<APlayerController>(GetController())) // tries to grab an instance of the player controller
+	if (APlayerController* PC = Cast<APlayerController>(GetController())) // tries to grab an instance of the player controller
 	{
 		if (ULocalPlayer* LocalPlayer = PC->GetLocalPlayer())
 		{
@@ -79,7 +81,7 @@ void ABase_VR_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 		}
 	}
 
-	if (UEnhancedInputComponent* PEI = Cast<UEnhancedInputComponent>(PlayerInputComponent)) 
+	if (UEnhancedInputComponent* PEI = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 #pragma region Setup Actions Comments
 		/* Bind Action Setup
@@ -107,6 +109,11 @@ void ABase_VR_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 		PEI->BindAction(m_InputActions->m_InputLeftAnalog, ETriggerEvent::Triggered, this, &ABase_VR_Character::MovePlayer); // binds an action to the input component
 		PEI->BindAction(m_InputActions->m_InputRightAnalog, ETriggerEvent::Triggered, this, &ABase_VR_Character::TurnPlayer); // binds an action to the input component
+
+		PEI->BindAction(m_InputActions->m_InputLeftGrip, ETriggerEvent::Triggered, this, &ABase_VR_Character::GrabObjectLeft);
+		PEI->BindAction(m_InputActions->m_InputLeftGrip, ETriggerEvent::Canceled, this, &ABase_VR_Character::ReleaseObjectLeft);
+		PEI->BindAction(m_InputActions->m_InputRightGrip, ETriggerEvent::Triggered, this, &ABase_VR_Character::GrabObjectRight);
+		PEI->BindAction(m_InputActions->m_InputRightGrip, ETriggerEvent::Canceled, this, &ABase_VR_Character::ReleaseObjectRight);
 	}
 
 }
@@ -148,5 +155,87 @@ void ABase_VR_Character::TurnPlayer(const FInputActionValue& Value)
 			AddControllerYawInput(TurnRate.X); // applies the horizontal input of the mouse into the controller yaw input
 		}
 	}
+}
+
+void ABase_VR_Character::GrabObjectLeft(const FInputActionValue& Value)
+{
+	if (UVR_GrabComponent* nearestComp = GetGrabComponentNearController(m_LeftController))
+	{
+		if (nearestComp->TryGrab(m_LeftController))
+		{
+			m_HeldLeft = nearestComp;
+			if (m_HeldLeft == m_HeldRight) { m_HeldRight == nullptr; }
+		}
+	}
+}
+
+void ABase_VR_Character::GrabObjectRight(const FInputActionValue& Value)
+{
+	if (UVR_GrabComponent* nearestComp = GetGrabComponentNearController(m_RightController))
+	{
+		if (nearestComp->TryGrab(m_RightController))
+		{
+			m_HeldRight = nearestComp;
+			if (m_HeldRight == m_HeldLeft) { m_HeldLeft == nullptr; }
+		}
+	}
+}
+
+void ABase_VR_Character::ReleaseObjectLeft(const FInputActionValue& Value)
+{
+	if (m_HeldLeft) 
+	{
+		if (m_HeldLeft->TryRelease()) 
+		{
+			m_HeldLeft = nullptr; 
+		}
+	}
+}
+
+void ABase_VR_Character::ReleaseObjectRight(const FInputActionValue& Value)
+{
+	if (m_HeldRight)
+	{
+		if (m_HeldRight->TryRelease())
+		{
+			m_HeldRight = nullptr;
+		}
+	}
+}
+
+UVR_GrabComponent* ABase_VR_Character::GetGrabComponentNearController(UMotionControllerComponent* controllerReference)
+{
+	UVR_GrabComponent* LocalGrabComponent = nullptr;
+
+	FHitResult hitResult;
+
+	FVector LocalGripPos = controllerReference->GetComponentLocation();
+
+	TArray< TEnumAsByte<EObjectTypeQuery>> traceObjects;
+	traceObjects.Add(UEngineTypes::ConvertToObjectType(ECC_PhysicsBody));
+	const TArray<AActor*> ignoreActor;
+	bool bHasHit = UKismetSystemLibrary::SphereTraceSingleForObjects(GetWorld(), LocalGripPos, LocalGripPos, m_GrabRadius, traceObjects, false, ignoreActor, EDrawDebugTrace::None, hitResult, true);
+
+	if (bHasHit)
+	{
+		TArray<UVR_GrabComponent*> GrabPoints;
+		hitResult.GetActor()->GetComponents(GrabPoints);
+		if (GrabPoints.Num() > 0)
+		{
+			for (int i = 0; i < GrabPoints.Num(); i++)
+			{
+				FVector componentWorldLocation = GrabPoints[i]->GetComponentLocation();
+				componentWorldLocation -= LocalGripPos;
+				float sqLength = componentWorldLocation.SquaredLength();
+				if (sqLength <= m_LocalNearestDistance)
+				{
+					m_LocalNearestDistance = sqLength;
+					LocalGrabComponent = GrabPoints[i];
+				}
+			}
+		}
+	}
+
+	return LocalGrabComponent;
 }
 
