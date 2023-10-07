@@ -91,51 +91,24 @@ void ABase_VR_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	if (APlayerController* PC = Cast<APlayerController>(GetController())) // tries to grab an instance of the player controller
-	{
-		if (ULocalPlayer* LocalPlayer = PC->GetLocalPlayer())
-		{
-			if (UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
-			{
-				InputSystem->ClearAllMappings(); // clears any mapping contexts if they had been assigned by mistake
-				InputSystem->AddMappingContext(m_InputMappingContext, 0); // assigns the mapping contexts as the highest priority
-			}
-		}
-	}
-
-	if (UEnhancedInputComponent* PEI = Cast<UEnhancedInputComponent>(PlayerInputComponent))
-	{
-#pragma region Setup Actions Comments
-		/* Bind Action Setup
-
-		 {
-			 BindAction(UInputAction,
-			 ETriggerEvent,
-			 CharacterObject(this),
-			 Function Reference (&Template::Do Thing)
-			)
-		 }
-
-		 ETriggerEvents
-		 {
-			 None         = (0x0),
-			 Triggered    = (1 << 0), Triggering occurred after one or more processing ticks.
-			 Started      = (1 << 1), An event has occurred that has begun Trigger evaluation. Note: Triggered may also occur this frame, but this event will always be fired first.
-			 Ongoing      = (1 << 2), Triggering is still being processed.
-			 Canceled     = (1 << 3), Triggering has been canceled.
-			 Completed    = (1 << 4), The trigger state has transitioned from Triggered to None this frame, i.e. Triggering has finished.
-		 }
-		*/
-#pragma endregion
 
 
-		PEI->BindAction(m_InputActions->m_InputLeftAnalog, ETriggerEvent::Triggered, this, &ABase_VR_Character::MovePlayer); // binds an action to the input component
-		PEI->BindAction(m_InputActions->m_InputRightAnalog, ETriggerEvent::Triggered, this, &ABase_VR_Character::TurnPlayer); // binds an action to the input component
-		PEI->BindAction(m_InputActions->m_InputLeftGrip, ETriggerEvent::Triggered, this, &ABase_VR_Character::GrabObjectLeft);
-		PEI->BindAction(m_InputActions->m_InputLeftGrip, ETriggerEvent::Canceled, this, &ABase_VR_Character::ReleaseObjectLeft);
-		PEI->BindAction(m_InputActions->m_InputRightGrip, ETriggerEvent::Triggered, this, &ABase_VR_Character::GrabObjectRight);
-		PEI->BindAction(m_InputActions->m_InputRightGrip, ETriggerEvent::Canceled, this, &ABase_VR_Character::ReleaseObjectRight);
-	}
+
+	//if (APlayerController* PC = Cast<APlayerController>(GetController())) // tries to grab an instance of the player controller
+	//{
+	//	if (ULocalPlayer* LocalPlayer = PC->GetLocalPlayer())
+	//	{
+	//		if (UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
+	//		{
+	//			InputSystem->ClearAllMappings(); // clears any mapping contexts if they had been assigned by mistake
+	//			InputSystem->AddMappingContext(m_InputMappingContext, 0); // assigns the mapping contexts as the highest priority
+	//			GEngine->AddOnScreenDebugMessage(1, 5, FColor::Red, TEXT("I am MAP"));
+
+	//		}
+	//	}
+	//}
+
+
 
 }
 
@@ -144,8 +117,8 @@ void ABase_VR_Character::MovePlayer(const FInputActionValue& Value)
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
 	GEngine->AddOnScreenDebugMessage(0, 0.1f, FColor::Yellow, FString::Printf(TEXT("CONTROLLER: %f , %f"), MovementVector.X, MovementVector.Y));
-	AddMovementInput(m_Camera->GetForwardVector(), MovementVector.Y);
-	AddMovementInput(m_Camera->GetRightVector(), MovementVector.X);
+	AddMovementInput(GetActorForwardVector(), MovementVector.Y);
+	AddMovementInput(GetActorRightVector(), MovementVector.X);
 
 
 	GEngine->AddOnScreenDebugMessage(0, 0.1f, FColor::Yellow, FString::Printf(TEXT("CONTROLLER NULL")));
