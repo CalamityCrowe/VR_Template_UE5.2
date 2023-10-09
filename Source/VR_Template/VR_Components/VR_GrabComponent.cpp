@@ -41,8 +41,24 @@ void UVR_GrabComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	// ...
 }
 
+
+
+void UVR_GrabComponent::HandleOnGrabbed()
+{
+	m_OnGrabbed.ExecuteIfBound();
+}
+
+void UVR_GrabComponent::HandleOnDropped()
+{
+	
+}
+
+
+
 bool UVR_GrabComponent::TryGrab(UMotionControllerComponent* MotionController)
 {
+	GEngine->AddOnScreenDebugMessage(2, 10, FColor::Blue, TEXT("I Am in Try Grab"));
+
 	switch (m_GrabType)
 	{
 	case GrabType::None:
@@ -52,11 +68,13 @@ bool UVR_GrabComponent::TryGrab(UMotionControllerComponent* MotionController)
 		SetPrimativeCompPhysics(false);
 		AttachParentToController(MotionController);
 		isHeld = true;
+		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Blue, TEXT("Held Free"));
+
 		break;
 
 	}
 	case GrabType::Snap:
-	{		
+	{
 		SetPrimativeCompPhysics(false);
 		AttachParentToController(MotionController);
 		isHeld = true;
@@ -72,9 +90,10 @@ bool UVR_GrabComponent::TryGrab(UMotionControllerComponent* MotionController)
 		newLocation = MotionController->GetComponentLocation() + newLocation; // sets the new location based on the motion controllers location + an offset
 
 		SetWorldLocation(newLocation, false, nullptr, ETeleportType::TeleportPhysics); // sets the world location of the object to the new location
+		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Blue, TEXT("Held Snap"));
 
 
-	break;
+		break;
 	}
 	case GrabType::Custom:
 	{
@@ -83,53 +102,56 @@ bool UVR_GrabComponent::TryGrab(UMotionControllerComponent* MotionController)
 	}
 	}
 
-	if (isHeld)
+	if (isHeld ==false)
 	{
+		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Blue, TEXT("Not Held"));
 		return false; // basically says that the object is not held by the user
 	}
 	MotionControllerReference = MotionController; // assigns a reference to the motion controller
 
 	// the on grabbed delegate needs called here
+	HandleOnGrabbed(); 
 
-	if (APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0)) 
+	if (APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0))
 	{
 		PC->PlayHapticEffect(OnGrabHapticFeedback, GetHeldByHand(), 1, false);  // plays the haptic feedback effect on the controller
 
 	}
+	GEngine->AddOnScreenDebugMessage(-0, 1, FColor::Blue, TEXT("Held"));
 
 	return true;
 }
 
 bool UVR_GrabComponent::TryRelease()
 {
-	switch(m_GrabType)
+	switch (m_GrabType)
 	{
 	case GrabType::None:
-		break; 
+		break;
 	case GrabType::Custom:
-		break; 
+		break;
 	default:
-		if (isSimulatedOnDrop) 
+		if (isSimulatedOnDrop)
 		{
-			SetPrimativeCompPhysics(true); 
+			SetPrimativeCompPhysics(true);
 		}
 		else
 		{
-			GetAttachParent()->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform); 
+			GetAttachParent()->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 		}
-		break; 
+		break;
 	}
-		isHeld = false;
+	isHeld = false;
 
-	if (isHeld) 
+	if (isHeld)
 	{
-		return false; 
+		return false;
 	}
-	else 
+	else
 	{
 		// call on dropped delegate
 
-		return true; 
+		return true;
 	}
 }
 
@@ -137,9 +159,9 @@ void UVR_GrabComponent::SetShouldSimulateDrop()
 {
 	if (UPrimitiveComponent* PrimComponent = Cast<UPrimitiveComponent>(GetAttachParent()))
 	{
-		if (PrimComponent->IsAnySimulatingPhysics()) 
+		if (PrimComponent->IsAnySimulatingPhysics())
 		{
-			isSimulatedOnDrop = true; 
+			isSimulatedOnDrop = true;
 		}
 	}
 }
@@ -158,7 +180,7 @@ EControllerHand UVR_GrabComponent::GetHeldByHand()
 	{
 		return EControllerHand::Left;  // returns the value of the left hand 
 	}
-	else 
+	else
 	{
 		return EControllerHand::Right; // returns the value of the right hand
 	}
@@ -166,9 +188,9 @@ EControllerHand UVR_GrabComponent::GetHeldByHand()
 
 void UVR_GrabComponent::AttachParentToController(UMotionControllerComponent* MotionController)
 {
-	if (AttachToComponent(MotionController, FAttachmentTransformRules::KeepWorldTransform, FName(TEXT("None"))))
+	if (GetOwner()->GetRootComponent()->AttachToComponent(MotionController, FAttachmentTransformRules::KeepWorldTransform, FName(TEXT("None"))))
 	{
-
+		GEngine->AddOnScreenDebugMessage(10, 10, FColor::Yellow, TEXT("I am Attached")); 
 	}
 }
 

@@ -131,9 +131,9 @@ void ABase_VR_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 		PEI->BindAction(m_InputActions->m_InputLeftAnalog, ETriggerEvent::Triggered, this, &ABase_VR_Character::MovePlayer); // binds an action to the input component
 		PEI->BindAction(m_InputActions->m_InputRightAnalog, ETriggerEvent::Triggered, this, &ABase_VR_Character::TurnPlayer); // binds an action to the input component
-		PEI->BindAction(m_InputActions->m_InputLeftGrip, ETriggerEvent::Triggered, this, &ABase_VR_Character::GrabObjectLeft);
+		PEI->BindAction(m_InputActions->m_InputLeftGrip, ETriggerEvent::Started, this, &ABase_VR_Character::GrabObjectLeft);
 		PEI->BindAction(m_InputActions->m_InputLeftGrip, ETriggerEvent::Canceled, this, &ABase_VR_Character::ReleaseObjectLeft);
-		PEI->BindAction(m_InputActions->m_InputRightGrip, ETriggerEvent::Triggered, this, &ABase_VR_Character::GrabObjectRight);
+		PEI->BindAction(m_InputActions->m_InputRightGrip, ETriggerEvent::Started, this, &ABase_VR_Character::GrabObjectRight);
 		PEI->BindAction(m_InputActions->m_InputRightGrip, ETriggerEvent::Canceled, this, &ABase_VR_Character::ReleaseObjectRight);
 	}
 
@@ -185,8 +185,11 @@ void ABase_VR_Character::GrabObjectRight(const FInputActionValue& Value)
 {
 	if (UVR_GrabComponent* nearestComp = GetGrabComponentNearController(m_RightController))
 	{
+		GEngine->AddOnScreenDebugMessage(3, 5, FColor::Red, TEXT("Nearest Component Found"));
+
 		if (nearestComp->TryGrab(m_RightController))
 		{
+			GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Blue, TEXT("GRABBY")); 
 			m_HeldRight = nearestComp;
 			if (m_HeldRight == m_HeldLeft) { m_HeldLeft == nullptr; }
 		}

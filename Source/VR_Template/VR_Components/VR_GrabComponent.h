@@ -8,7 +8,8 @@
 
 
 // NEED TO DECLARE A CUSTOM EVENT DISPATCHER FOR THE ON GRABBED AND DROPPED FUNCTIONS
-
+DECLARE_DELEGATE(FOnGrabbedDelegate);
+DECLARE_DELEGATE(FOnDroppedDelegate);
 
 UENUM()
 enum class GrabType : uint8
@@ -41,26 +42,35 @@ protected:
 
 	void SetShouldSimulateDrop();
 	void SetPrimativeCompPhysics(bool isSimulated);
-	EControllerHand GetHeldByHand();
+
 
 	void AttachParentToController(class UMotionControllerComponent* MotionController);
 
-protected:
+public: //functions
+	UFUNCTION(BlueprintPure)
+		EControllerHand GetHeldByHand();
 
-	bool isHeld;;
+protected: // variables
+
+	bool isHeld;
 	FRotator PrimaryGrabRelativerRotation;
 	bool isSimulatedOnDrop;
 	GrabType m_GrabType;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Haptic Feedback")
 		TObjectPtr<class UHapticFeedbackEffect_Base> OnGrabHapticFeedback; // this gets assigned in the engine and helps register that the player has interacted in the world
-	
+
 	TObjectPtr<UMotionControllerComponent> MotionControllerReference;
-public: 
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnGrabbed(); 
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnDropped(); 
+public: //functions
+	UFUNCTION()
+		void HandleOnGrabbed();
+	UFUNCTION()
+		void HandleOnDropped();
 
 	bool TryGrab(class UMotionControllerComponent* MotionCOntroller);
 	bool TryRelease();
+
+	void SetGrabType(GrabType newType) { m_GrabType = newType; }
+	GrabType GetGrabType() { return m_GrabType; }
+public: //variables 
+	FOnGrabbedDelegate m_OnGrabbed;
 };
