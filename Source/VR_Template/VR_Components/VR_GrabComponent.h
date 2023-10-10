@@ -73,4 +73,5 @@ public: //functions
 	GrabType GetGrabType() { return m_GrabType; }
 public: //variables 
 	FOnGrabbedDelegate m_OnGrabbed;
+	FOnDroppedDelegate m_OnDropped; 
 };

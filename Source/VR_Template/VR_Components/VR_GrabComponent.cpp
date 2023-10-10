@@ -45,12 +45,19 @@ void UVR_GrabComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 
 void UVR_GrabComponent::HandleOnGrabbed()
 {
-	m_OnGrabbed.ExecuteIfBound();
+	if (m_OnGrabbed.ExecuteIfBound())
+	{
+		GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::Emerald, TEXT("On Grabbed Delegate Called"));
+	}
 }
 
 void UVR_GrabComponent::HandleOnDropped()
 {
-	
+
+	if (m_OnDropped.ExecuteIfBound())
+	{
+		GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::Emerald, TEXT("On Dropped Delegate Called"));
+	}
 }
 
 
@@ -102,7 +109,7 @@ bool UVR_GrabComponent::TryGrab(UMotionControllerComponent* MotionController)
 	}
 	}
 
-	if (isHeld ==false)
+	if (isHeld == false)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Blue, TEXT("Not Held"));
 		return false; // basically says that the object is not held by the user
@@ -110,7 +117,7 @@ bool UVR_GrabComponent::TryGrab(UMotionControllerComponent* MotionController)
 	MotionControllerReference = MotionController; // assigns a reference to the motion controller
 
 	// the on grabbed delegate needs called here
-	HandleOnGrabbed(); 
+	HandleOnGrabbed();
 
 	if (APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0))
 	{
@@ -134,10 +141,13 @@ bool UVR_GrabComponent::TryRelease()
 		if (isSimulatedOnDrop)
 		{
 			SetPrimativeCompPhysics(true);
+			GEngine->AddOnScreenDebugMessage(0, 2, FColor::Silver, TEXT("Simulated Physics"));
+
 		}
 		else
 		{
 			GetAttachParent()->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+			GEngine->AddOnScreenDebugMessage(0, 2, FColor::Silver, TEXT("Released From Hand"));
 		}
 		break;
 	}
@@ -178,10 +188,12 @@ EControllerHand UVR_GrabComponent::GetHeldByHand()
 {
 	if (MotionControllerReference->MotionSource == FName(TEXT("Left"))) // checks if it is the left hand that has grabbed the object
 	{
+		GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::Cyan, TEXT("Left Hand"));
 		return EControllerHand::Left;  // returns the value of the left hand 
 	}
 	else
 	{
+		GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::Cyan, TEXT("Right Hand"));
 		return EControllerHand::Right; // returns the value of the right hand
 	}
 }
@@ -190,7 +202,7 @@ void UVR_GrabComponent::AttachParentToController(UMotionControllerComponent* Mot
 {
 	if (GetOwner()->GetRootComponent()->AttachToComponent(MotionController, FAttachmentTransformRules::KeepWorldTransform, FName(TEXT("None"))))
 	{
-		GEngine->AddOnScreenDebugMessage(10, 10, FColor::Yellow, TEXT("I am Attached")); 
+		GEngine->AddOnScreenDebugMessage(10, 10, FColor::Yellow, TEXT("I am Attached"));
 	}
 }
 
