@@ -43,10 +43,12 @@ void ABase_Interactable::Tick(float DeltaTime)
 void ABase_Interactable::BindInteractableInput()
 {
 	OnGrabbed();
+	GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::Red, TEXT("Attached Component, Base Interactable.cpp"));
 }
 
 void ABase_Interactable::UnbindInput()
 {
 	OnDropped(); 
+	GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::Red, TEXT("Detached Component, Base Interactable.cpp"));
 }
 
