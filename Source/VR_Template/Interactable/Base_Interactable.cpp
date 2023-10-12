@@ -16,7 +16,7 @@ ABase_Interactable::ABase_Interactable()
 	m_GrabPointSnap->SetupAttachment(m_Mesh);
 	if (m_GrabPointSnap->GetGrabType() == GrabType::None) // checks if there is no grab type set and if so sets it to snap 
 	{
-		m_GrabPointSnap->SetGrabType(GrabType::Snap); 
+		m_GrabPointSnap->SetGrabType(GrabType::Free); 
 	}
 }
 

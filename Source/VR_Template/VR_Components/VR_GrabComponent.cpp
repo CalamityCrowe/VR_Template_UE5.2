@@ -24,6 +24,7 @@ void UVR_GrabComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	SetShouldSimulateDrop();
+	SetPrimativeCompPhysics(true);
 	if (UPrimitiveComponent* PrimComponent = Cast<UPrimitiveComponent>(GetAttachParent()))
 	{
 		PrimComponent->SetCollisionProfileName(FName(TEXT("PhysicsActor")), true); // sets up the collison profiles and tells it to update the overlaps of the object
@@ -37,7 +38,15 @@ void UVR_GrabComponent::BeginPlay()
 void UVR_GrabComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if (isHeld)
+	{
+		GEngine->AddOnScreenDebugMessage(0, 1, FColor::Cyan, FString::Printf(TEXT("is Held TRUE")));
+	}
+	else
+	{
 
+		GEngine->AddOnScreenDebugMessage(0, 1, FColor::Cyan, FString::Printf(TEXT("is Held FALSE")));
+	}
 	// ...
 }
 
@@ -136,6 +145,8 @@ bool UVR_GrabComponent::TryRelease()
 	case GrabType::None:
 		break;
 	case GrabType::Custom:
+		isHeld = false;
+
 		break;
 	default:
 		if (isSimulatedOnDrop)
@@ -146,12 +157,14 @@ bool UVR_GrabComponent::TryRelease()
 		}
 		else
 		{
-			GetAttachParent()->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+			GetOwner()->GetRootComponent()->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 			GEngine->AddOnScreenDebugMessage(0, 2, FColor::Silver, TEXT("Released From Hand"));
+
 		}
+		isHeld = false;
+
 		break;
 	}
-	isHeld = false;
 
 	if (isHeld)
 	{
@@ -160,7 +173,7 @@ bool UVR_GrabComponent::TryRelease()
 	else
 	{
 		// call on dropped delegate
-
+		m_OnDropped;
 		return true;
 	}
 }

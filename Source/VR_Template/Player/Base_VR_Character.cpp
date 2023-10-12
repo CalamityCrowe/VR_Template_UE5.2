@@ -30,11 +30,11 @@ ABase_VR_Character::ABase_VR_Character()
 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	m_VROrigin = CreateOptionalDefaultSubobject<USceneComponent>(TEXT("VR Origin")); 
-	m_VROrigin->SetupAttachment(GetCapsuleComponent()); 
+	m_VROrigin = CreateOptionalDefaultSubobject<USceneComponent>(TEXT("VR Origin"));
+	RootComponent = m_VROrigin;
 
 	m_Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	m_Camera->SetupAttachment(m_VROrigin); 
+	m_Camera->SetupAttachment(m_VROrigin);
 
 
 	m_LeftController = CreateOptionalDefaultSubobject<UMotionControllerComponent>(TEXT("Left Motion Controller"));
@@ -43,8 +43,8 @@ ABase_VR_Character::ABase_VR_Character()
 	m_LeftController->MotionSource = FName(TEXT("Left"));
 	m_RightController->MotionSource = FName(TEXT("Right"));
 
-	m_LeftController->SetupAttachment(m_VROrigin); 
-	m_RightController->SetupAttachment(m_VROrigin); 
+	m_LeftController->SetupAttachment(m_VROrigin);
+	m_RightController->SetupAttachment(m_VROrigin);
 
 	m_HandLeft = CreateOptionalDefaultSubobject<UMannequin_Hands>(TEXT("Left Hand Mesh"));
 	m_HandLeft->SetupAttachment(m_LeftController);
@@ -132,9 +132,9 @@ void ABase_VR_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 		PEI->BindAction(m_InputActions->m_InputLeftAnalog, ETriggerEvent::Triggered, this, &ABase_VR_Character::MovePlayer); // binds an action to the input component
 		PEI->BindAction(m_InputActions->m_InputRightAnalog, ETriggerEvent::Triggered, this, &ABase_VR_Character::TurnPlayer); // binds an action to the input component
 		PEI->BindAction(m_InputActions->m_InputLeftGrip, ETriggerEvent::Started, this, &ABase_VR_Character::GrabObjectLeft);
-		PEI->BindAction(m_InputActions->m_InputLeftGrip, ETriggerEvent::Canceled, this, &ABase_VR_Character::ReleaseObjectLeft);
+		PEI->BindAction(m_InputActions->m_InputLeftGrip, ETriggerEvent::Completed, this, &ABase_VR_Character::ReleaseObjectLeft);
 		PEI->BindAction(m_InputActions->m_InputRightGrip, ETriggerEvent::Started, this, &ABase_VR_Character::GrabObjectRight);
-		PEI->BindAction(m_InputActions->m_InputRightGrip, ETriggerEvent::Canceled, this, &ABase_VR_Character::ReleaseObjectRight);
+		PEI->BindAction(m_InputActions->m_InputRightGrip, ETriggerEvent::Completed, this, &ABase_VR_Character::ReleaseObjectRight);
 	}
 
 }
@@ -189,7 +189,7 @@ void ABase_VR_Character::GrabObjectRight(const FInputActionValue& Value)
 
 		if (nearestComp->TryGrab(m_RightController))
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Blue, TEXT("GRABBY")); 
+			GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Blue, TEXT("GRABBY"));
 			m_HeldRight = nearestComp;
 			if (m_HeldRight == m_HeldLeft) { m_HeldLeft == nullptr; }
 		}
