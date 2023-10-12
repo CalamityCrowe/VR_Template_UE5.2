@@ -21,6 +21,7 @@
 #include "VR_Template/VR_Components/VR_GrabComponent.h"
 
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
 
 #pragma endregion
 
@@ -62,21 +63,6 @@ void ABase_VR_Character::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
-	//{
-	//	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-	//	{
-	//		Subsystem->AddMappingContext(m_InputMappingContext, 0);
-	//	}
-	//	else
-	//	{
-	//		GEngine->AddOnScreenDebugMessage(0, 1, FColor::Yellow, TEXT("Mapping Failed"));
-	//	}
-	//}
-	//else
-	//{
-	//	GEngine->AddOnScreenDebugMessage(0, 1, FColor::Green, TEXT("Mapping Failed"));
-	//}
 }
 
 // Called every frame
@@ -137,6 +123,19 @@ void ABase_VR_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 		PEI->BindAction(m_InputActions->m_InputRightGrip, ETriggerEvent::Completed, this, &ABase_VR_Character::ReleaseObjectRight);
 	}
 
+}
+
+void ABase_VR_Character::AllignColliderToHMD() 
+{
+	FVector camLoc = FVector(m_Camera->GetComponentLocation().X, m_Camera->GetComponentLocation().Y,GetActorLocation().Z);
+	FVector actLoc = GetActorLocation(); 
+
+	FVector newOffset = camLoc - actLoc; 
+	GetCapsuleComponent()->AddWorldOffset(newOffset); 
+
+	newOffset = UKismetMathLibrary::NegateVector(newOffset); 
+
+	m_VROrigin->AddWorldOffset(newOffset); 
 }
 
 void ABase_VR_Character::MovePlayer(const FInputActionValue& Value)

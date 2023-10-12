@@ -17,6 +17,8 @@ class VR_TEMPLATE_API ABase_VR_Character : public ACharacter
 public:
 	// Sets default values for this pawn's properties
 	ABase_VR_Character();
+private: 
+	void AllignColliderToHMD(); 
 
 protected:
 	// Called when the game starts or when spawned
