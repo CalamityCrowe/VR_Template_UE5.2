@@ -47,12 +47,20 @@ ABase_VR_Character::ABase_VR_Character()
 	m_LeftController->SetupAttachment(m_VROrigin);
 	m_RightController->SetupAttachment(m_VROrigin);
 
+	auto MeshAsset = ConstructorHelpers::FObjectFinder<USkeletalMesh>(TEXT("SkeletalMesh'/Game/Characters/MannequinsXR/Meshes/SKM_MannyXR_left.SKM_MannyXR_left'"));
+
 	m_HandLeft = CreateOptionalDefaultSubobject<UMannequin_Hands>(TEXT("Left Hand Mesh"));
 	m_HandLeft->SetupAttachment(m_LeftController);
+	m_HandLeft->SetSkeletalMesh(MeshAsset.Object);
+	m_HandLeft->SetRelativeLocation(FVector(-2.98126, -3.5, 4.561753)); 
+	m_HandLeft->SetRelativeRotation(FRotator(-25,-179.999908, 89.99998));
 	m_HandLeft->mb_isMirrored = true;
-
+	MeshAsset = ConstructorHelpers::FObjectFinder<USkeletalMesh>(TEXT("SkeletalMesh'/Game/Characters/MannequinsXR/Meshes/SKM_MannyXR_right.SKM_MannyXR_right'"));
 	m_HandRight = CreateOptionalDefaultSubobject<UMannequin_Hands>(TEXT("Right Hand Mesh"));
 	m_HandRight->SetupAttachment(m_RightController);
+	m_HandRight->SetSkeletalMesh(MeshAsset.Object);
+	m_HandRight->SetRelativeLocation(FVector(-2.98126, 3.5, 4.561753));
+	m_HandRight->SetRelativeRotation(FRotator(-25, 0, 89.999999)); 
 	m_HandRight->mb_isMirrored = false;
 
 
@@ -125,17 +133,17 @@ void ABase_VR_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 }
 
-void ABase_VR_Character::AllignColliderToHMD() 
+void ABase_VR_Character::AllignColliderToHMD()
 {
-	FVector camLoc = FVector(m_Camera->GetComponentLocation().X, m_Camera->GetComponentLocation().Y,GetActorLocation().Z);
-	FVector actLoc = GetActorLocation(); 
+	FVector camLoc = FVector(m_Camera->GetComponentLocation().X, m_Camera->GetComponentLocation().Y, GetActorLocation().Z);
+	FVector actLoc = GetActorLocation();
 
-	FVector newOffset = camLoc - actLoc; 
-	GetCapsuleComponent()->AddWorldOffset(newOffset); 
+	FVector newOffset = camLoc - actLoc;
+	GetCapsuleComponent()->AddWorldOffset(newOffset);
 
-	newOffset = UKismetMathLibrary::NegateVector(newOffset); 
+	newOffset = UKismetMathLibrary::NegateVector(newOffset);
 
-	m_VROrigin->AddWorldOffset(newOffset); 
+	m_VROrigin->AddWorldOffset(newOffset);
 }
 
 void ABase_VR_Character::MovePlayer(const FInputActionValue& Value)

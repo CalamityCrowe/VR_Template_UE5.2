@@ -6,6 +6,10 @@
 #include "GameFramework/Actor.h"
 #include "Base_Interactable.generated.h"
 
+class UVR_GrabComponent;
+class UInputMappingContext;
+class UInputConfigData;
+
 UCLASS()
 class VR_TEMPLATE_API ABase_Interactable : public AActor
 {
@@ -32,17 +36,18 @@ public:
 		void UnbindInput();
 
 
-public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Mesh")
+private:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Mesh", meta = (AllowPrivateAccess = true))
 		TObjectPtr<UStaticMeshComponent> m_Mesh;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
-		TObjectPtr<class UVR_GrabComponent> m_GrabPointSnap;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh", meta = (AllowPrivateAccess = true))
+		TObjectPtr<UVR_GrabComponent> m_GrabPointSnap;
+protected: 
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
-		class UInputMappingContext* m_InputMappingContext;
+		UInputMappingContext* m_InputMappingContext;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
-		class UInputConfigData* m_FireActions; // this is a custom data config that holds a list of pointers that will get assigned in the engine to pull the input actions in
-
-
+		UInputConfigData* m_FireActions; // this is a custom data config that holds a list of pointers that will get assigned in the engine to pull the input actions in
+public:
+	UStaticMeshComponent* GetMesh() { return m_Mesh;  }
+	UVR_GrabComponent* GetGrabComponent() { return m_GrabPointSnap; }
 
 };

@@ -5,6 +5,6 @@
 
 ABaseVRGameState::ABaseVRGameState() 
 {
-	m_Score = 0; 
+	 
 }
 

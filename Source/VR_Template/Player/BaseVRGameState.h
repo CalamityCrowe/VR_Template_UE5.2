@@ -16,6 +16,5 @@ class VR_TEMPLATE_API ABaseVRGameState : public AGameStateBase
 public:
 	ABaseVRGameState(); 
 	virtual ~ABaseVRGameState() = default; 
-protected:
-	__int32 m_Score; 
+
 };

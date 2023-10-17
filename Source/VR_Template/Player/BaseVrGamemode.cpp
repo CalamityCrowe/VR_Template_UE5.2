@@ -8,14 +8,13 @@
 
 ABaseVrGamemode::ABaseVrGamemode()
 {
-	TSoftClassPtr<ABase_VR_Character> ActorBpClass = TSoftClassPtr<ABase_VR_Character>(FSoftObjectPath(TEXT("Blueprint'/Game/My_VR_Character/PlayerCharacter'")));
+	auto player = ConstructorHelpers::FObjectFinder<ABase_VR_Character>(TEXT("Blueprint'/Game/My_VR_Character/PlayerCharacter.PLayerCharacter'"));
 
-	DefaultPawnClass = ActorBpClass->StaticClass();
-	GameStateClass = ABaseVRGameState::StaticClass(); 
+	GameStateClass = ABaseVRGameState::StaticClass();
 }
 
 void ABaseVrGamemode::StartPlay()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Purple, TEXT("Start Play Has Been Called")); 
-	Super::StartPlay(); 
+	GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Purple, TEXT("Start Play Has Been Called"));
+	Super::StartPlay();
 }

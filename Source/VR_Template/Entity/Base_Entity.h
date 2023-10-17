@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Pawn.h"
+#include "GameFramework/Character.h"
 #include "Base_Entity.generated.h"
 
 UCLASS()
-class VR_TEMPLATE_API ABase_Entity : public APawn
+class VR_TEMPLATE_API ABase_Entity : public ACharacter
 {
 	GENERATED_BODY()
 
