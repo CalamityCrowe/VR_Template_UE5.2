@@ -49,6 +49,8 @@ protected:
 public: //functions
 	UFUNCTION(BlueprintPure)
 		EControllerHand GetHeldByHand();
+private: 
+	FDetachmentTransformRules* detachRules;
 
 protected: // variables
 

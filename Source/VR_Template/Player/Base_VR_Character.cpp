@@ -32,7 +32,7 @@ ABase_VR_Character::ABase_VR_Character()
 	PrimaryActorTick.bCanEverTick = true;
 
 	m_VROrigin = CreateOptionalDefaultSubobject<USceneComponent>(TEXT("VR Origin"));
-	RootComponent = m_VROrigin;
+	m_VROrigin->SetupAttachment(GetCapsuleComponent());
 
 	m_Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	m_Camera->SetupAttachment(m_VROrigin);
@@ -52,15 +52,17 @@ ABase_VR_Character::ABase_VR_Character()
 	m_HandLeft = CreateOptionalDefaultSubobject<UMannequin_Hands>(TEXT("Left Hand Mesh"));
 	m_HandLeft->SetupAttachment(m_LeftController);
 	m_HandLeft->SetSkeletalMesh(MeshAsset.Object);
-	m_HandLeft->SetRelativeLocation(FVector(-2.98126, -3.5, 4.561753)); 
-	m_HandLeft->SetRelativeRotation(FRotator(-25,-179.999908, 89.99998));
+	m_HandLeft->SetRelativeLocation(FVector(-2.98126, -3.5, 4.561753));
+	m_HandLeft->SetRelativeRotation(FRotator(-25, -179.999908, 89.99998));
 	m_HandLeft->mb_isMirrored = true;
+
+
 	MeshAsset = ConstructorHelpers::FObjectFinder<USkeletalMesh>(TEXT("SkeletalMesh'/Game/Characters/MannequinsXR/Meshes/SKM_MannyXR_right.SKM_MannyXR_right'"));
 	m_HandRight = CreateOptionalDefaultSubobject<UMannequin_Hands>(TEXT("Right Hand Mesh"));
 	m_HandRight->SetupAttachment(m_RightController);
 	m_HandRight->SetSkeletalMesh(MeshAsset.Object);
 	m_HandRight->SetRelativeLocation(FVector(-2.98126, 3.5, 4.561753));
-	m_HandRight->SetRelativeRotation(FRotator(-25, 0, 89.999999)); 
+	m_HandRight->SetRelativeRotation(FRotator(-25, 0, 89.999999));
 	m_HandRight->mb_isMirrored = false;
 
 
@@ -77,7 +79,7 @@ void ABase_VR_Character::BeginPlay()
 void ABase_VR_Character::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	AllignColliderToHMD();
 }
 
 // Called to bind functionality to input
@@ -137,13 +139,15 @@ void ABase_VR_Character::AllignColliderToHMD()
 {
 	FVector camLoc = FVector(m_Camera->GetComponentLocation().X, m_Camera->GetComponentLocation().Y, GetActorLocation().Z);
 	FVector actLoc = GetActorLocation();
+	if (abs(camLoc.SquaredLength() - actLoc.SquaredLength()) > 1000)
+	{
+		FVector newOffset = camLoc - actLoc;
+		GetCapsuleComponent()->AddWorldOffset(newOffset);
 
-	FVector newOffset = camLoc - actLoc;
-	GetCapsuleComponent()->AddWorldOffset(newOffset);
+		newOffset = UKismetMathLibrary::NegateVector(newOffset);
 
-	newOffset = UKismetMathLibrary::NegateVector(newOffset);
-
-	m_VROrigin->AddWorldOffset(newOffset);
+		m_VROrigin->AddWorldOffset(newOffset);
+	}
 }
 
 void ABase_VR_Character::MovePlayer(const FInputActionValue& Value)
@@ -205,22 +209,25 @@ void ABase_VR_Character::GrabObjectRight(const FInputActionValue& Value)
 
 void ABase_VR_Character::ReleaseObjectLeft(const FInputActionValue& Value)
 {
-	if (m_HeldLeft)
+	if (IsValid(m_HeldLeft))
 	{
-		if (m_HeldLeft->TryRelease())
+		if (m_HeldLeft->TryRelease() == true)
 		{
 			m_HeldLeft = nullptr;
+			GEngine->AddOnScreenDebugMessage(100, 20, FColor::Purple, TEXT("Left Release"));
 		}
 	}
 }
 
 void ABase_VR_Character::ReleaseObjectRight(const FInputActionValue& Value)
 {
-	if (m_HeldRight)
+	if (IsValid(m_HeldRight))
 	{
-		if (m_HeldRight->TryRelease())
+		if (m_HeldRight->TryRelease() ==true)
 		{
 			m_HeldRight = nullptr;
+			GEngine->AddOnScreenDebugMessage(100, 20, FColor::Purple, TEXT("Right Release"));
+
 		}
 	}
 }
@@ -235,8 +242,9 @@ UVR_GrabComponent* ABase_VR_Character::GetGrabComponentNearController(UMotionCon
 
 	TArray< TEnumAsByte<EObjectTypeQuery>> traceObjects;
 	traceObjects.Add(UEngineTypes::ConvertToObjectType(ECC_PhysicsBody));
-	const TArray<AActor*> ignoreActor;
-	bool bHasHit = UKismetSystemLibrary::SphereTraceSingleForObjects(GetWorld(), LocalGripPos, LocalGripPos, m_GrabRadius, traceObjects, false, ignoreActor, EDrawDebugTrace::None, hitResult, true);
+	const TArray<AActor*> ignoreActor{this};
+	
+	bool bHasHit = UKismetSystemLibrary::SphereTraceSingleForObjects(GetWorld(), LocalGripPos, LocalGripPos, m_GrabRadius, traceObjects, false, ignoreActor, EDrawDebugTrace::Persistent, hitResult, true);
 
 	if (bHasHit)
 	{

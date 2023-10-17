@@ -15,6 +15,14 @@ UVR_GrabComponent::UVR_GrabComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
+
+	detachRules = new FDetachmentTransformRules(EDetachmentRule::KeepWorld, EDetachmentRule::KeepWorld, EDetachmentRule::KeepWorld, true);
+	detachRules->bCallModify = true;
+	detachRules->LocationRule = EDetachmentRule::KeepWorld;
+	detachRules->RotationRule = EDetachmentRule::KeepWorld;
+	detachRules->ScaleRule = EDetachmentRule::KeepWorld;
+
+	isHeld = false; 
 	// ...
 }
 
@@ -148,32 +156,32 @@ bool UVR_GrabComponent::TryRelease()
 		isHeld = false;
 
 		break;
-	default:
+	case GrabType::Free:
 		if (isSimulatedOnDrop)
 		{
 			SetPrimativeCompPhysics(true);
-			GEngine->AddOnScreenDebugMessage(0, 2, FColor::Silver, TEXT("Simulated Physics"));
+			GEngine->AddOnScreenDebugMessage(50, 20, FColor::Silver, TEXT("Simulated Physics"));
 
 		}
 		else
 		{
-			GetOwner()->GetRootComponent()->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
-			GEngine->AddOnScreenDebugMessage(0, 2, FColor::Silver, TEXT("Released From Hand"));
+			GetAttachParent()->DetachFromComponent(*detachRules);
+			GEngine->AddOnScreenDebugMessage(64, 10, FColor::Green, TEXT("Released From Hand AAAAAAAAAAAAAAAAAAAAAAAA"));
 
 		}
+
 		isHeld = false;
 
 		break;
 	}
-
-	if (isHeld)
+	if (isHeld == true)
 	{
 		return false;
 	}
 	else
 	{
-		// call on dropped delegate
-		m_OnDropped;
+		//HandleOnDropped();
+		isHeld = false;
 		return true;
 	}
 }
@@ -213,7 +221,8 @@ EControllerHand UVR_GrabComponent::GetHeldByHand()
 
 void UVR_GrabComponent::AttachParentToController(UMotionControllerComponent* MotionController)
 {
-	if (GetOwner()->GetRootComponent()->AttachToComponent(MotionController, FAttachmentTransformRules::KeepWorldTransform, FName(TEXT("None"))))
+
+	if (GetAttachParent()->AttachToComponent(MotionController, FAttachmentTransformRules::KeepWorldTransform, FName(TEXT("None"))))
 	{
 		GEngine->AddOnScreenDebugMessage(10, 10, FColor::Yellow, TEXT("I am Attached"));
 	}
