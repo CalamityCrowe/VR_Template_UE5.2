@@ -2,6 +2,7 @@
 
 
 #include "Interactable_Stungun.h"
+#include "Components/ArrowComponent.h"
 
 AInteractable_Stungun::AInteractable_Stungun()
 {
@@ -11,7 +12,33 @@ AInteractable_Stungun::AInteractable_Stungun()
 
 
 
+void AInteractable_Stungun::BeginPlay()
+{
+	Super::BeginPlay();
+	FireStunGun();
+}
+
 void AInteractable_Stungun::FireStunGun()
 {
 
+	GEngine->AddOnScreenDebugMessage(110, 2, FColor::Red, TEXT("AAAAAAAAAAAAA"));
+	if (FHitResult* newResult = LineTraceMethod(FVector(0, 0, 0), FVector(2000, 2000, 0)))
+	{
+		GEngine->AddOnScreenDebugMessage(110, 2, FColor::Red, TEXT("HIT"));
+	}
 }
+
+FHitResult* AInteractable_Stungun::LineTraceMethod(const FVector& StartLocation, const FVector& EndLocation)
+{
+	FHitResult* HitResult = new FHitResult();
+	FCollisionQueryParams CollisionParams;
+
+	if (GetWorld()->LineTraceSingleByChannel(*HitResult, StartLocation, EndLocation, ECC_Visibility, CollisionParams)) // performs a line trace between the starting point and where it should end
+	{
+		// a hit occurred
+		return HitResult;
+	}
+
+	return HitResult;
+}
+

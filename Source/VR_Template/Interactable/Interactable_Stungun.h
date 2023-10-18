@@ -17,7 +17,18 @@ public:
 	AInteractable_Stungun();
 	virtual ~AInteractable_Stungun() = default;
 
-protected: 
-	void FireStunGun(); 
+
+
+protected:
+
+	virtual void BeginPlay() override;
+
+	void FireStunGun();
+
+private:
+
+	FHitResult* LineTraceMethod(const FVector& StartLocation, const FVector& EndLocation);
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Arrow", meta = (AllowPrivateAccess = true))
+	TObjectPtr<UArrowComponent> m_FireDirection;
 
 };
