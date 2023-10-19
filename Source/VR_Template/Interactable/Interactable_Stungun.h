@@ -29,6 +29,6 @@ private:
 
 	FHitResult* LineTraceMethod(const FVector& StartLocation, const FVector& EndLocation);
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Arrow", meta = (AllowPrivateAccess = true))
-	TObjectPtr<UArrowComponent> m_FireDirection;
+	TObjectPtr<class UArrowComponent> m_FireDirection;
 
 };
