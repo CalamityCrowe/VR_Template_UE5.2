@@ -3,6 +3,7 @@
 
 #include "Interactable_Stungun.h"
 #include "Components/ArrowComponent.h"
+#include "VR_Template/Entity/Base_Entity.h"
 
 AInteractable_Stungun::AInteractable_Stungun()
 {
@@ -25,6 +26,10 @@ void AInteractable_Stungun::FireStunGun()
 	if (FHitResult* newResult = LineTraceMethod(FVector(0, 0, 0), FVector(2000, 2000, 0)))
 	{
 		GEngine->AddOnScreenDebugMessage(110, 2, FColor::Red, TEXT("HIT"));
+		if (ABase_Entity* newEntity = Cast<ABase_Entity>(newResult->GetActor())) 
+		{
+			// do stuff
+		}
 	}
 }
 
