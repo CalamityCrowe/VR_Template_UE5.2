@@ -22,18 +22,18 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	bool m_isOpen;
+
+
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Mesh", meta = (AllowPrivateAccess = true))
 	TObjectPtr<UStaticMeshComponent> m_Mesh;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	TObjectPtr<USceneComponent> m_SceneRoot;
-
-
-protected:
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	bool m_isOpen;
-
 
 public:
 	inline UStaticMeshComponent* GetMesh() { return m_Mesh; }

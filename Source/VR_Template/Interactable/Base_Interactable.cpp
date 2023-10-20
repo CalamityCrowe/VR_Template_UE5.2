@@ -16,7 +16,7 @@ ABase_Interactable::ABase_Interactable()
 	m_GrabPointSnap->SetupAttachment(m_Mesh);
 	if (m_GrabPointSnap->GetGrabType() == GrabType::None) // checks if there is no grab type set and if so sets it to snap 
 	{
-		m_GrabPointSnap->SetGrabType(GrabType::Free); 
+		m_GrabPointSnap->SetGrabType(GrabType::Snap); 
 	}
 }
 
@@ -27,8 +27,8 @@ void ABase_Interactable::BeginPlay()
 
 	if (m_GrabPointSnap) 
 	{
-		m_GrabPointSnap->m_OnGrabbed.BindUObject(this, &ABase_Interactable::BindInteractableInput);
-		m_GrabPointSnap->m_OnGrabbed.BindUObject(this, &ABase_Interactable::UnbindInput);
+		m_GrabPointSnap->m_OnGrabbed.BindUObject(this, &ABase_Interactable::BindInteractableInput); 
+		m_GrabPointSnap->m_OnDropped.BindUObject(this, &ABase_Interactable::UnbindInput); // this is used for binding inputs within interactable objects
 	}
 	
 }

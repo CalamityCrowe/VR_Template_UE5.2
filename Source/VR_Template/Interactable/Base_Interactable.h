@@ -26,14 +26,11 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnGrabbed();
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnDropped();
-	UFUNCTION()
-	void BindInteractableInput();
-	UFUNCTION()
-	void UnbindInput();
 
 
 private:
@@ -41,11 +38,19 @@ private:
 	TObjectPtr<UStaticMeshComponent> m_Mesh;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh", meta = (AllowPrivateAccess = true))
 	TObjectPtr<UVR_GrabComponent> m_GrabPointSnap;
+
+	UFUNCTION()
+	void BindInteractableInput();
+	UFUNCTION()
+	void UnbindInput();
+
 protected:
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
 	UInputMappingContext* m_InputMappingContext;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
 	UInputConfigData* m_FireActions; // this is a custom data config that holds a list of pointers that will get assigned in the engine to pull the input actions in
+
+
 public:
 	UStaticMeshComponent* GetMesh() { return m_Mesh; }
 	UVR_GrabComponent* GetGrabComponent() { return m_GrabPointSnap; }

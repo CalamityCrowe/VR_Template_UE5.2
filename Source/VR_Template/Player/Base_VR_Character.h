@@ -17,12 +17,60 @@ class VR_TEMPLATE_API ABase_VR_Character : public ACharacter
 public:
 	// Sets default values for this pawn's properties
 	ABase_VR_Character();
-private: 
-	void AllignColliderToHMD(); 
+private:
+#pragma region Function Decleration
+	void AllignColliderToHMD();
+	UFUNCTION()
+	void MovePlayer(const FInputActionValue& Value);
+	UFUNCTION()
+	void TurnPlayer(const FInputActionValue& Value);
+	UFUNCTION()
+	void GrabObjectLeft(const FInputActionValue& Value);
+	UFUNCTION()
+	void GrabObjectRight(const FInputActionValue& Value);
+	UFUNCTION()
+	void ReleaseObjectLeft(const FInputActionValue& Value);
+	UFUNCTION()
+	void ReleaseObjectRight(const FInputActionValue& Value);
+#pragma endregion
+
+#pragma region Variable Decleration
+	UPROPERTY(Category = "Camera", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
+	TObjectPtr<class UCameraComponent> m_Camera;
+
+
+	UPROPERTY(Category = "VR Orign", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
+	TObjectPtr<class USceneComponent> m_VROrigin;
+	UPROPERTY(Category = "Motion Controllers", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
+	TObjectPtr<class UMotionControllerComponent> m_RightController;
+	UPROPERTY(Category = "Motion Controllers", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
+	TObjectPtr<UMotionControllerComponent> m_LeftController;
+	UPROPERTY(Category = "Motion Controllers", EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
+	TObjectPtr<class UMannequin_Hands> m_HandRight;
+	UPROPERTY(Category = "Motion Controllers", EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
+	TObjectPtr<UMannequin_Hands> m_HandLeft;
+	UPROPERTY(Category = "Motion Controllers", EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
+	TObjectPtr<class UVR_GrabComponent> m_HeldRight;
+	UPROPERTY(Category = "Motion Controllers", EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
+	TObjectPtr<UVR_GrabComponent> m_HeldLeft;
+#pragma endregion
+
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+#pragma region Variable Decleration
+	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
+	class UInputMappingContext* m_InputMappingContext;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
+	class UInputConfigData* m_InputActions; // this is a custom data config that holds a list of pointers that will get assigned in the engine to pull the input actions in
+
+	UPROPERTY(EditDefaultsOnly, BluePrintReadWrite, Category = "Motion Controllers")
+	float m_GrabRadius;
+	UPROPERTY(EditDefaultsOnly, BluePrintReadWrite, Category = "Motion Controllers")
+	float m_LocalNearestDistance;
+#pragma endregion
 
 public:
 	// Called every frame
@@ -30,55 +78,14 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	UFUNCTION()
-		void MovePlayer(const FInputActionValue& Value);
-	UFUNCTION()
-		void TurnPlayer(const FInputActionValue& Value);
-	UFUNCTION()
-		void GrabObjectLeft(const FInputActionValue& Value);
-	UFUNCTION()
-		void GrabObjectRight(const FInputActionValue& Value);
-	UFUNCTION()
-		void ReleaseObjectLeft(const FInputActionValue& Value);
-	UFUNCTION()
-		void ReleaseObjectRight(const FInputActionValue& Value);
 
 	UFUNCTION()
-		class UVR_GrabComponent* GetGrabComponentNearController(UMotionControllerComponent* controllerReference);
+	class UVR_GrabComponent* GetGrabComponentNearController(UMotionControllerComponent* controllerReference);
 
 
 
-protected:
 
 
-	UPROPERTY(Category = "Camera", VisibleAnywhere, BlueprintReadOnly)
-		TObjectPtr<class UCameraComponent> m_Camera;
-
-	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
-		class UInputMappingContext* m_InputMappingContext;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
-		class UInputConfigData* m_InputActions; // this is a custom data config that holds a list of pointers that will get assigned in the engine to pull the input actions in
-
-	UPROPERTY(Category = "Motion Controllers", VisibleAnywhere, BlueprintReadOnly)
-		TObjectPtr<class USceneComponent> m_VROrigin;
-
-	UPROPERTY(Category = "Motion Controllers", VisibleAnywhere, BlueprintReadOnly)
-		TObjectPtr<class UMotionControllerComponent> m_RightController;
-	UPROPERTY(Category = "Motion Controllers", VisibleAnywhere, BlueprintReadOnly)
-		TObjectPtr<UMotionControllerComponent> m_LeftController;
-	UPROPERTY(Category = "Motion Controllers", EditDefaultsOnly, BlueprintReadOnly)
-		TObjectPtr<class UMannequin_Hands> m_HandRight;
-	UPROPERTY(Category = "Motion Controllers", EditDefaultsOnly, BlueprintReadOnly)
-		TObjectPtr<UMannequin_Hands> m_HandLeft;
-	UPROPERTY(Category = "Motion Controllers", EditDefaultsOnly, BlueprintReadOnly)
-		TObjectPtr<class UVR_GrabComponent> m_HeldRight;
-	UPROPERTY(Category = "Motion Controllers", EditDefaultsOnly, BlueprintReadOnly)
-		TObjectPtr<UVR_GrabComponent> m_HeldLeft;
-
-	UPROPERTY(EditDefaultsOnly, BluePrintReadWrite, Category = "Motion Controllers")
-		float m_GrabRadius;
-	UPROPERTY(EditDefaultsOnly, BluePrintReadWrite, Category = "Motion Controllers")
-		float m_LocalNearestDistance;
 
 
 

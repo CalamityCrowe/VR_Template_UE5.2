@@ -29,6 +29,9 @@ protected:
 	UFUNCTION()
 	void OnEndOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Object References")
+	TObjectPtr<ALatch_Code> m_LatchRefrence;
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -39,9 +42,7 @@ private:
 	TObjectPtr<USceneComponent> m_SceneRoot;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Meshes", meta = (AllowPrivateAccess = true))
 	TObjectPtr<UStaticMeshComponent> m_Mesh;
-protected:
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Object References")
-	TObjectPtr<ALatch_Code> m_LatchRefrence;
+
 
 public:
 	inline UBoxComponent* GetCollider() { return m_Collider; }

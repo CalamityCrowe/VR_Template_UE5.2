@@ -38,43 +38,55 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	UFUNCTION(BlueprintPure)
+	EControllerHand GetHeldByHand();
+
+	FOnGrabbedDelegate m_OnGrabbed;
+	FOnDroppedDelegate m_OnDropped;
+
+
 protected:
+
+#pragma region Function Decleration
 
 	void SetShouldSimulateDrop();
 	void SetPrimativeCompPhysics(bool isSimulated);
 
-
 	void AttachParentToController(class UMotionControllerComponent* MotionController);
 
-public: //functions
-	UFUNCTION(BlueprintPure)
-		EControllerHand GetHeldByHand();
-private: 
+#pragma endregion
+
+#pragma region Variable Decleration
+	
+	bool isHeld;
+	bool isSimulatedOnDrop;
+
+	FRotator PrimaryGrabRelativerRotation;
+	GrabType m_GrabType;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Haptic Feedback")
+	TObjectPtr<class UHapticFeedbackEffect_Base> OnGrabHapticFeedback; // this gets assigned in the engine and helps register that the player has interacted in the world
+	TObjectPtr<UMotionControllerComponent> MotionControllerReference;
+
+#pragma endregion
+
+private:
 	FDetachmentTransformRules* detachRules;
 
-protected: // variables
+public:
 
-	bool isHeld;
-	FRotator PrimaryGrabRelativerRotation;
-	bool isSimulatedOnDrop;
-	GrabType m_GrabType;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Haptic Feedback")
-		TObjectPtr<class UHapticFeedbackEffect_Base> OnGrabHapticFeedback; // this gets assigned in the engine and helps register that the player has interacted in the world
-
-	TObjectPtr<UMotionControllerComponent> MotionControllerReference;
-public: //functions
+#pragma region Function Decleration
 	UFUNCTION()
-		void HandleOnGrabbed();
+	void HandleOnGrabbed();
 	UFUNCTION()
-		void HandleOnDropped();
+	void HandleOnDropped();
 
 	bool TryGrab(class UMotionControllerComponent* MotionCOntroller);
 	bool TryRelease();
 
 	void SetGrabType(GrabType newType) { m_GrabType = newType; }
 	GrabType GetGrabType() { return m_GrabType; }
-public: //variables 
-	FOnGrabbedDelegate m_OnGrabbed;
-	FOnDroppedDelegate m_OnDropped;
+#pragma endregion
+
 
 };
