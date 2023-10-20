@@ -76,4 +76,5 @@ public: //functions
 public: //variables 
 	FOnGrabbedDelegate m_OnGrabbed;
 	FOnDroppedDelegate m_OnDropped;
+
 };

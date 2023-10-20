@@ -187,7 +187,7 @@ void ABase_VR_Character::GrabObjectLeft(const FInputActionValue& Value)
 		if (nearestComp->TryGrab(m_LeftController))
 		{
 			m_HeldLeft = nearestComp;
-			if (m_HeldLeft == m_HeldRight) { m_HeldRight == nullptr; }
+			if (&m_HeldLeft == &m_HeldRight) { m_HeldRight == nullptr; }
 		}
 	}
 }
@@ -202,7 +202,7 @@ void ABase_VR_Character::GrabObjectRight(const FInputActionValue& Value)
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Blue, TEXT("GRABBY"));
 			m_HeldRight = nearestComp;
-			if (m_HeldRight == m_HeldLeft) { m_HeldLeft == nullptr; }
+			if (&m_HeldRight == &m_HeldLeft) { m_HeldLeft == nullptr; }
 		}
 	}
 }
@@ -223,7 +223,7 @@ void ABase_VR_Character::ReleaseObjectRight(const FInputActionValue& Value)
 {
 	if (IsValid(m_HeldRight))
 	{
-		if (m_HeldRight->TryRelease() ==true)
+		if (m_HeldRight->TryRelease() == true)
 		{
 			m_HeldRight = nullptr;
 			GEngine->AddOnScreenDebugMessage(100, 20, FColor::Purple, TEXT("Right Release"));
@@ -242,8 +242,8 @@ UVR_GrabComponent* ABase_VR_Character::GetGrabComponentNearController(UMotionCon
 
 	TArray< TEnumAsByte<EObjectTypeQuery>> traceObjects;
 	traceObjects.Add(UEngineTypes::ConvertToObjectType(ECC_PhysicsBody));
-	const TArray<AActor*> ignoreActor{this};
-	
+	const TArray<AActor*> ignoreActor{ this };
+
 	bool bHasHit = UKismetSystemLibrary::SphereTraceSingleForObjects(GetWorld(), LocalGripPos, LocalGripPos, m_GrabRadius, traceObjects, false, ignoreActor, EDrawDebugTrace::Persistent, hitResult, true);
 
 	if (bHasHit)
