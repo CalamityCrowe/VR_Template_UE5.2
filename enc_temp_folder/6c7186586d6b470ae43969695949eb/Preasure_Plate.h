@@ -40,8 +40,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Meshes", meta = (AllowPrivateAccess = true))
 	TObjectPtr<UStaticMeshComponent> m_Mesh;
 protected:
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Object References")
-	TObjectPtr<ALatch_Code> m_LatchRefrence;
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, meta = (EditInline), Category = "Object References")
+	TSubclassOf<ALatch_Code> m_LatchRefrence;
 
 public:
 	inline UBoxComponent* GetCollider() { return m_Collider; }

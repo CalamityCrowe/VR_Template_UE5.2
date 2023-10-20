@@ -27,27 +27,27 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	UFUNCTION(BlueprintImplementableEvent)
-	void OnGrabbed();
+		void OnGrabbed();
 	UFUNCTION(BlueprintImplementableEvent)
-	void OnDropped();
+		void OnDropped();
 	UFUNCTION()
-	void BindInteractableInput();
+		void BindInteractableInput();
 	UFUNCTION()
-	void UnbindInput();
+		void UnbindInput();
 
 
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Mesh", meta = (AllowPrivateAccess = true))
-	TObjectPtr<UStaticMeshComponent> m_Mesh;
+		TObjectPtr<UStaticMeshComponent> m_Mesh;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh", meta = (AllowPrivateAccess = true))
-	TObjectPtr<UVR_GrabComponent> m_GrabPointSnap;
-protected:
+		TObjectPtr<UVR_GrabComponent> m_GrabPointSnap;
+protected: 
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
-	UInputMappingContext* m_InputMappingContext;
+		UInputMappingContext* m_InputMappingContext;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
-	UInputConfigData* m_FireActions; // this is a custom data config that holds a list of pointers that will get assigned in the engine to pull the input actions in
+		UInputConfigData* m_FireActions; // this is a custom data config that holds a list of pointers that will get assigned in the engine to pull the input actions in
 public:
-	UStaticMeshComponent* GetMesh() { return m_Mesh; }
+	UStaticMeshComponent* GetMesh() { return m_Mesh;  }
 	UVR_GrabComponent* GetGrabComponent() { return m_GrabPointSnap; }
 
 };
