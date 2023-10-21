@@ -6,17 +6,17 @@
 // Sets default values
 ABase_Interactable::ABase_Interactable()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	m_Mesh = CreateOptionalDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh")); 
-	RootComponent = m_Mesh; 
+	m_Mesh = CreateOptionalDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	RootComponent = m_Mesh;
 
 	m_GrabPointSnap = CreateOptionalDefaultSubobject<UVR_GrabComponent>(TEXT("Grab Point"));
 	m_GrabPointSnap->SetupAttachment(m_Mesh);
 	if (m_GrabPointSnap->GetGrabType() == GrabType::None) // checks if there is no grab type set and if so sets it to snap 
 	{
-		m_GrabPointSnap->SetGrabType(GrabType::Snap); 
+		m_GrabPointSnap->SetGrabType(GrabType::Snap);
 	}
 }
 
@@ -25,12 +25,17 @@ void ABase_Interactable::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (m_GrabPointSnap) 
+	if (ObjectData)
 	{
-		m_GrabPointSnap->m_OnGrabbed.BindUObject(this, &ABase_Interactable::BindInteractableInput); 
+		FindObjectData(ObjectTypeRefrence);
+	}
+
+	if (m_GrabPointSnap)
+	{
+		m_GrabPointSnap->m_OnGrabbed.BindUObject(this, &ABase_Interactable::BindInteractableInput);
 		m_GrabPointSnap->m_OnDropped.BindUObject(this, &ABase_Interactable::UnbindInput); // this is used for binding inputs within interactable objects
 	}
-	
+
 }
 
 // Called every frame
@@ -38,6 +43,29 @@ void ABase_Interactable::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+
+
+void ABase_Interactable::FindObjectData(EObjectType newType)
+{
+	EObjectType FindThisType = newType;
+
+	FInteractableData* FoundRow = nullptr;
+
+	for (auto It : ObjectData->GetRowMap())
+	{
+		FInteractableData* Row = reinterpret_cast<FInteractableData*>(It.Value);
+		if (Row->ObjectType == FindThisType)
+		{
+			FoundRow = Row;
+			break;
+		}
+	}
+	if (FoundRow != nullptr)
+	{
+		m_ObjectTag = FoundRow->ObjectType; 
+	}
 }
 
 void ABase_Interactable::BindInteractableInput()
@@ -48,7 +76,7 @@ void ABase_Interactable::BindInteractableInput()
 
 void ABase_Interactable::UnbindInput()
 {
-	OnDropped(); 
+	OnDropped();
 	GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::Red, TEXT("Detached Component, Base Interactable.cpp"));
 }
 
