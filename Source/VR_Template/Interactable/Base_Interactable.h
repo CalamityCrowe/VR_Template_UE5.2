@@ -61,8 +61,6 @@ public:
 	void OnDropped();
 
 
-
-
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Mesh", meta = (AllowPrivateAccess = true))
 	TObjectPtr<UStaticMeshComponent> m_Mesh;
@@ -88,7 +86,7 @@ protected:
 	TObjectPtr<UDataTable> ObjectData;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data Tables")
 	EObjectType ObjectTypeReference;
-	
+
 
 public:
 	UStaticMeshComponent* GetMesh() { return m_Mesh; }

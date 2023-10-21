@@ -27,7 +27,7 @@ void ABase_Interactable::BeginPlay()
 
 	if (ObjectData)
 	{
-		FindObjectData(ObjectTypeRefrence);
+		FindObjectData(ObjectTypeReference); // this will begin the search for the relevant informatin for the object tags
 	}
 
 	if (m_GrabPointSnap)
@@ -64,7 +64,7 @@ void ABase_Interactable::FindObjectData(EObjectType newType)
 	}
 	if (FoundRow != nullptr)
 	{
-		m_ObjectTag = FoundRow->ObjectType; 
+		m_ObjectTag = FoundRow->ObjectType;
 	}
 }
 
