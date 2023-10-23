@@ -3,6 +3,17 @@
 
 #include "Interactable_Flashlight.h"
 #include "Components/SpotLightComponent.h"
+#include "Kismet/GameplayStatics.h"
+
+#include "Components/InputComponent.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
+#include "InputMappingContext.h"
+
+#include "VR_Template/Player/Inputs/InputConfigData.h"
+#include "VR_Template/VR_Components/VR_GrabComponent.h"
+
+
 
 AInteractable_Flashlight::AInteractable_Flashlight()
 {
@@ -35,24 +46,40 @@ void AInteractable_Flashlight::Tick(float Delta)
 
 void AInteractable_Flashlight::ToggleFlashlight()
 {
-	if (m_Light->IsActive()) 
+	if (m_Light->IsActive())
 	{
-		m_Light->Deactivate(); 
+		m_Light->Deactivate();
 	}
 	else
 	{
-		m_Light->Activate(true); 
+		m_Light->Activate(true);
 	}
 }
 
 void AInteractable_Flashlight::BindInteractableInput()
 {
-	ABase_Interactable::BindInteractableInput(); 
+	ABase_Interactable::BindInteractableInput();
 
-	
+	if (APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0))
+	{
+		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PC->InputComponent))
+		{
+			if (GetGrabComponent()->GetHeldByHand() == EControllerHand::Left)
+			{
+				EnhancedInputComponent->BindAction(m_FireActions->m_InputLeftTrigger, ETriggerEvent::Triggered, this, &AInteractable_Flashlight::ToggleFlashlight);
+			}
+			else
+			{
+				EnhancedInputComponent->BindAction(m_FireActions->m_InputLeftTrigger, ETriggerEvent::Triggered, this, &AInteractable_Flashlight::ToggleFlashlight);
+
+			}
+		}
+	}
 }
 
 void AInteractable_Flashlight::UnbindInput()
 {
-	ABase_Interactable::UnbindInput(); 
+	ABase_Interactable::UnbindInput();
+
+
 }
