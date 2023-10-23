@@ -82,6 +82,10 @@ private:
 	// used for tagging the type of object it will be 
 	EObjectType m_ObjectTag;
 
+	UFUNCTION()
+	void BindInteractableInput();
+	UFUNCTION()
+	void UnbindInput();
 
 	virtual void FindObjectData(EObjectType);  // this will pull from a data table and then will get any relevant information that will be associated with the object
 
@@ -93,19 +97,12 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data Tables")
 	TObjectPtr<UDataTable> ObjectData;
-
-	UFUNCTION()
-	virtual void BindInteractableInput();
-	UFUNCTION()
-	virtual void UnbindInput();
-
+	
 
 	void LoadDataTable(EObjectType);
 
 public:
-	inline UStaticMeshComponent* GetMesh() { return m_Mesh; }
-	inline UVR_GrabComponent* GetGrabComponent() { return m_GrabPointSnap; }
-
-	inline EObjectType GetObjectType() { return m_ObjectTag; }
+	UStaticMeshComponent* GetMesh() { return m_Mesh; }
+	UVR_GrabComponent* GetGrabComponent() { return m_GrabPointSnap; }
 
 };

@@ -44,15 +44,3 @@ void AInteractable_Flashlight::ToggleFlashlight()
 		m_Light->Activate(true); 
 	}
 }
-
-void AInteractable_Flashlight::BindInteractableInput()
-{
-	ABase_Interactable::BindInteractableInput(); 
-
-	
-}
-
-void AInteractable_Flashlight::UnbindInput()
-{
-	ABase_Interactable::UnbindInput(); 
-}

@@ -3,20 +3,23 @@
 
 #include "Base_PuzzleTriggers.h"
 #include "Components/BoxComponent.h"
+#include "VR_Template/Interactable/Base_Interactable.h"
 
 // Sets default values
 ABase_PuzzleTriggers::ABase_PuzzleTriggers()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	m_SceneRoot = CreateOptionalDefaultSubobject<USceneComponent>(TEXT("Scene Root")); 
-	RootComponent = m_SceneRoot; 
+	m_SceneRoot = CreateOptionalDefaultSubobject<USceneComponent>(TEXT("Scene Root"));
+	RootComponent = m_SceneRoot;
 
 	m_Collider = CreateOptionalDefaultSubobject<UBoxComponent>(TEXT("Collider"));
-	m_Collider->SetupAttachment(m_SceneRoot); 
-	m_Collider->SetBoxExtent(FVector(100, 100, 100), true); 
-	m_Collider->SetLineThickness(2.5f); 
-	m_Collider->ShapeColor = FColor(128, 0, 255); 
+	m_Collider->SetupAttachment(m_SceneRoot);
+	m_Collider->SetBoxExtent(FVector(100, 100, 100), true);
+	m_Collider->SetLineThickness(2.5f);
+	m_Collider->ShapeColor = FColor(128, 0, 255);
+
+	m_TargetToCatch = 3; // this is the target for the number of objects to get into the puzzle
 
 }
 
@@ -24,12 +27,34 @@ ABase_PuzzleTriggers::ABase_PuzzleTriggers()
 void ABase_PuzzleTriggers::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 void ABase_PuzzleTriggers::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	GEngine->AddOnScreenDebugMessage(278, 2, FColor(255, 128, 255), TEXT("Puzzle Trigger Overlap Activated")); 
+	GEngine->AddOnScreenDebugMessage(278, 2, FColor(255, 128, 255), TEXT("Puzzle Trigger Overlap Activated"));
+	if (ABase_Interactable* ThrowActor = Cast<ABase_Interactable>(OtherActor))
+	{
+		if (ThrowActor->GetObjectType() == EObjectType::Throwable)
+		{
+			m_NumberCaught++;
+			if (m_NumberCaught == m_TargetToCatch)
+			{
+				// do the stuff to trigger to go to the next puzzle
+			}
+		}
+	}
+}
+
+void ABase_PuzzleTriggers::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (ABase_Interactable* ThrowActor = Cast<ABase_Interactable>(OtherActor))
+	{
+		if (ThrowActor->GetObjectType() == EObjectType::Throwable)
+		{
+			m_NumberCaught--;
+		}
+	}
 }
 
 // Called every frame

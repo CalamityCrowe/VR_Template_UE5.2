@@ -200,6 +200,7 @@ void ABase_VR_Character::GrabObjectRight(const FInputActionValue& Value)
 
 		if (nearestComp->TryGrab(m_RightController))
 		{
+			GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Blue, TEXT("GRABBY"));
 			m_HeldRight = nearestComp;
 			if (&m_HeldRight == &m_HeldLeft) { m_HeldLeft == nullptr; }
 		}
@@ -245,15 +246,15 @@ UVR_GrabComponent* ABase_VR_Character::GetGrabComponentNearController(UMotionCon
 
 	bool bHasHit = UKismetSystemLibrary::SphereTraceSingleForObjects(GetWorld(), LocalGripPos, LocalGripPos, m_GrabRadius, traceObjects, false, ignoreActor, EDrawDebugTrace::Persistent, hitResult, true);
 
-	if (bHasHit) // checks if the sphere trace has hit something
+	if (bHasHit)
 	{
-		TArray<UVR_GrabComponent*> GrabPoints; 
-		hitResult.GetActor()->GetComponents(GrabPoints); // gets the actor from the hit results
-		if (GrabPoints.Num() > 0) // checks if it is greater than 0
+		TArray<UVR_GrabComponent*> GrabPoints;
+		hitResult.GetActor()->GetComponents(GrabPoints);
+		if (GrabPoints.Num() > 0)
 		{
-			for (int i = 0; i < GrabPoints.Num(); i++) // loops through all the grab points and assigns the nearest one to the local component grabbed
+			for (int i = 0; i < GrabPoints.Num(); i++)
 			{
-				FVector componentWorldLocation = GrabPoints[i]->GetComponentLocation(); 
+				FVector componentWorldLocation = GrabPoints[i]->GetComponentLocation();
 				componentWorldLocation -= LocalGripPos;
 				float sqLength = componentWorldLocation.SquaredLength();
 				if (sqLength <= m_LocalNearestDistance)

@@ -18,22 +18,16 @@ public:
 	AInteractable_Flashlight();
 	virtual ~AInteractable_Flashlight() = default;
 protected:
-	virtual void BeginPlay() override;
+	virtual void BeginPlay() override; 
 public:
-	virtual void Tick(float) override;
+	virtual void Tick(float) override; 
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Light", meta = (AllowPrivateAccess = true))
 	TObjectPtr<USpotLightComponent> m_Light;
 public:
 	USpotLightComponent* GetLight() { return m_Light; }
 protected:
-	void ToggleFlashlight();
-
-
-	virtual void BindInteractableInput() override;
-
-	virtual void UnbindInput() override;
-
+	void ToggleFlashlight(); 
 
 
 };

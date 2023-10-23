@@ -21,8 +21,7 @@ protected:
 
 	UFUNCTION()
 	virtual void OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	UFUNCTION()
-	void OnEndOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
 
 public:
 	// Called every frame
@@ -33,9 +32,6 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	TObjectPtr<USceneComponent> m_SceneRoot; 
 
-
-	uint8 m_NumberCaught; 
-	uint8 m_TargetToCatch; 
 
 public:
 	inline UBoxComponent* GetCollider() { return m_Collider; }
