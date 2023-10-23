@@ -3,6 +3,12 @@
 
 #include "Base_Interactable.h"
 #include "VR_Template/VR_Components/VR_GrabComponent.h"
+#include "Kismet/GameplayStatics.h"
+
+#include "Components/InputComponent.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
+#include "InputMappingContext.h"
 // Sets default values
 ABase_Interactable::ABase_Interactable()
 {
@@ -18,17 +24,26 @@ ABase_Interactable::ABase_Interactable()
 	{
 		m_GrabPointSnap->SetGrabType(GrabType::Snap);
 	}
+
+	///
+	//
+
+}
+
+void ABase_Interactable::LoadDataTable(EObjectType newObj)
+{
+	auto DataTable = ConstructorHelpers::FObjectFinder<UDataTable>(TEXT("DataTable'/Game/Data_Tables/MDT_Object_Data.MDT_Object_Data'"));
+	ObjectData = DataTable.Object;
+	if (ObjectData)
+	{
+		FindObjectData(newObj);
+	}
 }
 
 // Called when the game starts or when spawned
 void ABase_Interactable::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if (ObjectData)
-	{
-		FindObjectData(ObjectTypeReference); // this will begin the search for the relevant informatin for the object tags
-	}
 
 	if (m_GrabPointSnap)
 	{
@@ -47,9 +62,9 @@ void ABase_Interactable::Tick(float DeltaTime)
 
 
 
-void ABase_Interactable::FindObjectData(EObjectType newType)
+void ABase_Interactable::FindObjectData(EObjectType newObj)
 {
-	EObjectType FindThisType = newType;
+	EObjectType FindThisType = newObj;
 
 	FInteractableData* FoundRow = nullptr;
 
@@ -64,19 +79,81 @@ void ABase_Interactable::FindObjectData(EObjectType newType)
 	}
 	if (FoundRow != nullptr)
 	{
+
 		m_ObjectTag = FoundRow->ObjectType;
+		m_Mesh->SetStaticMesh(FoundRow->ObjectMesh);
+		SetActorScale3D(FoundRow->ObjectScale);
+		m_GrabPointSnap->SetRelativeScale3D(FoundRow->GrabPointScale);
+
+		switch (m_ObjectTag)
+		{
+		case EObjectType::None:
+			m_GrabPointSnap->SetGrabType(GrabType::None);
+			break;
+
+		case EObjectType::Gun:
+		case EObjectType::Light:
+			m_GrabPointSnap->SetGrabType(GrabType::Snap);
+			break;
+		case EObjectType::Throwable:
+			m_GrabPointSnap->SetGrabType(GrabType::Free);
+			break;
+		}
+		m_InputMappingContext = FoundRow->ObjectInputMap;
+		m_FireActions = FoundRow->ObjectFireInput;
 	}
 }
 
 void ABase_Interactable::BindInteractableInput()
 {
-	OnGrabbed();
 	GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::Red, TEXT("Attached Component, Base Interactable.cpp"));
+
+	if (APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0))
+	{
+		EnableInput(PC);
+		if (ULocalPlayer* LocalPlayer = PC->GetLocalPlayer())
+		{
+			if (UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
+			{
+				switch (m_GrabPointSnap->GetHeldByHand())
+				{
+				case EControllerHand::Left:
+					InputSystem->AddMappingContext(m_InputMappingContext, 1);
+					break;
+				case EControllerHand::Right:
+					InputSystem->AddMappingContext(m_InputMappingContext, 1);
+					break;
+				}
+			}
+		}
+	}
+
+
 }
 
 void ABase_Interactable::UnbindInput()
 {
-	OnDropped();
+
 	GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::Red, TEXT("Detached Component, Base Interactable.cpp"));
+	if (APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0))
+	{
+		DisableInput(PC);
+		if (ULocalPlayer* LocalPlayer = PC->GetLocalPlayer())
+		{
+			if (UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
+			{
+				switch (m_GrabPointSnap->GetHeldByHand())
+				{
+				case EControllerHand::Left:
+					InputSystem->RemoveMappingContext(m_InputMappingContext);
+					break;
+				case EControllerHand::Right:
+					InputSystem->RemoveMappingContext(m_InputMappingContext);
+					break;
+				}
+			}
+		}
+	}
+
 }
 

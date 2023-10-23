@@ -57,7 +57,7 @@ protected:
 #pragma endregion
 
 #pragma region Variable Decleration
-	
+
 	bool isHeld;
 	bool isSimulatedOnDrop;
 

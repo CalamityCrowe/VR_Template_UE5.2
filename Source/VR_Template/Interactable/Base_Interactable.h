@@ -22,6 +22,7 @@ enum class EObjectType : uint8
 };
 
 
+
 USTRUCT(BlueprintType)
 struct VR_TEMPLATE_API FInteractableData : public FTableRowBase
 {
@@ -30,9 +31,23 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EObjectType ObjectType;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UStaticMesh* ObjectMesh;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector ObjectScale;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector GrabPointScale;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UInputMappingContext* ObjectInputMap;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UInputConfigData* ObjectFireInput;
+
+
+
 
 	// needs to be setup like this or the engine will scream at you
-	FInteractableData() :ObjectType(EObjectType::None)
+	// all the parameters after the constructor are the properties above, these are essentially getting assigned null or the equivalent by default 
+	FInteractableData() :ObjectType(EObjectType::Light), ObjectMesh(nullptr), ObjectScale(FVector()), GrabPointScale(FVector()), ObjectInputMap(nullptr), ObjectFireInput(nullptr)
 	{
 
 	}
@@ -47,6 +62,7 @@ public:
 	// Sets default values for this actor's properties
 	ABase_Interactable();
 
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -55,10 +71,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnGrabbed();
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnDropped();
 
 
 private:
@@ -76,6 +88,7 @@ private:
 	void UnbindInput();
 
 	virtual void FindObjectData(EObjectType);  // this will pull from a data table and then will get any relevant information that will be associated with the object
+
 protected:
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
 	UInputMappingContext* m_InputMappingContext;
@@ -84,9 +97,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data Tables")
 	TObjectPtr<UDataTable> ObjectData;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data Tables")
-	EObjectType ObjectTypeReference;
+	
 
+	void LoadDataTable(EObjectType);
 
 public:
 	UStaticMeshComponent* GetMesh() { return m_Mesh; }

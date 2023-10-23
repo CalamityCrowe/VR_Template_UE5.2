@@ -16,6 +16,8 @@ AInteractable_Flashlight::AInteractable_Flashlight()
 	m_Light->CastShadows = true;
 	m_Light->bAffectsWorld = true;
 
+	// used for loading in the objects based on their type
+	LoadDataTable(EObjectType::Throwable);
 
 }
 
@@ -23,7 +25,6 @@ void AInteractable_Flashlight::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GEngine->AddOnScreenDebugMessage(23, 5, FColor::Red, TEXT("Nipples"));
 }
 
 void AInteractable_Flashlight::Tick(float Delta)
