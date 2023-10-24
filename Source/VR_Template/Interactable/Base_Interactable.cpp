@@ -99,7 +99,8 @@ void ABase_Interactable::FindObjectData(EObjectType newObj)
 			m_GrabPointSnap->SetGrabType(GrabType::Free);
 			break;
 		}
-		m_InputMappingContext = FoundRow->ObjectInputMap;
+		m_InputMappingContextLeft = FoundRow->ObjectInputMapLeft;
+		m_InputMappingContextRight= FoundRow->ObjectInputMapRight;
 		m_FireActions = FoundRow->ObjectFireInput;
 	}
 }
@@ -118,10 +119,10 @@ void ABase_Interactable::BindInteractableInput()
 				switch (m_GrabPointSnap->GetHeldByHand())
 				{
 				case EControllerHand::Left:
-					InputSystem->AddMappingContext(m_InputMappingContext, 1);
+					InputSystem->AddMappingContext(m_InputMappingContextLeft, 1);
 					break;
 				case EControllerHand::Right:
-					InputSystem->AddMappingContext(m_InputMappingContext, 1);
+					InputSystem->AddMappingContext(m_InputMappingContextRight, 1);
 					break;
 				}
 			}
@@ -145,10 +146,10 @@ void ABase_Interactable::UnbindInput()
 				switch (m_GrabPointSnap->GetHeldByHand())
 				{
 				case EControllerHand::Left:
-					InputSystem->RemoveMappingContext(m_InputMappingContext);
+					InputSystem->RemoveMappingContext(m_InputMappingContextLeft);
 					break;
 				case EControllerHand::Right:
-					InputSystem->RemoveMappingContext(m_InputMappingContext);
+					InputSystem->RemoveMappingContext(m_InputMappingContextRight);
 					break;
 				}
 			}

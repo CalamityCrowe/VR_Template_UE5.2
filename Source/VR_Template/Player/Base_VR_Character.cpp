@@ -79,7 +79,7 @@ void ABase_VR_Character::BeginPlay()
 void ABase_VR_Character::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	AllignColliderToHMD();
+	AllignColliderToHMD(); // used for alligning the headset to the collision when moving
 }
 
 // Called to bind functionality to input
@@ -89,9 +89,9 @@ void ABase_VR_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 	if (APlayerController* PC = Cast<APlayerController>(GetController())) // tries to grab an instance of the player controller
 	{
-		if (ULocalPlayer* LocalPlayer = PC->GetLocalPlayer())
+		if (ULocalPlayer* LocalPlayer = PC->GetLocalPlayer()) // gets the local player from the controller
 		{
-			if (UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
+			if (UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())  // gets the enhanced input from the local input system
 			{
 				InputSystem->ClearAllMappings(); // clears any mapping contexts if they had been assigned by mistake
 				InputSystem->AddMappingContext(m_InputMappingContext, 0); // assigns the mapping contexts as the highest priority
@@ -99,7 +99,7 @@ void ABase_VR_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 		}
 	}
 
-	if (UEnhancedInputComponent* PEI = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+	if (UEnhancedInputComponent* PEI = Cast<UEnhancedInputComponent>(PlayerInputComponent)) // attempts to cast to the enhanced input system
 	{
 #pragma region Setup Actions Comments
 		/* Bind Action Setup
@@ -125,42 +125,50 @@ void ABase_VR_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 #pragma endregion
 
 
-		PEI->BindAction(m_InputActions->m_InputLeftAnalog, ETriggerEvent::Triggered, this, &ABase_VR_Character::MovePlayer); // binds an action to the input component
-		PEI->BindAction(m_InputActions->m_InputRightAnalog, ETriggerEvent::Triggered, this, &ABase_VR_Character::TurnPlayer); // binds an action to the input component
-		PEI->BindAction(m_InputActions->m_InputLeftGrip, ETriggerEvent::Started, this, &ABase_VR_Character::GrabObjectLeft);
+		PEI->BindAction(m_InputActions->m_InputLeftAnalog, ETriggerEvent::Triggered, this, &ABase_VR_Character::MovePlayer); // binds the movement to the player 
+		PEI->BindAction(m_InputActions->m_InputRightAnalog, ETriggerEvent::Triggered, this, &ABase_VR_Character::TurnPlayer); // binds the rotation to the player 
+
+#pragma region Grab Components
+		PEI->BindAction(m_InputActions->m_InputLeftGrip, ETriggerEvent::Started, this, &ABase_VR_Character::GrabObjectLeft); 
 		PEI->BindAction(m_InputActions->m_InputLeftGrip, ETriggerEvent::Completed, this, &ABase_VR_Character::ReleaseObjectLeft);
 		PEI->BindAction(m_InputActions->m_InputRightGrip, ETriggerEvent::Started, this, &ABase_VR_Character::GrabObjectRight);
 		PEI->BindAction(m_InputActions->m_InputRightGrip, ETriggerEvent::Completed, this, &ABase_VR_Character::ReleaseObjectRight);
+#pragma endregion
+
 	}
 
 }
 
 void ABase_VR_Character::AllignColliderToHMD()
 {
-	FVector camLoc = FVector(m_Camera->GetComponentLocation().X, m_Camera->GetComponentLocation().Y, GetActorLocation().Z);
-	FVector actLoc = GetActorLocation();
-	if (abs(camLoc.SquaredLength() - actLoc.SquaredLength()) > 1000)
+	FVector camLoc = FVector(m_Camera->GetComponentLocation().X, m_Camera->GetComponentLocation().Y, GetActorLocation().Z); // grabs the camera location and gets the actors Z location
+	FVector actLoc = GetActorLocation(); // grabs the actors location
+	if (abs(camLoc.SquaredLength() - actLoc.SquaredLength()) > 1000) // checks if the absolute distance is greater than 1000
 	{
-		FVector newOffset = camLoc - actLoc;
-		GetCapsuleComponent()->AddWorldOffset(newOffset);
+		FVector newOffset = camLoc - actLoc; // gets the difference for the newOffset by subtracting the actor location from the camera location
+		GetCapsuleComponent()->AddWorldOffset(newOffset); // adds the new offset to the capsule component
 
-		newOffset = UKismetMathLibrary::NegateVector(newOffset);
+		newOffset = UKismetMathLibrary::NegateVector(newOffset); // negates the offset vector
 
-		m_VROrigin->AddWorldOffset(newOffset);
+		m_VROrigin->AddWorldOffset(newOffset); //applies the offset to the VR Origin
 	}
 }
 
 void ABase_VR_Character::MovePlayer(const FInputActionValue& Value)
 {
-	FVector2D MovementVector = Value.Get<FVector2D>();
+	FVector2D MovementVector = Value.Get<FVector2D>(); // gets the axis value from the input value
 
+#if WITH_EDITOR
 	GEngine->AddOnScreenDebugMessage(0, 0.1f, FColor::Yellow, FString::Printf(TEXT("CONTROLLER: %f , %f"), MovementVector.X, MovementVector.Y));
+#endif
+	
+	// applies the movement to the characters movement components based on the forward vector
 	AddMovementInput(m_Camera->GetForwardVector(), MovementVector.Y);
 	AddMovementInput(m_Camera->GetRightVector(), MovementVector.X);
 
-
+#if WITH_EDITOR
 	GEngine->AddOnScreenDebugMessage(0, 0.1f, FColor::Yellow, FString::Printf(TEXT("CONTROLLER NULL")));
-
+#endif
 }
 
 void ABase_VR_Character::TurnPlayer(const FInputActionValue& Value)
@@ -182,51 +190,52 @@ void ABase_VR_Character::TurnPlayer(const FInputActionValue& Value)
 
 void ABase_VR_Character::GrabObjectLeft(const FInputActionValue& Value)
 {
-	if (UVR_GrabComponent* nearestComp = GetGrabComponentNearController(m_LeftController))
+	if (UVR_GrabComponent* nearestComp = GetGrabComponentNearController(m_LeftController)) // checks if the grab attempt near the controller is successful for grabbing stuff 
 	{
-		if (nearestComp->TryGrab(m_LeftController))
+		if (nearestComp->TryGrab(m_LeftController)) // checks if the try is successful with the left controller
 		{
-			m_HeldLeft = nearestComp;
-			if (&m_HeldLeft == &m_HeldRight) { m_HeldRight == nullptr; }
+			m_HeldLeft = nearestComp; // assigns the nearest component to the heldLeft 
+			if (&m_HeldLeft == &m_HeldRight) { m_HeldRight == nullptr; } // checks if the held left and right are the same and if so held right is set to null
 		}
 	}
 }
 
 void ABase_VR_Character::GrabObjectRight(const FInputActionValue& Value)
 {
-	if (UVR_GrabComponent* nearestComp = GetGrabComponentNearController(m_RightController))
+	if (UVR_GrabComponent* nearestComp = GetGrabComponentNearController(m_RightController)) // checks if the grab attempt near the controller is successful for grabbing stuff 
 	{
-		GEngine->AddOnScreenDebugMessage(3, 5, FColor::Red, TEXT("Nearest Component Found"));
-
-		if (nearestComp->TryGrab(m_RightController))
+		if (nearestComp->TryGrab(m_RightController))// checks if the try is successful with the right controller
 		{
-			m_HeldRight = nearestComp;
-			if (&m_HeldRight == &m_HeldLeft) { m_HeldLeft == nullptr; }
+			m_HeldRight = nearestComp; // assigns the nearest component to the held right
+			if (&m_HeldRight == &m_HeldLeft) { m_HeldLeft == nullptr; } // checks if the held left and right are the same and if so held left is set to null
 		}
 	}
 }
 
 void ABase_VR_Character::ReleaseObjectLeft(const FInputActionValue& Value)
 {
-	if (IsValid(m_HeldLeft))
+	if (IsValid(m_HeldLeft)) // checks if the held left has a valid value
 	{
-		if (m_HeldLeft->TryRelease() == true)
+		if (m_HeldLeft->TryRelease()) // checks if try release is true 
 		{
-			m_HeldLeft = nullptr;
+			m_HeldLeft = nullptr; // sets the held left to nullptr
+#if WITH_EDITOR
 			GEngine->AddOnScreenDebugMessage(100, 20, FColor::Purple, TEXT("Left Release"));
+#endif
 		}
 	}
 }
 
 void ABase_VR_Character::ReleaseObjectRight(const FInputActionValue& Value)
 {
-	if (IsValid(m_HeldRight))
+	if (IsValid(m_HeldRight))// checks if the held right has a valid value
 	{
-		if (m_HeldRight->TryRelease() == true)
+		if (m_HeldRight->TryRelease()) // checks if try release is true 
 		{
-			m_HeldRight = nullptr;
+			m_HeldRight = nullptr; // sets the held right to nullptr
+#if WITH_EDITOR
 			GEngine->AddOnScreenDebugMessage(100, 20, FColor::Purple, TEXT("Right Release"));
-
+#endif
 		}
 	}
 }
@@ -243,23 +252,23 @@ UVR_GrabComponent* ABase_VR_Character::GetGrabComponentNearController(UMotionCon
 	traceObjects.Add(UEngineTypes::ConvertToObjectType(ECC_PhysicsBody));
 	const TArray<AActor*> ignoreActor{ this };
 
-	bool bHasHit = UKismetSystemLibrary::SphereTraceSingleForObjects(GetWorld(), LocalGripPos, LocalGripPos, m_GrabRadius, traceObjects, false, ignoreActor, EDrawDebugTrace::Persistent, hitResult, true);
+	bool bHasHit = UKismetSystemLibrary::SphereTraceSingleForObjects(GetWorld(), LocalGripPos, LocalGripPos, m_GrabRadius, traceObjects, false, ignoreActor, EDrawDebugTrace::Persistent, hitResult, true); 
 
 	if (bHasHit) // checks if the sphere trace has hit something
 	{
-		TArray<UVR_GrabComponent*> GrabPoints; 
+		TArray<UVR_GrabComponent*> GrabPoints;
 		hitResult.GetActor()->GetComponents(GrabPoints); // gets the actor from the hit results
 		if (GrabPoints.Num() > 0) // checks if it is greater than 0
 		{
 			for (int i = 0; i < GrabPoints.Num(); i++) // loops through all the grab points and assigns the nearest one to the local component grabbed
 			{
-				FVector componentWorldLocation = GrabPoints[i]->GetComponentLocation(); 
-				componentWorldLocation -= LocalGripPos;
-				float sqLength = componentWorldLocation.SquaredLength();
-				if (sqLength <= m_LocalNearestDistance)
+				FVector componentWorldLocation = GrabPoints[i]->GetComponentLocation(); // gets the current component location
+				componentWorldLocation -= LocalGripPos; // subtracts the local grip position from the component location
+				float sqLength = componentWorldLocation.SquaredLength(); 
+				if (sqLength <= m_LocalNearestDistance) // checks if the squared length is less or equal to the local nearest distance
 				{
-					m_LocalNearestDistance = sqLength;
-					LocalGrabComponent = GrabPoints[i];
+					m_LocalNearestDistance = sqLength; // sets the local nearest distance to the squared length
+					LocalGrabComponent = GrabPoints[i]; // sets the local grab point to the current grab point
 				}
 			}
 		}

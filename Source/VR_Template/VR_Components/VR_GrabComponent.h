@@ -86,6 +86,8 @@ public:
 
 	void SetGrabType(GrabType newType) { m_GrabType = newType; }
 	GrabType GetGrabType() { return m_GrabType; }
+
+	TObjectPtr<UHapticFeedbackEffect_Base> GetHapticEffect() { return OnGrabHapticFeedback; }
 #pragma endregion
 
 

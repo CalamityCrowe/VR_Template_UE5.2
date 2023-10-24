@@ -32,7 +32,10 @@ void ABase_PuzzleTriggers::BeginPlay()
 
 void ABase_PuzzleTriggers::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+#if WITH_EDITOR
 	GEngine->AddOnScreenDebugMessage(278, 2, FColor(255, 128, 255), TEXT("Puzzle Trigger Overlap Activated"));
+#endif
+
 	if (ABase_Interactable* ThrowActor = Cast<ABase_Interactable>(OtherActor))
 	{
 		if (ThrowActor->GetObjectType() == EObjectType::Throwable)

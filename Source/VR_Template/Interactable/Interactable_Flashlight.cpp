@@ -54,6 +54,10 @@ void AInteractable_Flashlight::ToggleFlashlight()
 	{
 		m_Light->Activate(true);
 	}
+	if (APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0))
+	{
+		PC->PlayHapticEffect(GetGrabComponent()->GetHapticEffect(), GetGrabComponent()->GetHeldByHand(), 1, false);  // plays the haptic feedback effect on the controller
+	}
 }
 
 void AInteractable_Flashlight::BindInteractableInput()
@@ -70,7 +74,7 @@ void AInteractable_Flashlight::BindInteractableInput()
 			}
 			else
 			{
-				EnhancedInputComponent->BindAction(m_FireActions->m_InputLeftTrigger, ETriggerEvent::Triggered, this, &AInteractable_Flashlight::ToggleFlashlight);
+				EnhancedInputComponent->BindAction(m_FireActions->m_InputRightTrigger, ETriggerEvent::Triggered, this, &AInteractable_Flashlight::ToggleFlashlight);
 
 			}
 		}
@@ -80,6 +84,6 @@ void AInteractable_Flashlight::BindInteractableInput()
 void AInteractable_Flashlight::UnbindInput()
 {
 	ABase_Interactable::UnbindInput();
-
+	// this might need additonal functionality for unbinding the inputs
 
 }

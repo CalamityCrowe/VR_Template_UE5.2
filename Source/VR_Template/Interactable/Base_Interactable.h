@@ -38,7 +38,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector GrabPointScale;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UInputMappingContext* ObjectInputMap;
+	UInputMappingContext* ObjectInputMapLeft;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UInputMappingContext* ObjectInputMapRight;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UInputConfigData* ObjectFireInput;
 
@@ -47,7 +49,14 @@ public:
 
 	// needs to be setup like this or the engine will scream at you
 	// all the parameters after the constructor are the properties above, these are essentially getting assigned null or the equivalent by default 
-	FInteractableData() :ObjectType(EObjectType::Light), ObjectMesh(nullptr), ObjectScale(FVector()), GrabPointScale(FVector()), ObjectInputMap(nullptr), ObjectFireInput(nullptr)
+	FInteractableData() :
+		ObjectType(EObjectType::Light),
+		ObjectMesh(nullptr),
+		ObjectScale(FVector()),
+		GrabPointScale(FVector()),
+		ObjectInputMapLeft(nullptr),
+		ObjectInputMapRight(nullptr),
+		ObjectFireInput(nullptr)
 	{
 
 	}
@@ -87,7 +96,9 @@ private:
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
-	UInputMappingContext* m_InputMappingContext;
+	UInputMappingContext* m_InputMappingContextRight;
+	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
+	UInputMappingContext* m_InputMappingContextLeft;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
 	UInputConfigData* m_FireActions; // this is a custom data config that holds a list of pointers that will get assigned in the engine to pull the input actions in
 
