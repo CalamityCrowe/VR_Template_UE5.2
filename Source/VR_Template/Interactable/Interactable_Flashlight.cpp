@@ -26,9 +26,13 @@ AInteractable_Flashlight::AInteractable_Flashlight()
 	m_Light->LightColor = FColor(255, 244, 229, 255);
 	m_Light->CastShadows = true;
 	m_Light->bAffectsWorld = true;
+	m_Light->SetRelativeRotation(FRotator(90, 0, 0));
+	m_Light->SetRelativeLocation(FVector(0, 0, 7.1f));
+	auto LightMaterial = ConstructorHelpers::FObjectFinder<UMaterialInterface>(TEXT("Material'/Game/Materials/m_LightFlicker.m_LightFlicker'"));
+	m_Light->LightFunctionMaterial = LightMaterial.Object; 
 
 	// used for loading in the objects based on their type
-	LoadDataTable(EObjectType::Throwable);
+	LoadDataTable(EObjectType::Light);
 
 }
 
@@ -64,7 +68,7 @@ void AInteractable_Flashlight::BindInteractableInput()
 {
 	ABase_Interactable::BindInteractableInput();
 
-	if (APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0))
+	if (const APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0))
 	{
 		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PC->InputComponent))
 		{
