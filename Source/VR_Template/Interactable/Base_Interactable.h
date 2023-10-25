@@ -10,6 +10,7 @@
 class UVR_GrabComponent;
 class UInputMappingContext;
 class UInputConfigData;
+class UHapticFeedbackEffect_Curve;
 
 UENUM()
 enum class EObjectType : uint8
@@ -18,6 +19,7 @@ enum class EObjectType : uint8
 	Gun,
 	Light,
 	Throwable,
+	Moveable
 
 };
 
@@ -32,17 +34,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EObjectType ObjectType;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UStaticMesh* ObjectMesh;
+	TObjectPtr<UStaticMesh> ObjectMesh;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector ObjectScale;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector GrabPointScale;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UInputMappingContext* ObjectInputMapLeft;
+	TObjectPtr<UInputMappingContext> ObjectInputMapLeft;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UInputMappingContext* ObjectInputMapRight;
+	TObjectPtr<UInputMappingContext> ObjectInputMapRight;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UInputConfigData* ObjectFireInput;
+	TObjectPtr<UInputConfigData> ObjectFireInput;
 
 
 
@@ -50,13 +52,34 @@ public:
 	// needs to be setup like this or the engine will scream at you
 	// all the parameters after the constructor are the properties above, these are essentially getting assigned null or the equivalent by default 
 	FInteractableData() :
-		ObjectType(EObjectType::Light),
+		ObjectType(EObjectType::None),
 		ObjectMesh(nullptr),
 		ObjectScale(FVector()),
 		GrabPointScale(FVector()),
 		ObjectInputMapLeft(nullptr),
 		ObjectInputMapRight(nullptr),
 		ObjectFireInput(nullptr)
+	{
+
+	}
+};
+
+USTRUCT(BlueprintType)
+struct FHapticEffects :public FTableRowBase
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EObjectType ObjectType;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UHapticFeedbackEffect_Curve* ObjectInteractFeedback;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UHapticFeedbackEffect_Curve* ObjectGrabFeedback;
+
+	FHapticEffects() :
+		ObjectType(EObjectType::None),
+		ObjectInteractFeedback(nullptr),
+		ObjectGrabFeedback(nullptr)
 	{
 
 	}
@@ -92,7 +115,8 @@ private:
 	EObjectType m_ObjectTag;
 
 
-	virtual void FindObjectData(EObjectType);  // this will pull from a data table and then will get any relevant information that will be associated with the object
+	void FindObjectData(EObjectType);  // this will pull from a data table and then will get any relevant information that will be associated with the object
+	void FindHapticData(EObjectType);
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
@@ -112,6 +136,7 @@ protected:
 
 
 	void LoadDataTable(EObjectType);
+	void LoadHapticEffects(EObjectType);
 
 public:
 	inline UStaticMeshComponent* GetMesh() { return m_Mesh; }

@@ -56,7 +56,7 @@ void AInteractable_Flashlight::ToggleFlashlight()
 	}
 	if (APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0))
 	{
-		PC->PlayHapticEffect(GetGrabComponent()->GetHapticEffect(), GetGrabComponent()->GetHeldByHand(), 1, false);  // plays the haptic feedback effect on the controller
+		PC->PlayHapticEffect(GetGrabComponent()->GetInteractHapticEffect(), GetGrabComponent()->GetHeldByHand(), 1, false);  // plays the haptic feedback effect on the controller
 	}
 }
 

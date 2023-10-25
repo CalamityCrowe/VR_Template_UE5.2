@@ -9,6 +9,9 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
+
+#include "Haptics/HapticFeedbackEffect_Curve.h"
+
 // Sets default values
 ABase_Interactable::ABase_Interactable()
 {
@@ -20,10 +23,7 @@ ABase_Interactable::ABase_Interactable()
 
 	m_GrabPointSnap = CreateOptionalDefaultSubobject<UVR_GrabComponent>(TEXT("Grab Point"));
 	m_GrabPointSnap->SetupAttachment(m_Mesh);
-	if (m_GrabPointSnap->GetGrabType() == GrabType::None) // checks if there is no grab type set and if so sets it to snap 
-	{
-		m_GrabPointSnap->SetGrabType(GrabType::Snap);
-	}
+
 
 	///
 	//
@@ -37,6 +37,16 @@ void ABase_Interactable::LoadDataTable(EObjectType newObj)
 	if (ObjectData)
 	{
 		FindObjectData(newObj);
+	}
+}
+
+void ABase_Interactable::LoadHapticEffects(EObjectType newObj)
+{
+	auto DataTable = ConstructorHelpers::FObjectFinder<UDataTable>(TEXT("DataTable'/Game/Data_Tables/MDT_Haptic_Data.MDT_Haptic_Data'"));
+	ObjectData = DataTable.Object;
+	if (ObjectData)
+	{
+		FindHapticData(newObj);
 	}
 }
 
@@ -96,12 +106,36 @@ void ABase_Interactable::FindObjectData(EObjectType newObj)
 			m_GrabPointSnap->SetGrabType(GrabType::Snap);
 			break;
 		case EObjectType::Throwable:
+		case EObjectType::Moveable:
 			m_GrabPointSnap->SetGrabType(GrabType::Free);
 			break;
 		}
 		m_InputMappingContextLeft = FoundRow->ObjectInputMapLeft;
-		m_InputMappingContextRight= FoundRow->ObjectInputMapRight;
+		m_InputMappingContextRight = FoundRow->ObjectInputMapRight;
 		m_FireActions = FoundRow->ObjectFireInput;
+	}
+}
+
+void ABase_Interactable::FindHapticData(EObjectType newObj)
+{
+	EObjectType FindThisType = newObj;
+
+	FHapticEffects* FoundRow = nullptr;
+
+	for (auto It : ObjectData->GetRowMap())
+	{
+		FHapticEffects* Row = reinterpret_cast<FHapticEffects*>(It.Value);
+		if (Row->ObjectType == FindThisType)
+		{
+			FoundRow = Row;
+			break;
+		}
+	}
+	if (FoundRow != nullptr)
+	{
+
+		m_GrabPointSnap->SetGrabHapticEffect(FoundRow->ObjectGrabFeedback);
+		m_GrabPointSnap->SetInteractHapticEffect(FoundRow->ObjectInteractFeedback);
 	}
 }
 

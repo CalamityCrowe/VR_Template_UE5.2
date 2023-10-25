@@ -24,7 +24,7 @@ AInteractable_Stungun::AInteractable_Stungun()
 void AInteractable_Stungun::BeginPlay()
 {
 	Super::BeginPlay();
-	FireStunGun();
+	//FireStunGun();
 }
 
 void AInteractable_Stungun::FireStunGun()
@@ -42,10 +42,10 @@ void AInteractable_Stungun::FireStunGun()
 			// do stuff
 		}
 	}
-	//if (APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0))
-	//{
-	//	PC->PlayHapticEffect(GetGrabComponent()->GetHapticEffect(), GetGrabComponent()->GetHeldByHand(), 1, false);  // plays the haptic feedback effect on the controller
-	//}
+	if (APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0))
+	{
+		PC->PlayHapticEffect(GetGrabComponent()->GetInteractHapticEffect(), GetGrabComponent()->GetHeldByHand(), 1, false);  // plays the haptic feedback effect on the controller
+	}
 
 }
 

@@ -66,6 +66,8 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Haptic Feedback")
 	TObjectPtr<class UHapticFeedbackEffect_Base> OnGrabHapticFeedback; // this gets assigned in the engine and helps register that the player has interacted in the world
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Haptic Feedback")
+	TObjectPtr<class UHapticFeedbackEffect_Base> OnInteractHapticFeedback; // this gets assigned in the engine and helps register that the player has interacted in the world
 	TObjectPtr<UMotionControllerComponent> MotionControllerReference;
 
 #pragma endregion
@@ -87,7 +89,10 @@ public:
 	void SetGrabType(GrabType newType) { m_GrabType = newType; }
 	GrabType GetGrabType() { return m_GrabType; }
 
-	TObjectPtr<UHapticFeedbackEffect_Base> GetHapticEffect() { return OnGrabHapticFeedback; }
+	inline TObjectPtr<UHapticFeedbackEffect_Base> GetGrabHapticEffect() { return OnGrabHapticFeedback; }
+	inline void SetGrabHapticEffect(UHapticFeedbackEffect_Base* newHaptic) { OnGrabHapticFeedback = newHaptic; }
+	inline TObjectPtr<UHapticFeedbackEffect_Base> GetInteractHapticEffect() { return OnInteractHapticFeedback; }
+	inline void SetInteractHapticEffect(UHapticFeedbackEffect_Base* newHaptic) { OnInteractHapticFeedback = newHaptic; }
 #pragma endregion
 
 
