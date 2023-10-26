@@ -194,7 +194,7 @@ void ABase_VR_Character::GrabObjectLeft(const FInputActionValue& Value)
 		if (nearestComp->TryGrab(LeftController)) // checks if the try is successful with the left controller
 		{
 			HeldLeft = nearestComp; // assigns the nearest component to the heldLeft 
-			if (&HeldLeft == &HeldRight) { HeldRight == nullptr; } // checks if the held left and right are the same and if so held right is set to null
+			if (HeldLeft == HeldRight) { HeldRight = nullptr; } // checks if the held left and right are the same and if so held right is set to null
 		}
 	}
 }
@@ -206,7 +206,7 @@ void ABase_VR_Character::GrabObjectRight(const FInputActionValue& Value)
 		if (nearestComp->TryGrab(RightController))// checks if the try is successful with the right controller
 		{
 			HeldRight = nearestComp; // assigns the nearest component to the held right
-			if (&HeldRight == &HeldLeft) { HeldLeft == nullptr; } // checks if the held left and right are the same and if so held left is set to null
+			if (HeldRight == HeldLeft) { HeldLeft = nullptr; } // checks if the held left and right are the same and if so held left is set to null
 		}
 	}
 }
