@@ -88,6 +88,6 @@ void AInteractable_Flashlight::BindInteractableInput()
 void AInteractable_Flashlight::UnbindInput()
 {
 	ABase_Interactable::UnbindInput();
-	// this might need additonal functionality for unbinding the inputs
+	// this might need additional functionality for unbinding the inputs
 
 }

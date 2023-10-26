@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "PuzzleDoor.generated.h"
 
+class UTimelineComponent;
+
 UCLASS()
 class VR_TEMPLATE_API APuzzleDoor : public AActor
 {
@@ -28,8 +30,20 @@ private:
 	TObjectPtr<UStaticMeshComponent> Mesh;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	TObjectPtr<USceneComponent> SceneRoot;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
+	TObjectPtr<UTimelineComponent> DoorTimeline; 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
+	UCurveFloat* DoorTimeCurve;
+
+	FRotator ClosedRotation;
+	FRotator OpenRotation;
+
+	void OpenDoor();
+
 public:
 	UStaticMeshComponent* GetMesh() const { return Mesh; }
 	USceneComponent* GetSceneRoot() const { return SceneRoot; }
+
+
 
 };
