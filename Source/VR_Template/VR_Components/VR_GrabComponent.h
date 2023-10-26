@@ -12,7 +12,7 @@ DECLARE_DELEGATE(FOnGrabbedDelegate);
 DECLARE_DELEGATE(FOnDroppedDelegate);
 
 UENUM()
-enum class GrabType : uint8
+enum class GrabTypes : uint8
 {
 	None UMETA(DisplayName = "None"),
 	Free UMETA(DisplayName = "Free"),
@@ -41,8 +41,8 @@ public:
 	UFUNCTION(BlueprintPure)
 	EControllerHand GetHeldByHand();
 
-	FOnGrabbedDelegate m_OnGrabbed;
-	FOnDroppedDelegate m_OnDropped;
+	FOnGrabbedDelegate OnGrabbedDelegate;
+	FOnDroppedDelegate OnDroppedDelegate;
 
 
 protected:
@@ -50,7 +50,7 @@ protected:
 #pragma region Function Decleration
 
 	void SetShouldSimulateDrop();
-	void SetPrimativeCompPhysics(bool isSimulated);
+	void SetPrimativeCompPhysics(bool bisSimulated);
 
 	void AttachParentToController(class UMotionControllerComponent* MotionController);
 
@@ -58,11 +58,11 @@ protected:
 
 #pragma region Variable Decleration
 
-	bool isHeld;
-	bool isSimulatedOnDrop;
+	bool bisHeld;
+	bool bisSimulatedOnDrop;
 
-	FRotator PrimaryGrabRelativerRotation;
-	GrabType m_GrabType;
+	FRotator PrimaryGrabRelativeRotation;
+	GrabTypes grabType;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Haptic Feedback")
 	TObjectPtr<class UHapticFeedbackEffect_Base> OnGrabHapticFeedback; // this gets assigned in the engine and helps register that the player has interacted in the world
@@ -86,8 +86,8 @@ public:
 	bool TryGrab(class UMotionControllerComponent* MotionCOntroller);
 	bool TryRelease();
 
-	void SetGrabType(GrabType newType) { m_GrabType = newType; }
-	GrabType GetGrabType() { return m_GrabType; }
+	void SetGrabType(GrabTypes newType) { grabType = newType; }
+	GrabTypes GetGrabType() const { return grabType; }
 
 	inline TObjectPtr<UHapticFeedbackEffect_Base> GetGrabHapticEffect() { return OnGrabHapticFeedback; }
 	inline void SetGrabHapticEffect(UHapticFeedbackEffect_Base* newHaptic) { OnGrabHapticFeedback = newHaptic; }

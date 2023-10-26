@@ -10,10 +10,10 @@
 
 AInteractable_Stungun::AInteractable_Stungun()
 {
-	m_FireDirection = CreateOptionalDefaultSubobject<UArrowComponent>(TEXT("Fire Direction"));
-	m_FireDirection->SetupAttachment(GetMesh());
-	m_FireDirection->SetRelativeLocation(FVector(0.0f, -3.0f, 5.0f));
-	m_FireDirection->SetRelativeRotation(FRotator(40, 270, 0));
+	FireDirection = CreateOptionalDefaultSubobject<UArrowComponent>(TEXT("Fire Direction"));
+	FireDirection->SetupAttachment(GetMesh());
+	FireDirection->SetRelativeLocation(FVector(0.0f, -3.0f, 5.0f));
+	FireDirection->SetRelativeRotation(FRotator(40, 270, 0));
 
 	LoadDataTable(EObjectType::Gun);
 
@@ -32,7 +32,7 @@ void AInteractable_Stungun::FireStunGun()
 #if WITH_EDITOR
 	GEngine->AddOnScreenDebugMessage(110, 2, FColor::Red, TEXT("AAAAAAAAAAAAA"));
 #endif 
-	if (FHitResult* newResult = LineTraceMethod(m_FireDirection->GetComponentLocation(), m_FireDirection->GetForwardVector() * 1000))
+	if (FHitResult* newResult = LineTraceMethod(FireDirection->GetComponentLocation(), FireDirection->GetForwardVector() * 1000))
 	{
 #if WITH_EDITOR
 		GEngine->AddOnScreenDebugMessage(110, 2, FColor::Red, TEXT("HIT"));

@@ -19,26 +19,26 @@ public:
 	// this is where you add more input actions so they can be added in the editor after all the parameters have been added
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-		TObjectPtr<UInputAction> m_InputLeftAnalog;
+	TObjectPtr<UInputAction>InputLeftAnalog;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-		TObjectPtr<UInputAction> m_InputRightAnalog;
+	TObjectPtr<UInputAction>InputRightAnalog;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-		TObjectPtr<UInputAction> m_InputFaceButton_A;
+	TObjectPtr<UInputAction>InputFaceButton_A;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-		TObjectPtr<UInputAction> m_InputFaceButton_B;
+	TObjectPtr<UInputAction>InputFaceButton_B;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-		TObjectPtr<UInputAction> m_InputFaceButton_X;
+	TObjectPtr<UInputAction>InputFaceButton_X;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-		TObjectPtr<UInputAction> m_InputFaceButton_Y;
+	TObjectPtr<UInputAction>InputFaceButton_Y;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-		TObjectPtr<UInputAction> m_InputRightGrip;
+	TObjectPtr<UInputAction>InputRightGrip;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-		TObjectPtr<UInputAction> m_InputLeftGrip;
+	TObjectPtr<UInputAction>InputLeftGrip;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-		TObjectPtr<UInputAction> m_InputRightTrigger;
+	TObjectPtr<UInputAction>InputRightTrigger;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-		TObjectPtr<UInputAction> m_InputLeftTrigger;
+	TObjectPtr<UInputAction>InputLeftTrigger;
 
 };

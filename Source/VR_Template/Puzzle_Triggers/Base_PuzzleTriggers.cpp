@@ -10,16 +10,16 @@ ABase_PuzzleTriggers::ABase_PuzzleTriggers()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	m_SceneRoot = CreateOptionalDefaultSubobject<USceneComponent>(TEXT("Scene Root"));
-	RootComponent = m_SceneRoot;
+	SceneRoot = CreateOptionalDefaultSubobject<USceneComponent>(TEXT("Scene Root"));
+	RootComponent = SceneRoot;
 
-	m_Collider = CreateOptionalDefaultSubobject<UBoxComponent>(TEXT("Collider"));
-	m_Collider->SetupAttachment(m_SceneRoot);
-	m_Collider->SetBoxExtent(FVector(100, 100, 100), true);
-	m_Collider->SetLineThickness(2.5f);
-	m_Collider->ShapeColor = FColor(128, 0, 255);
+	Collider = CreateOptionalDefaultSubobject<UBoxComponent>(TEXT("Collider"));
+	Collider->SetupAttachment(SceneRoot);
+	Collider->SetBoxExtent(FVector(100, 100, 100), true);
+	Collider->SetLineThickness(2.5f);
+	Collider->ShapeColor = FColor(128, 0, 255);
 
-	m_TargetToCatch = 3; // this is the target for the number of objects to get into the puzzle
+	TargetToCatch = 3; // this is the target for the number of objects to get into the puzzle
 
 }
 
@@ -40,8 +40,8 @@ void ABase_PuzzleTriggers::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, A
 	{
 		if (ThrowActor->GetObjectType() == EObjectType::Throwable)
 		{
-			m_NumberCaught++;
-			if (m_NumberCaught == m_TargetToCatch)
+			NumberCaught++;
+			if (NumberCaught == TargetToCatch)
 			{
 				// do the stuff to trigger to go to the next puzzle
 			}
@@ -55,7 +55,7 @@ void ABase_PuzzleTriggers::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AAc
 	{
 		if (ThrowActor->GetObjectType() == EObjectType::Throwable)
 		{
-			m_NumberCaught--;
+			NumberCaught--;
 		}
 	}
 }

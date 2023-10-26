@@ -29,5 +29,5 @@ private:
 	TObjectPtr<USplineMeshComponent> SplineMesh;
 
 public:
-	TObjectPtr<USplineMeshComponent> GetSplineMesh() { return SplineMesh; }
+	TObjectPtr<USplineMeshComponent> GetSplineMesh() const { return SplineMesh; }
 };

@@ -29,15 +29,15 @@ public:
 	virtual void Tick(float DeltaTime) override;
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Collision", meta = (AllowPrivateAccess = true))
-	TObjectPtr<class UBoxComponent> m_Collider;
+	TObjectPtr<class UBoxComponent> Collider;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
-	TObjectPtr<USceneComponent> m_SceneRoot; 
+	TObjectPtr<USceneComponent> SceneRoot; 
 
 
-	uint8 m_NumberCaught; 
-	uint8 m_TargetToCatch; 
+	uint8 NumberCaught; 
+	uint8 TargetToCatch; 
 
 public:
-	inline UBoxComponent* GetCollider() { return m_Collider; }
-	inline USceneComponent* GetSceneRoot() { return m_SceneRoot;  }
+	inline UBoxComponent* GetCollider() const { return Collider; }
+	inline USceneComponent* GetSceneRoot() const { return SceneRoot;  }
 };

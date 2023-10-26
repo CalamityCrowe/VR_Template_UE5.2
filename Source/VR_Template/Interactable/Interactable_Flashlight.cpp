@@ -17,19 +17,19 @@
 
 AInteractable_Flashlight::AInteractable_Flashlight()
 {
-	m_Light = CreateOptionalDefaultSubobject<USpotLightComponent>(TEXT("Spot light"));
-	m_Light->SetupAttachment(GetMesh());
-
-	m_Light->OuterConeAngle = 20.0f;
-	m_Light->InnerConeAngle = 10.0f;
-	m_Light->Intensity = 10000.f;
-	m_Light->LightColor = FColor(255, 244, 229, 255);
-	m_Light->CastShadows = true;
-	m_Light->bAffectsWorld = true;
-	m_Light->SetRelativeRotation(FRotator(90, 0, 0));
-	m_Light->SetRelativeLocation(FVector(0, 0, 7.1f));
+	SpotLight = CreateOptionalDefaultSubobject<USpotLightComponent>(TEXT("Spot light"));
+	SpotLight->SetupAttachment(GetMesh());
+	
+	SpotLight->OuterConeAngle = 20.0f;
+	SpotLight->InnerConeAngle = 10.0f;
+	SpotLight->Intensity = 10000.f;
+	SpotLight->LightColor = FColor(255, 244, 229, 255);
+	SpotLight->CastShadows = true;
+	SpotLight->bAffectsWorld = true;
+	SpotLight->SetRelativeRotation(FRotator(90, 0, 0));
+	SpotLight->SetRelativeLocation(FVector(0, 0, 7.1f));
 	auto LightMaterial = ConstructorHelpers::FObjectFinder<UMaterialInterface>(TEXT("Material'/Game/Materials/m_LightFlicker.m_LightFlicker'"));
-	m_Light->LightFunctionMaterial = LightMaterial.Object; 
+	SpotLight->LightFunctionMaterial = LightMaterial.Object; 
 
 	// used for loading in the objects based on their type
 	LoadDataTable(EObjectType::Light);
@@ -50,13 +50,13 @@ void AInteractable_Flashlight::Tick(float Delta)
 
 void AInteractable_Flashlight::ToggleFlashlight()
 {
-	if (m_Light->IsActive())
+	if (SpotLight->IsActive())
 	{
-		m_Light->Deactivate();
+		SpotLight->Deactivate();
 	}
 	else
 	{
-		m_Light->Activate(true);
+		SpotLight->Activate(true);
 	}
 	if (APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0))
 	{
@@ -74,11 +74,11 @@ void AInteractable_Flashlight::BindInteractableInput()
 		{
 			if (GetGrabComponent()->GetHeldByHand() == EControllerHand::Left)
 			{
-				EnhancedInputComponent->BindAction(m_FireActions->m_InputLeftTrigger, ETriggerEvent::Triggered, this, &AInteractable_Flashlight::ToggleFlashlight);
+				EnhancedInputComponent->BindAction(m_FireActions->InputLeftTrigger, ETriggerEvent::Triggered, this, &AInteractable_Flashlight::ToggleFlashlight);
 			}
 			else
 			{
-				EnhancedInputComponent->BindAction(m_FireActions->m_InputRightTrigger, ETriggerEvent::Triggered, this, &AInteractable_Flashlight::ToggleFlashlight);
+				EnhancedInputComponent->BindAction(m_FireActions->InputRightTrigger, ETriggerEvent::Triggered, this, &AInteractable_Flashlight::ToggleFlashlight);
 
 			}
 		}

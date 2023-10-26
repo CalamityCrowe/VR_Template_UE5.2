@@ -19,7 +19,7 @@ void AGuide_Hook::BeginPlay()
 
 	GetMesh()->OnComponentBeginOverlap.AddDynamic(this, &AGuide_Hook::OnBeginOverlap); 
 
-	m_StartLocation = GetActorLocation();
+	StartLocation = GetActorLocation();
 }
 
 
@@ -33,7 +33,7 @@ void AGuide_Hook::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* Ot
 	if (ASplineActor* tempSpline = Cast<ASplineActor>(OtherActor))
 	{
 
-		SetActorLocation(m_StartLocation);
+		SetActorLocation(StartLocation);
 		if (APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0))
 		{
 			PC->PlayHapticEffect(GetGrabComponent()->GetInteractHapticEffect(), GetGrabComponent()->GetHeldByHand(), 1, false);  // plays the haptic feedback effect on the controller

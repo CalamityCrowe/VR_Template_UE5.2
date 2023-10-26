@@ -24,5 +24,5 @@ protected:
 public:
 	virtual void Tick(float) override; 
 private:
-	FVector m_StartLocation; 
+	FVector StartLocation; 
 };

@@ -36,23 +36,23 @@ private:
 
 #pragma region Variable Decleration
 	UPROPERTY(Category = "Camera", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
-	TObjectPtr<class UCameraComponent> m_Camera;
+	TObjectPtr<class UCameraComponent> Camera;
 
 
 	UPROPERTY(Category = "VR Orign", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
-	TObjectPtr<class USceneComponent> m_VROrigin;
+	TObjectPtr<class USceneComponent> VROrigin;
 	UPROPERTY(Category = "Motion Controllers", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
-	TObjectPtr<class UMotionControllerComponent> m_RightController;
+	TObjectPtr<class UMotionControllerComponent> RightController;
 	UPROPERTY(Category = "Motion Controllers", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
-	TObjectPtr<UMotionControllerComponent> m_LeftController;
+	TObjectPtr<UMotionControllerComponent> LeftController;
 	UPROPERTY(Category = "Motion Controllers", EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
-	TObjectPtr<class UMannequin_Hands> m_HandRight;
+	TObjectPtr<class UMannequin_Hands> HandRight;
 	UPROPERTY(Category = "Motion Controllers", EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
-	TObjectPtr<UMannequin_Hands> m_HandLeft;
+	TObjectPtr<UMannequin_Hands> HandLeft;
 	UPROPERTY(Category = "Motion Controllers", EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
-	TObjectPtr<class UVR_GrabComponent> m_HeldRight;
+	TObjectPtr<class UVR_GrabComponent> HeldRight;
 	UPROPERTY(Category = "Motion Controllers", EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
-	TObjectPtr<UVR_GrabComponent> m_HeldLeft;
+	TObjectPtr<UVR_GrabComponent> HeldLeft;
 #pragma endregion
 
 
@@ -62,14 +62,14 @@ protected:
 
 #pragma region Variable Decleration
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
-	class UInputMappingContext* m_InputMappingContext;
+	class UInputMappingContext* InputMappingContext;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
-	class UInputConfigData* m_InputActions; // this is a custom data config that holds a list of pointers that will get assigned in the engine to pull the input actions in
+	class UInputConfigData* InputActions; // this is a custom data config that holds a list of pointers that will get assigned in the engine to pull the input actions in
 
 	UPROPERTY(EditDefaultsOnly, BluePrintReadWrite, Category = "Motion Controllers")
-	float m_GrabRadius;
+	float GrabRadius;
 	UPROPERTY(EditDefaultsOnly, BluePrintReadWrite, Category = "Motion Controllers")
-	float m_LocalNearestDistance;
+	float LocalNearestDistance;
 #pragma endregion
 
 public:

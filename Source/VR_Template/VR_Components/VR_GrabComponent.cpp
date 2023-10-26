@@ -22,7 +22,9 @@ UVR_GrabComponent::UVR_GrabComponent()
 	detachRules->RotationRule = EDetachmentRule::KeepWorld;
 	detachRules->ScaleRule = EDetachmentRule::KeepWorld;
 
-	isHeld = false;
+	bisHeld = false;
+
+	grabType = GrabTypes::None; 
 	// ...
 }
 
@@ -47,7 +49,7 @@ void UVR_GrabComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 #if WITH_EDITOR
-	if (isHeld)
+	if (bisHeld)
 	{
 		GEngine->AddOnScreenDebugMessage(0, 1, FColor::Cyan, FString::Printf(TEXT("is Held TRUE")));
 	}
@@ -64,7 +66,7 @@ void UVR_GrabComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 void UVR_GrabComponent::HandleOnGrabbed()
 {
 	// calls the delegate 
-	if (m_OnGrabbed.ExecuteIfBound())
+	if (OnGrabbedDelegate.ExecuteIfBound())
 	{
 #if WITH_EDITOR
 		GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::Emerald, TEXT("On Grabbed Delegate Called"));
@@ -75,7 +77,7 @@ void UVR_GrabComponent::HandleOnGrabbed()
 void UVR_GrabComponent::HandleOnDropped()
 {
 
-	if (m_OnDropped.ExecuteIfBound())
+	if (OnDroppedDelegate.ExecuteIfBound())
 	{
 #if WITH_EDITOR
 		GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::Emerald, TEXT("On Dropped Delegate Called"));
@@ -90,32 +92,32 @@ bool UVR_GrabComponent::TryGrab(UMotionControllerComponent* MotionController)
 #if WITH_EDITOR
 	GEngine->AddOnScreenDebugMessage(2, 10, FColor::Blue, TEXT("I Am in Try Grab"));
 #endif
-	switch (m_GrabType)
+	switch (grabType)
 	{
-	case GrabType::None:
+	case GrabTypes::None:
 		break;
-	case GrabType::Free:
+	case GrabTypes::Free:
 	{
 		SetPrimativeCompPhysics(false);
 		AttachParentToController(MotionController);
-		isHeld = true;
+		bisHeld = true;
 #if WITH_EDITOR
 		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Blue, TEXT("Held Free"));
 #endif
 		break;
 
 	}
-	case GrabType::Snap:
+	case GrabTypes::Snap:
 	{
 		SetPrimativeCompPhysics(false);
 		AttachParentToController(MotionController);
-		isHeld = true;
+		bisHeld = true;
 
-		FRotator invertedRotation = UKismetMathLibrary::NegateRotator(GetRelativeRotation());
+		const FRotator invertedRotation = UKismetMathLibrary::NegateRotator(GetRelativeRotation());
 
 		SetRelativeRotation(invertedRotation, false, nullptr, ETeleportType::TeleportPhysics);
 
-		FVector ParentLocation = GetAttachParent()->GetComponentLocation(); // gets the location of the parent
+		const FVector ParentLocation = GetAttachParent()->GetComponentLocation(); // gets the location of the parent
 
 		FVector newLocation = (GetComponentLocation() - ParentLocation) * -1;
 
@@ -128,14 +130,14 @@ bool UVR_GrabComponent::TryGrab(UMotionControllerComponent* MotionController)
 
 		break;
 	}
-	case GrabType::Custom:
+	case GrabTypes::Custom:
 	{
-		isHeld = true;
+		bisHeld = true;
 		break;
 	}
 	}
 
-	if (isHeld == false)
+	if (bisHeld == false)
 	{
 #if WITH_EDITOR
 		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Blue, TEXT("Not Held"));
@@ -160,16 +162,16 @@ bool UVR_GrabComponent::TryGrab(UMotionControllerComponent* MotionController)
 
 bool UVR_GrabComponent::TryRelease()
 {
-	switch (m_GrabType)
+	switch (grabType)
 	{
-	case GrabType::None:
+	case GrabTypes::None:
 		break;
-	case GrabType::Custom:
-		isHeld = false;
+	case GrabTypes::Custom:
+		bisHeld = false;
 
 		break;
-	case GrabType::Free:
-		if (isSimulatedOnDrop)
+	case GrabTypes::Free:
+		if (bisSimulatedOnDrop)
 		{
 			SetPrimativeCompPhysics(true);
 #if WITH_EDITOR
@@ -184,18 +186,20 @@ bool UVR_GrabComponent::TryRelease()
 #endif
 		}
 
-		isHeld = false;
+		bisHeld = false;
 
 		break;
+	default:
+		break; 
 	}
-	if (isHeld == true)
+	if (bisHeld == true)
 	{
 		return false;
 	}
 	else
 	{
 		//HandleOnDropped();
-		isHeld = false;
+		bisHeld = false;
 		return true;
 	}
 }
@@ -206,7 +210,7 @@ void UVR_GrabComponent::SetShouldSimulateDrop()
 	{
 		if (PrimComponent->IsAnySimulatingPhysics())
 		{
-			isSimulatedOnDrop = true;
+			bisSimulatedOnDrop = true;
 		}
 	}
 }

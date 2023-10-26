@@ -18,11 +18,11 @@ ABase_Interactable::ABase_Interactable()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	m_Mesh = CreateOptionalDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	RootComponent = m_Mesh;
+	Mesh = CreateOptionalDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	RootComponent = Mesh;
 
-	m_GrabPointSnap = CreateOptionalDefaultSubobject<UVR_GrabComponent>(TEXT("Grab Point"));
-	m_GrabPointSnap->SetupAttachment(m_Mesh);
+	GrabPoint = CreateOptionalDefaultSubobject<UVR_GrabComponent>(TEXT("Grab Point"));
+	GrabPoint->SetupAttachment(Mesh);
 
 
 	///
@@ -55,10 +55,10 @@ void ABase_Interactable::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (m_GrabPointSnap)
+	if (GrabPoint)
 	{
-		m_GrabPointSnap->m_OnGrabbed.BindUObject(this, &ABase_Interactable::BindInteractableInput);
-		m_GrabPointSnap->m_OnDropped.BindUObject(this, &ABase_Interactable::UnbindInput); // this is used for binding inputs within interactable objects
+		GrabPoint->OnGrabbedDelegate.BindUObject(this, &ABase_Interactable::BindInteractableInput);
+		GrabPoint->OnDroppedDelegate.BindUObject(this, &ABase_Interactable::UnbindInput); // this is used for binding inputs within interactable objects
 	}
 
 }
@@ -80,38 +80,40 @@ void ABase_Interactable::FindObjectData(EObjectType newObj)
 
 	for (auto It : ObjectData->GetRowMap())
 	{
-		FInteractableData* Row = reinterpret_cast<FInteractableData*>(It.Value);
-		if (Row->ObjectType == FindThisType)
+		if (FInteractableData* Row = reinterpret_cast<FInteractableData*>(It.Value))
 		{
-			FoundRow = Row;
-			break;
+			if (Row->ObjectType == FindThisType)
+			{
+				FoundRow = Row;
+				break;
+			}
 		}
 	}
 	if (FoundRow != nullptr)
 	{
 
 		m_ObjectTag = FoundRow->ObjectType;
-		m_Mesh->SetStaticMesh(FoundRow->ObjectMesh);
+		Mesh->SetStaticMesh(FoundRow->ObjectMesh);
 		SetActorScale3D(FoundRow->ObjectScale);
-		m_GrabPointSnap->SetRelativeScale3D(FoundRow->GrabPointScale);
+		GrabPoint->SetRelativeScale3D(FoundRow->GrabPointScale);
 
 		switch (m_ObjectTag)
 		{
 		case EObjectType::None:
-			m_GrabPointSnap->SetGrabType(GrabType::None);
+			GrabPoint->SetGrabType(GrabTypes::None);
 			break;
 
 		case EObjectType::Gun:
 		case EObjectType::Light:
-			m_GrabPointSnap->SetGrabType(GrabType::Snap);
+			GrabPoint->SetGrabType(GrabTypes::Snap);
 			break;
 		case EObjectType::Throwable:
 		case EObjectType::Moveable:
-			m_GrabPointSnap->SetGrabType(GrabType::Free);
+			GrabPoint->SetGrabType(GrabTypes::Free);
 			break;
 		}
-		m_InputMappingContextLeft = FoundRow->ObjectInputMapLeft;
-		m_InputMappingContextRight = FoundRow->ObjectInputMapRight;
+		InputMappingContextLeft = FoundRow->ObjectInputMapLeft;
+		InputMappingContextRight = FoundRow->ObjectInputMapRight;
 		m_FireActions = FoundRow->ObjectFireInput;
 	}
 }
@@ -124,18 +126,20 @@ void ABase_Interactable::FindHapticData(EObjectType newObj)
 
 	for (auto It : ObjectData->GetRowMap())
 	{
-		FHapticEffects* Row = reinterpret_cast<FHapticEffects*>(It.Value);
-		if (Row->ObjectType == FindThisType)
+		if (FHapticEffects* Row = reinterpret_cast<FHapticEffects*>(It.Value))
 		{
-			FoundRow = Row;
-			break;
+			if (Row->ObjectType == FindThisType)
+			{
+				FoundRow = Row;
+				break;
+			}
 		}
 	}
 	if (FoundRow != nullptr)
 	{
 
-		m_GrabPointSnap->SetGrabHapticEffect(FoundRow->ObjectGrabFeedback);
-		m_GrabPointSnap->SetInteractHapticEffect(FoundRow->ObjectInteractFeedback);
+		GrabPoint->SetGrabHapticEffect(FoundRow->ObjectGrabFeedback);
+		GrabPoint->SetInteractHapticEffect(FoundRow->ObjectInteractFeedback);
 	}
 }
 
@@ -150,13 +154,15 @@ void ABase_Interactable::BindInteractableInput()
 		{
 			if (UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
 			{
-				switch (m_GrabPointSnap->GetHeldByHand())
+				switch (GrabPoint->GetHeldByHand())
 				{
 				case EControllerHand::Left:
-					InputSystem->AddMappingContext(m_InputMappingContextLeft, 1);
+					InputSystem->AddMappingContext(InputMappingContextLeft, 1);
 					break;
 				case EControllerHand::Right:
-					InputSystem->AddMappingContext(m_InputMappingContextRight, 1);
+					InputSystem->AddMappingContext(InputMappingContextRight, 1);
+					break;
+				default:
 					break;
 				}
 			}
@@ -173,17 +179,20 @@ void ABase_Interactable::UnbindInput()
 	if (APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0))
 	{
 		DisableInput(PC);
-		if (ULocalPlayer* LocalPlayer = PC->GetLocalPlayer())
+		if (const ULocalPlayer* LocalPlayer = PC->GetLocalPlayer())
 		{
 			if (UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
 			{
-				switch (m_GrabPointSnap->GetHeldByHand())
+				switch (GrabPoint->GetHeldByHand())
 				{
 				case EControllerHand::Left:
-					InputSystem->RemoveMappingContext(m_InputMappingContextLeft);
+					InputSystem->RemoveMappingContext(InputMappingContextLeft);
 					break;
 				case EControllerHand::Right:
-					InputSystem->RemoveMappingContext(m_InputMappingContextRight);
+					InputSystem->RemoveMappingContext(InputMappingContextRight);
+					break;
+				default:
+
 					break;
 				}
 			}

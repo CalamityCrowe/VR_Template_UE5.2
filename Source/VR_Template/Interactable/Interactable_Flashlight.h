@@ -23,9 +23,9 @@ public:
 	virtual void Tick(float) override;
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Light", meta = (AllowPrivateAccess = true))
-	TObjectPtr<USpotLightComponent> m_Light;
+	TObjectPtr<USpotLightComponent> SpotLight;
 public:
-	USpotLightComponent* GetLight() { return m_Light; }
+	USpotLightComponent* GetLight()const  { return SpotLight; }
 protected:
 	void ToggleFlashlight();
 

@@ -9,13 +9,13 @@ ALatch_Code::ALatch_Code()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	m_SceneRoot = CreateOptionalDefaultSubobject<USceneComponent>(TEXT("Scene Root"));
-	RootComponent = m_SceneRoot;
+	SceneRoot = CreateOptionalDefaultSubobject<USceneComponent>(TEXT("Scene Root"));
+	RootComponent = SceneRoot;
 
-	m_Mesh = CreateOptionalDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh")); 
-	m_Mesh->SetupAttachment(m_SceneRoot);
+	Mesh = CreateOptionalDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	Mesh->SetupAttachment(SceneRoot);
 
-	m_isOpen = false; 
+	m_isOpen = false;
 
 
 }

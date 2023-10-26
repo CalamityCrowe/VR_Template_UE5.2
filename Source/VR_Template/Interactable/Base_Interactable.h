@@ -107,9 +107,9 @@ public:
 
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Mesh", meta = (AllowPrivateAccess = true))
-	TObjectPtr<UStaticMeshComponent> m_Mesh;
+	TObjectPtr<UStaticMeshComponent> Mesh;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh", meta = (AllowPrivateAccess = true))
-	TObjectPtr<UVR_GrabComponent> m_GrabPointSnap;
+	TObjectPtr<UVR_GrabComponent> GrabPoint;
 
 	// used for tagging the type of object it will be 
 	EObjectType m_ObjectTag;
@@ -120,9 +120,9 @@ private:
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
-	UInputMappingContext* m_InputMappingContextRight;
+	UInputMappingContext* InputMappingContextRight;
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
-	UInputMappingContext* m_InputMappingContextLeft;
+	UInputMappingContext* InputMappingContextLeft;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
 	UInputConfigData* m_FireActions; // this is a custom data config that holds a list of pointers that will get assigned in the engine to pull the input actions in
 
@@ -139,9 +139,9 @@ protected:
 	void LoadHapticEffects(EObjectType);
 
 public:
-	inline UStaticMeshComponent* GetMesh() { return m_Mesh; }
-	inline UVR_GrabComponent* GetGrabComponent() { return m_GrabPointSnap; }
+	inline UStaticMeshComponent* GetMesh() const { return Mesh; }
+	inline UVR_GrabComponent* GetGrabComponent() const { return GrabPoint; }
 
-	inline EObjectType GetObjectType() { return m_ObjectTag; }
+	inline EObjectType GetObjectType() const { return m_ObjectTag; }
 
 };

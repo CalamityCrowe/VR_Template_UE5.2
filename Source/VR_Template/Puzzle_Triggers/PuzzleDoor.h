@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Latch_Code.generated.h"
+#include "PuzzleDoor.generated.h"
 
 UCLASS()
-class VR_TEMPLATE_API ALatch_Code : public AActor
+class VR_TEMPLATE_API APuzzleDoor : public AActor
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this actor's properties
-	ALatch_Code();
+	APuzzleDoor();
 
 protected:
 	// Called when the game starts or when spawned
@@ -23,23 +23,13 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	bool m_isOpen;
-
-
 private:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Mesh", meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	TObjectPtr<UStaticMeshComponent> Mesh;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	TObjectPtr<USceneComponent> SceneRoot;
-
 public:
-	inline UStaticMeshComponent* GetMesh() const { return Mesh; }
-	inline USceneComponent* GetSceneRoot() const { return SceneRoot; }
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void ChangeLatchRotation();
+	UStaticMeshComponent* GetMesh() const { return Mesh; }
+	USceneComponent* GetSceneRoot() const { return SceneRoot; }
 
 };
