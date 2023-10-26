@@ -38,7 +38,7 @@ AInteractable_Flashlight::AInteractable_Flashlight()
 
 void AInteractable_Flashlight::BeginPlay()
 {
-	ABase_Interactable::BeginPlay();
+	Super::BeginPlay();
 
 }
 

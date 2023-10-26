@@ -82,11 +82,4 @@ public:
 	UFUNCTION()
 	class UVR_GrabComponent* GetGrabComponentNearController(UMotionControllerComponent* controllerReference);
 
-
-
-
-
-
-
-
 };

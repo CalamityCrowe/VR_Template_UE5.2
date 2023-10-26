@@ -44,7 +44,7 @@ ABase_VR_Character::ABase_VR_Character()
 	LeftController->MotionSource = FName(TEXT("Left"));
 	RightController->MotionSource = FName(TEXT("Right"));
 
-	LeftController->SetupAttachment(VROrigin); RightController->SetupAttachment(VROrigin);
+	LeftController->SetupAttachment(VROrigin);RightController->SetupAttachment(VROrigin);
 
 	auto MeshAsset = ConstructorHelpers::FObjectFinder<USkeletalMesh>(TEXT("SkeletalMesh'/Game/Characters/MannequinsXR/Meshes/SKM_MannyXR_left.SKM_MannyXR_left'"));
 
@@ -128,7 +128,7 @@ void ABase_VR_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 		PEI->BindAction(InputActions->InputRightAnalog, ETriggerEvent::Triggered, this, &ABase_VR_Character::TurnPlayer); // binds the rotation to the player 
 
 #pragma region Grab Components
-		PEI->BindAction(InputActions->InputLeftGrip, ETriggerEvent::Started, this, &ABase_VR_Character::GrabObjectLeft);
+		PEI->BindAction(InputActions->InputLeftGrip, ETriggerEvent::Started, this, &ABase_VR_Character::GrabObjectLeft); 
 		PEI->BindAction(InputActions->InputLeftGrip, ETriggerEvent::Completed, this, &ABase_VR_Character::ReleaseObjectLeft);
 		PEI->BindAction(InputActions->InputRightGrip, ETriggerEvent::Started, this, &ABase_VR_Character::GrabObjectRight);
 		PEI->BindAction(InputActions->InputRightGrip, ETriggerEvent::Completed, this, &ABase_VR_Character::ReleaseObjectRight);
@@ -160,7 +160,7 @@ void ABase_VR_Character::MovePlayer(const FInputActionValue& Value)
 #if WITH_EDITOR
 	GEngine->AddOnScreenDebugMessage(0, 0.1f, FColor::Yellow, FString::Printf(TEXT("CONTROLLER: %f , %f"), MovementVector.X, MovementVector.Y));
 #endif
-
+	
 	// applies the movement to the characters movement components based on the forward vector
 	AddMovementInput(Camera->GetForwardVector(), MovementVector.Y);
 	AddMovementInput(Camera->GetRightVector(), MovementVector.X);
@@ -213,13 +213,13 @@ void ABase_VR_Character::GrabObjectRight(const FInputActionValue& Value)
 
 void ABase_VR_Character::ReleaseObjectLeft(const FInputActionValue& Value)
 {
-	if (HeldLeft != nullptr) // checks if the held left has a valid value
+	if (IsValid(HeldLeft)) // checks if the held left has a valid value
 	{
 		if (HeldLeft->TryRelease()) // checks if try release is true 
 		{
 			HeldLeft = nullptr; // sets the held left to nullptr
 #if WITH_EDITOR
-			GEngine->AddOnScreenDebugMessage(100, 20, FColor::Yellow, TEXT("Left Release"));
+			GEngine->AddOnScreenDebugMessage(100, 20, FColor::Purple, TEXT("Left Release"));
 #endif
 		}
 	}
@@ -227,7 +227,7 @@ void ABase_VR_Character::ReleaseObjectLeft(const FInputActionValue& Value)
 
 void ABase_VR_Character::ReleaseObjectRight(const FInputActionValue& Value)
 {
-	if (HeldRight != nullptr)// checks if the held right has a valid value
+	if (IsValid(HeldRight))// checks if the held right has a valid value
 	{
 		if (HeldRight->TryRelease()) // checks if try release is true 
 		{
@@ -251,7 +251,7 @@ UVR_GrabComponent* ABase_VR_Character::GetGrabComponentNearController(UMotionCon
 	traceObjects.Add(UEngineTypes::ConvertToObjectType(ECC_PhysicsBody));
 	const TArray<AActor*> ignoreActor{ this };
 
-	bool bHasHit = UKismetSystemLibrary::SphereTraceSingleForObjects(GetWorld(), LocalGripPos, LocalGripPos, GrabRadius, traceObjects, false, ignoreActor, EDrawDebugTrace::Persistent, hitResult, true);
+	bool bHasHit = UKismetSystemLibrary::SphereTraceSingleForObjects(GetWorld(), LocalGripPos, LocalGripPos, GrabRadius, traceObjects, false, ignoreActor, EDrawDebugTrace::Persistent, hitResult, true); 
 
 	if (bHasHit) // checks if the sphere trace has hit something
 	{
@@ -263,7 +263,7 @@ UVR_GrabComponent* ABase_VR_Character::GetGrabComponentNearController(UMotionCon
 			{
 				FVector componentWorldLocation = GrabPoints[i]->GetComponentLocation(); // gets the current component location
 				componentWorldLocation -= LocalGripPos; // subtracts the local grip position from the component location
-				float sqLength = componentWorldLocation.SquaredLength();
+				float sqLength = componentWorldLocation.SquaredLength(); 
 				if (sqLength <= LocalNearestDistance) // checks if the squared length is less or equal to the local nearest distance
 				{
 					LocalNearestDistance = sqLength; // sets the local nearest distance to the squared length

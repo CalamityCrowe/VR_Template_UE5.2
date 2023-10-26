@@ -23,7 +23,6 @@ ABase_Interactable::ABase_Interactable()
 
 	GrabPoint = CreateOptionalDefaultSubobject<UVR_GrabComponent>(TEXT("Grab Point"));
 	GrabPoint->SetupAttachment(Mesh);
-	GrabPoint->SetGrabType(GrabTypes::Free); 
 
 
 	///

@@ -170,7 +170,6 @@ bool UVR_GrabComponent::TryRelease()
 		bisHeld = false;
 
 		break;
-	case GrabTypes::Snap:
 	case GrabTypes::Free:
 		if (bisSimulatedOnDrop)
 		{
