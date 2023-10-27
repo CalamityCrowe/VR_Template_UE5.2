@@ -31,7 +31,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	TObjectPtr<USceneComponent> SceneRoot;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
-	TObjectPtr<UTimelineComponent> DoorTimeline; 
+	TObjectPtr<UTimelineComponent> DoorTimeline;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	UCurveFloat* DoorTimeCurve;
 
@@ -39,6 +39,9 @@ private:
 	FRotator OpenRotation;
 
 	void OpenDoor();
+
+
+
 
 public:
 	UStaticMeshComponent* GetMesh() const { return Mesh; }

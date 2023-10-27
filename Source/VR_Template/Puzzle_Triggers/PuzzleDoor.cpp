@@ -20,9 +20,13 @@ APuzzleDoor::APuzzleDoor()
 // Called when the game starts or when spawned
 void APuzzleDoor::BeginPlay()
 {
+
+	FOnTimelineFloat onTimelineCallback;
+	FOnTimelineEventStatic onTimelineFinishedCallback;
+
 	Super::BeginPlay();
 
-	if(DoorTimeCurve != NULL)
+	if (DoorTimeCurve != NULL)
 	{
 		DoorTimeline = NewObject<UTimelineComponent>(this, FName("TimelineAnimation"));
 		DoorTimeline->CreationMethod = EComponentCreationMethod::UserConstructionScript;
@@ -38,7 +42,13 @@ void APuzzleDoor::BeginPlay()
 
 		DoorTimeline->SetPlaybackPosition(0.0f, false);
 
-		
+
+		onTimelineCallback.BindUFunction(this, FName{ TEXT("TimelineCallback") });
+		onTimelineFinishedCallback.BindUFunction(this, FName{ TEXT("TimelineFinishedCallback") });
+		DoorTimeline->AddInterpFloat(DoorTimeCurve, onTimelineCallback);
+		DoorTimeline->SetTimelineFinishedFunc(onTimelineFinishedCallback);
+
+		DoorTimeline->RegisterComponent();
 
 	}
 
@@ -48,12 +58,20 @@ void APuzzleDoor::BeginPlay()
 void APuzzleDoor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	if(DoorTimeline->IsPlaying())
+	{
+		Mesh->SetRelativeRotation(FRotator(DoorTimeCurve->GetFloatValue(DoorTimeline->GetPlaybackPosition()), 0, 0));
+	}
 }
 
 void APuzzleDoor::OpenDoor()
 {
-	FTimerHandle time;
+	if (DoorTimeline)
+	{
+		DoorTimeline->PlayFromStart();
+	}
 
 }
+
+
 
