@@ -7,7 +7,7 @@
 #include "PuzzleDoor.generated.h"
 
 class UTimelineComponent;
-
+class ABase_Puzzle;
 UCLASS()
 class VR_TEMPLATE_API APuzzleDoor : public AActor
 {
@@ -47,6 +47,7 @@ public:
 	UStaticMeshComponent* GetMesh() const { return Mesh; }
 	USceneComponent* GetSceneRoot() const { return SceneRoot; }
 
-
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TObjectPtr<ABase_Puzzle> Puzzle_Reference;
 
 };

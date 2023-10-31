@@ -3,6 +3,7 @@
 
 #include "PuzzleDoor.h"
 #include "Components/TimelineComponent.h"
+#include "Base_Puzzle.h"
 // Sets default values
 APuzzleDoor::APuzzleDoor()
 {
@@ -52,13 +53,19 @@ void APuzzleDoor::BeginPlay()
 
 	}
 
+
+	if (Puzzle_Reference != nullptr && Puzzle_Reference->OnPuzzleCompletedDelegate.IsBound() == false)
+	{
+		Puzzle_Reference->OnPuzzleCompletedDelegate.BindUObject(this, &APuzzleDoor::OpenDoor);
+
+	}
 }
 
 // Called every frame
 void APuzzleDoor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if(DoorTimeline->IsPlaying())
+	if (DoorTimeline->IsPlaying())
 	{
 		Mesh->SetRelativeRotation(FRotator(DoorTimeCurve->GetFloatValue(DoorTimeline->GetPlaybackPosition()), 0, 0));
 	}

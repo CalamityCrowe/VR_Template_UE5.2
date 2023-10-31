@@ -27,7 +27,7 @@ protected:
 
 private:
 
-	FHitResult* LineTraceMethod(const FVector& StartLocation, const FVector& EndLocation);
+	bool LineTraceMethod(FHitResult& OutHit,const FVector& StartLocation, const FVector& EndLocation);
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Arrow", meta = (AllowPrivateAccess = true))
 	TObjectPtr<class UArrowComponent> FireDirection;
 
