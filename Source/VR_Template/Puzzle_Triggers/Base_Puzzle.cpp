@@ -10,7 +10,6 @@ ABase_Puzzle::ABase_Puzzle()
 	PrimaryActorTick.bCanEverTick = true;
 
 
-	bIsCompleted = false; 
 }
 
 // Called when the game starts or when spawned

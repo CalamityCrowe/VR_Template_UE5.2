@@ -38,10 +38,9 @@ private:
 
 	bool bDoOnce;
 
-	bool bIsCompleted;
 
 
 public:
+	
 
-	void 
 };
