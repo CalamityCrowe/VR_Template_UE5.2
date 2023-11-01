@@ -12,8 +12,10 @@ ALatch_Code::ALatch_Code()
 	SceneRoot = CreateOptionalDefaultSubobject<USceneComponent>(TEXT("Scene Root"));
 	RootComponent = SceneRoot;
 
+	auto MeshAsset = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Plane.Shape_Plane'"));
 	Mesh = CreateOptionalDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(SceneRoot);
+	Mesh->SetStaticMesh(MeshAsset.Object);
 
 	m_isOpen = false;
 

@@ -32,12 +32,16 @@ public:
 
 	void DoOnce() { if (bCallOnce == false) { bCallOnce = true; bDoOnce = true; } }
 
-
-
 private:
 
 	bool bCallOnce = false;
 
 	bool bDoOnce;
 
+	bool bIsCompleted;
+
+
+public:
+
+	void 
 };
