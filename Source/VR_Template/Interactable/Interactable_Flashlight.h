@@ -25,6 +25,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Light", meta = (AllowPrivateAccess = true))
 	TObjectPtr<USpotLightComponent> SpotLight;
 
+	bool bLightOn; 
+
 public:
 	USpotLightComponent* GetLight()const  { return SpotLight; }
 protected:

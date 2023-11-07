@@ -31,8 +31,8 @@ AInteractable_Flashlight::AInteractable_Flashlight()
 	auto LightMaterial = ConstructorHelpers::FObjectFinder<UMaterialInterface>(TEXT("Material'/Game/Materials/m_LightFlicker.m_LightFlicker'"));
 	SpotLight->LightFunctionMaterial = LightMaterial.Object;
 
+	bLightOn = true;
 
-	SpotLight->Deactivate(); 
 	// used for loading in the objects based on their type
 	LoadDataTable(EObjectType::Light);
 
@@ -56,13 +56,15 @@ void AInteractable_Flashlight::Tick(float Delta)
 
 void AInteractable_Flashlight::ToggleFlashlight()
 {
-	if (SpotLight->IsActive())
+	if (bLightOn)
 	{
-		SpotLight->Deactivate();
+		bLightOn = false;
+		SpotLight->LightColor = FColor(0, 0, 0, 0);
 	}
 	else
 	{
-		SpotLight->Activate(true);
+		bLightOn = true;
+		SpotLight->LightColor = FColor(255, 244, 229, 255);
 	}
 	if (APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0))
 	{

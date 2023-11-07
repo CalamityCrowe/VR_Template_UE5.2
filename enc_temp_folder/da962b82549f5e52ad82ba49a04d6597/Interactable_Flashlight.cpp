@@ -19,20 +19,24 @@ AInteractable_Flashlight::AInteractable_Flashlight()
 {
 	SpotLight = CreateOptionalDefaultSubobject<USpotLightComponent>(TEXT("Spot light"));
 	SpotLight->SetupAttachment(GetMesh());
-	
+
 	SpotLight->OuterConeAngle = 20.0f;
 	SpotLight->InnerConeAngle = 10.0f;
 	SpotLight->Intensity = 10000.f;
-	SpotLight->LightColor = FColor(255, 244, 229, 255);
+	SpotLight->LightColor = FColor(0, 0, 0, 0);
 	SpotLight->CastShadows = true;
 	SpotLight->bAffectsWorld = true;
 	SpotLight->SetRelativeRotation(FRotator(90, 0, 0));
 	SpotLight->SetRelativeLocation(FVector(0, 0, 7.1f));
 	auto LightMaterial = ConstructorHelpers::FObjectFinder<UMaterialInterface>(TEXT("Material'/Game/Materials/m_LightFlicker.m_LightFlicker'"));
-	SpotLight->LightFunctionMaterial = LightMaterial.Object; 
+	SpotLight->LightFunctionMaterial = LightMaterial.Object;
+
+	bLightOn = true;
 
 	// used for loading in the objects based on their type
 	LoadDataTable(EObjectType::Light);
+
+
 
 }
 
@@ -40,6 +44,8 @@ void AInteractable_Flashlight::BeginPlay()
 {
 	ABase_Interactable::BeginPlay();
 
+	GetGrabComponent()->OnGrabbedDelegate.BindUObject(this, &AInteractable_Flashlight::BindInteractableInput);
+	GetGrabComponent()->OnDroppedDelegate.BindUObject(this, &AInteractable_Flashlight::UnbindInput);
 }
 
 void AInteractable_Flashlight::Tick(float Delta)
@@ -50,13 +56,15 @@ void AInteractable_Flashlight::Tick(float Delta)
 
 void AInteractable_Flashlight::ToggleFlashlight()
 {
-	if (SpotLight->IsActive())
+	if (bLightOn)
 	{
-		SpotLight->Deactivate();
+		bLightOn = false;
+		SpotLight->LightColor = FColor(255, 244, 229, 0);
 	}
 	else
 	{
-		SpotLight->Activate(true);
+		bLightOn = true;
+		SpotLight->LightColor = FColor(255, 244, 229, 255);
 	}
 	if (APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0))
 	{
