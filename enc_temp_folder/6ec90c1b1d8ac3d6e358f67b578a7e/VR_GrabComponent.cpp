@@ -199,7 +199,7 @@ bool UVR_GrabComponent::TryRelease()
 	}
 	else
 	{
-		HandleOnDropped();
+		//HandleOnDropped();
 		bisHeld = false;
 		return true;
 	}

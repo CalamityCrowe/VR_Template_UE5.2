@@ -19,7 +19,7 @@ AInteractable_Flashlight::AInteractable_Flashlight()
 {
 	SpotLight = CreateOptionalDefaultSubobject<USpotLightComponent>(TEXT("Spot light"));
 	SpotLight->SetupAttachment(GetMesh());
-
+	
 	SpotLight->OuterConeAngle = 20.0f;
 	SpotLight->InnerConeAngle = 10.0f;
 	SpotLight->Intensity = 10000.f;
@@ -29,14 +29,10 @@ AInteractable_Flashlight::AInteractable_Flashlight()
 	SpotLight->SetRelativeRotation(FRotator(90, 0, 0));
 	SpotLight->SetRelativeLocation(FVector(0, 0, 7.1f));
 	auto LightMaterial = ConstructorHelpers::FObjectFinder<UMaterialInterface>(TEXT("Material'/Game/Materials/m_LightFlicker.m_LightFlicker'"));
-	SpotLight->LightFunctionMaterial = LightMaterial.Object;
+	SpotLight->LightFunctionMaterial = LightMaterial.Object; 
 
-
-	SpotLight->Deactivate(); 
 	// used for loading in the objects based on their type
 	LoadDataTable(EObjectType::Light);
-
-
 
 }
 
@@ -44,8 +40,6 @@ void AInteractable_Flashlight::BeginPlay()
 {
 	ABase_Interactable::BeginPlay();
 
-	GetGrabComponent()->OnGrabbedDelegate.BindUObject(this, &AInteractable_Flashlight::BindInteractableInput);
-	GetGrabComponent()->OnDroppedDelegate.BindUObject(this, &AInteractable_Flashlight::UnbindInput);
 }
 
 void AInteractable_Flashlight::Tick(float Delta)

@@ -123,16 +123,19 @@ void ABase_VR_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 		*/
 #pragma endregion
 
-
-		PEI->BindAction(InputActions->InputLeftAnalog, ETriggerEvent::Triggered, this, &ABase_VR_Character::MovePlayer); // binds the movement to the player 
-		PEI->BindAction(InputActions->InputRightAnalog, ETriggerEvent::Triggered, this, &ABase_VR_Character::TurnPlayer); // binds the rotation to the player 
+		if (UInputConfigData* PlayerActions = Cast<UInputConfigData>(InputActions))
+		{
+			PEI->BindAction(PlayerActions->InputLeftAnalog, ETriggerEvent::Triggered, this, &ABase_VR_Character::MovePlayer); // binds the movement to the player 
+			PEI->BindAction(PlayerActions->InputRightAnalog, ETriggerEvent::Triggered, this, &ABase_VR_Character::TurnPlayer); // binds the rotation to the player 
 
 #pragma region Grab Components
-		PEI->BindAction(InputActions->InputLeftGrip, ETriggerEvent::Started, this, &ABase_VR_Character::GrabObjectLeft);
-		PEI->BindAction(InputActions->InputLeftGrip, ETriggerEvent::Completed, this, &ABase_VR_Character::ReleaseObjectLeft);
-		PEI->BindAction(InputActions->InputRightGrip, ETriggerEvent::Started, this, &ABase_VR_Character::GrabObjectRight);
-		PEI->BindAction(InputActions->InputRightGrip, ETriggerEvent::Completed, this, &ABase_VR_Character::ReleaseObjectRight);
+			PEI->BindAction(PlayerActions->InputLeftGrip, ETriggerEvent::Started, this, &ABase_VR_Character::GrabObjectLeft);
+			PEI->BindAction(PlayerActions->InputLeftGrip, ETriggerEvent::Completed, this, &ABase_VR_Character::ReleaseObjectLeft);
+			PEI->BindAction(PlayerActions->InputRightGrip, ETriggerEvent::Started, this, &ABase_VR_Character::GrabObjectRight);
+			PEI->BindAction(PlayerActions->InputRightGrip, ETriggerEvent::Completed, this, &ABase_VR_Character::ReleaseObjectRight);
 #pragma endregion
+
+		}
 
 	}
 

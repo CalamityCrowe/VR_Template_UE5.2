@@ -64,7 +64,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
 	class UInputMappingContext* InputMappingContext;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
-	class UInputConfigData* InputActions; // this is a custom data config that holds a list of pointers that will get assigned in the engine to pull the input actions in
+	class UDataAsset* InputActions; // this is a custom data config that holds a list of pointers that will get assigned in the engine to pull the input actions in
 
 	UPROPERTY(EditDefaultsOnly, BluePrintReadWrite, Category = "Motion Controllers")
 	float GrabRadius;
