@@ -15,11 +15,16 @@ class VR_TEMPLATE_API ABase_Entity_Controller : public AAIController
 	GENERATED_BODY()
 public: // for the constructors
 	ABase_Entity_Controller();
-protected: 
+protected:
 	virtual void BeginPlay() override;
-public: // for the functions
 
 	virtual void Tick(float DeltaTime) override;
+
+	virtual void OnPossess(APawn* InPawn) override;
+public: // for the functions
+	void MoveActor(AActor*);
+
+
 
 protected: // for variables
 

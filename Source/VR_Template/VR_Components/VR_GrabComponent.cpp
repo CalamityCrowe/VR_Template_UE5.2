@@ -24,7 +24,7 @@ UVR_GrabComponent::UVR_GrabComponent()
 
 	bisHeld = false;
 
-	grabType = GrabTypes::None; 
+	grabType = GrabTypes::None;
 	// ...
 }
 
@@ -191,7 +191,7 @@ bool UVR_GrabComponent::TryRelease()
 
 		break;
 	default:
-		break; 
+		break;
 	}
 	if (bisHeld == true)
 	{
