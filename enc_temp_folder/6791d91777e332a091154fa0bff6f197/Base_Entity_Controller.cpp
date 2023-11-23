@@ -5,7 +5,6 @@
 
 ABase_Entity_Controller::ABase_Entity_Controller()
 {
-
 }
 
 void ABase_Entity_Controller::BeginPlay()

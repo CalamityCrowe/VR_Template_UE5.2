@@ -6,6 +6,15 @@
 #include "GameFramework/Character.h"
 #include "Base_Entity.generated.h"
 
+UENUM(Blueprintable)
+enum class EEntityState : uint8
+{
+	Spawn,
+	Idle,
+	Chase,
+	Dead
+};
+
 UCLASS()
 class VR_TEMPLATE_API ABase_Entity : public ACharacter
 {
@@ -19,11 +28,23 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	
+
+protected:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Entity", meta = (AllowPrivateAccess = true))
+	TEnumAsByte<EEntityState> EntityState;
+
+	UFUNCTION(BlueprintCallable, Category = "Entity")
+	void HandleAnimations(); 
+
+private:
+	float Health; 
 
 };
