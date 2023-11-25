@@ -35,7 +35,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	
+	void StunEntity();
 
 protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Entity", meta = (AllowPrivateAccess = true))
@@ -46,5 +46,13 @@ protected:
 
 private:
 	float Health; 
+
+	TObjectPtr<class UTimelineComponent> StunTimeline;
+	TObjectPtr<class UCurveFloat> StunCurve;
+
+
+	void ActivateTimeline();
+
+	void TimeLineFinishedCallback();
 
 };

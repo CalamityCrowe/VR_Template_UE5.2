@@ -17,6 +17,8 @@ AInteractable_Stungun::AInteractable_Stungun()
 
 	LoadDataTable(EObjectType::Gun);
 
+	
+
 }
 
 
@@ -24,7 +26,7 @@ AInteractable_Stungun::AInteractable_Stungun()
 void AInteractable_Stungun::BeginPlay()
 {
 	Super::BeginPlay();
-	//FireStunGun();
+	
 }
 
 void AInteractable_Stungun::FireStunGun()

@@ -2,6 +2,7 @@
 
 
 #include "Base_Entity.h"
+#include "Components/TimelineComponent.h"
 
 // Sets default values
 ABase_Entity::ABase_Entity()
@@ -21,12 +22,42 @@ ABase_Entity::ABase_Entity()
 
 	EntityState = EEntityState::Idle;
 	Health = 100.0f;
+
+	auto CurveAsset = ConstructorHelpers::FObjectFinder<UCurveFloat>(TEXT("CurveFloat'/Game/Data_Tables/Curves/StunCurve.StunCurve'"));
+	StunCurve = CurveAsset.Object;
 }
 
 // Called when the game starts or when spawned
 void ABase_Entity::BeginPlay()
 {
+	FOnTimelineFloat onTimelineCallback;
+	FOnTimelineEventStatic onTimelineFinishedCallback;
 	Super::BeginPlay();
+
+	if(StunCurve != NULL)
+	{
+		StunTimeline = NewObject<UTimelineComponent>(this, FName("TimelineAnimation"));
+		StunTimeline->CreationMethod = EComponentCreationMethod::UserConstructionScript;
+		this->BlueprintCreatedComponents.Add(StunTimeline);
+		StunTimeline->SetNetAddressable();
+
+		StunTimeline->SetPropertySetObject(this);
+		StunTimeline->SetDirectionPropertyName(FName("TimelineDirection"));
+
+		StunTimeline->SetLooping(false);
+		StunTimeline->SetTimelineLength(5.0f);
+		StunTimeline->SetTimelineLengthMode(ETimelineLengthMode::TL_LastKeyFrame);
+
+		StunTimeline->SetPlaybackPosition(0.0f, false);
+
+		onTimelineCallback.BindUFunction(this, FName{ TEXT("TimelineCallback") });
+		onTimelineFinishedCallback.BindUFunction(this, FName{ TEXT("TimelineFinishedCallback") });
+		StunTimeline->AddInterpFloat(StunCurve, onTimelineCallback);
+		StunTimeline->SetTimelineFinishedFunc(onTimelineFinishedCallback);
+
+		StunTimeline->RegisterComponent();
+	}
+
 
 }
 
@@ -44,6 +75,12 @@ void ABase_Entity::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 }
 
+void ABase_Entity::StunEntity()
+{
+	Health = 0.0f;
+	ActivateTimeline();
+}
+
 void ABase_Entity::HandleAnimations()
 {
 	FVector EntityVelocity = GetVelocity();
@@ -52,4 +89,17 @@ void ABase_Entity::HandleAnimations()
 	EntityState = (VelocitySqr > 0) ? EEntityState::Chase : EEntityState::Idle;
 	EntityState = (Health <= 0) ? EEntityState::Dead : EntityState;
 }
+
+void ABase_Entity::ActivateTimeline()
+{
+	StunTimeline->PlayFromStart();
+}
+
+void ABase_Entity::TimeLineFinishedCallback()
+{
+	EntityState = EEntityState::Idle;
+	Health = 100.0f;
+}
+
+
 
