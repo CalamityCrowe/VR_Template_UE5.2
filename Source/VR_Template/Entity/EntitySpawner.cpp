@@ -12,6 +12,8 @@ AEntitySpawner::AEntitySpawner()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	bCanSpawn = true;
+
 }
 
 // Called when the game starts or when spawned
@@ -20,7 +22,6 @@ void AEntitySpawner::BeginPlay()
 	Super::BeginPlay();
 
 }
-
 // Called every frame
 void AEntitySpawner::Tick(float DeltaTime)
 {
@@ -30,16 +31,20 @@ void AEntitySpawner::Tick(float DeltaTime)
 
 void AEntitySpawner::SpawnEnemy()
 {
-	const FActorSpawnParameters SpawnParameters;
-
-	if (ABase_Entity_Controller* NewController = GetWorld()->SpawnActor<ABase_Entity_Controller>(ABase_Entity_Controller::StaticClass()))
+	if (bCanSpawn)
 	{
-		if (ABase_Entity* newEntity = GetWorld()->SpawnActor<ABase_Entity>(ABase_Entity::StaticClass()))
+		const FActorSpawnParameters SpawnParameters;
+
+		if (ABase_Entity_Controller* NewController = GetWorld()->SpawnActor<ABase_Entity_Controller>(ABase_Entity_Controller::StaticClass()))
 		{
-			NewController->Possess(newEntity);
-			newEntity->AIControllerClass = ABase_Entity_Controller::StaticClass();
-			newEntity->Controller = NewController;
+			if (ABase_Entity* newEntity = GetWorld()->SpawnActor<ABase_Entity>(ABase_Entity::StaticClass()))
+			{
+				NewController->Possess(newEntity);
+				newEntity->AIControllerClass = ABase_Entity_Controller::StaticClass();
+				newEntity->Controller = NewController;
+			}
 		}
+		bCanSpawn = false;
 	}
 
 }

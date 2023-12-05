@@ -54,8 +54,8 @@ public:
 	FInteractableData() :
 		ObjectType(EObjectType::None),
 		ObjectMesh(nullptr),
-		ObjectScale(FVector()),
-		GrabPointScale(FVector()),
+		ObjectScale(FVector(0, 0, 0)),
+		GrabPointScale(FVector(0, 0, 0)),
 		ObjectInputMapLeft(nullptr),
 		ObjectInputMapRight(nullptr),
 		ObjectFireInput(nullptr)

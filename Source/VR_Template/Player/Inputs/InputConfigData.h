@@ -19,7 +19,9 @@ public:
 	// this is where you add more input actions so they can be added in the editor after all the parameters have been added
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TObjectPtr<UInputAction>InputLeftAnalog;
+	TObjectPtr<UInputAction>InputLeftAnalog_X;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TObjectPtr<UInputAction>InputLeftAnalog_Y;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UInputAction>InputRightAnalog;

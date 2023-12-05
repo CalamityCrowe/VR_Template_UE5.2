@@ -7,17 +7,32 @@
 
 ABase_Entity_Controller::ABase_Entity_Controller()
 {
-	
+
 }
 
 void ABase_Entity_Controller::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (ControlledPawnReference == nullptr)
+	{
+		if (Cast<ABase_Entity>(GetPawn()))
+		{
+			ControlledPawnReference = Cast<ABase_Entity>(GetPawn());
+			GEngine->AddOnScreenDebugMessage(0, 2, FColor::Magenta, TEXT("Pawn Reference Found"));
+		}
+	}
 }
 
 void ABase_Entity_Controller::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime); 
+	Super::Tick(DeltaTime);
+
+	if (TargetActorReference)
+	{
+		MoveActor(TargetActorReference);
+	}
+
 }
 
 void ABase_Entity_Controller::OnPossess(APawn* InPawn)
@@ -32,13 +47,10 @@ void ABase_Entity_Controller::OnPossess(APawn* InPawn)
 void ABase_Entity_Controller::MoveActor(AActor* TargetActor)
 {
 	UNavigationSystemV1* NavSys = UNavigationSystemV1::GetCurrent(GetWorld());
-	if(APawn* ControlledPawn = GetPawn())
+	if (ControlledPawnReference) // if the pawn reference is valid
 	{
-		const ANavigationData* NavData = NavSys->GetDefaultNavDataInstance(FNavigationSystem::DontCreate);
-		if(ABase_Entity* CurrentEntity = Cast<ABase_Entity>(ControlledPawn))
-		{
-			MoveToActor(TargetActor, 0); 
-		}
+		const ANavigationData* NavData = NavSys->GetDefaultNavDataInstance(FNavigationSystem::DontCreate); //gets the navigation data
+		MoveToActor(TargetActor, 0); // moves to the target actor
 	}
 }
 

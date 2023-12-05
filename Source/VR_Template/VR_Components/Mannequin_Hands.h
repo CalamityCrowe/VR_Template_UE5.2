@@ -16,6 +16,6 @@ class VR_TEMPLATE_API UMannequin_Hands : public USkeletalMeshComponent
 	
 public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-		bool bisMirrored; 
+		bool Mirror; 
 
 };

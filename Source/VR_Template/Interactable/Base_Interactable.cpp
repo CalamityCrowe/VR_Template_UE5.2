@@ -23,7 +23,7 @@ ABase_Interactable::ABase_Interactable()
 
 	GrabPoint = CreateOptionalDefaultSubobject<UVR_GrabComponent>(TEXT("Grab Point"));
 	GrabPoint->SetupAttachment(Mesh);
-	GrabPoint->SetGrabType(GrabTypes::Free); 
+	GrabPoint->SetGrabType(GrabTypes::Free);
 
 
 	///
@@ -58,8 +58,8 @@ void ABase_Interactable::BeginPlay()
 
 	if (GrabPoint)
 	{
-		GrabPoint->OnGrabbedDelegate.BindUObject(this, &ABase_Interactable::BindInteractableInput);
-		GrabPoint->OnDroppedDelegate.BindUObject(this, &ABase_Interactable::UnbindInput); // this is used for binding inputs within interactable objects
+		GrabPoint->OnGrabbedDelegate.AddUObject(this, &ABase_Interactable::BindInteractableInput);
+		GrabPoint->OnDroppedDelegate.AddUObject(this, &ABase_Interactable::UnbindInput); // this is used for binding inputs within interactable objects
 	}
 
 }
@@ -93,6 +93,7 @@ void ABase_Interactable::FindObjectData(EObjectType newObj)
 	if (FoundRow != nullptr)
 	{
 
+		UE_LOG(LogTemp, Warning, TEXT("Found Row"));
 		m_ObjectTag = FoundRow->ObjectType;
 		Mesh->SetStaticMesh(FoundRow->ObjectMesh);
 		SetActorScale3D(FoundRow->ObjectScale);
@@ -146,7 +147,6 @@ void ABase_Interactable::FindHapticData(EObjectType newObj)
 
 void ABase_Interactable::BindInteractableInput()
 {
-	GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::Red, TEXT("Attached Component, Base Interactable.cpp"));
 
 	if (APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0))
 	{
@@ -158,10 +158,12 @@ void ABase_Interactable::BindInteractableInput()
 				switch (GrabPoint->GetHeldByHand())
 				{
 				case EControllerHand::Left:
-					InputSystem->AddMappingContext(InputMappingContextLeft, 1);
+					UE_LOG(LogTemp, Warning, TEXT("Left Hand Mapping Context Bound"));
+					InputSystem->AddMappingContext(InputMappingContextLeft, 0);
 					break;
 				case EControllerHand::Right:
-					InputSystem->AddMappingContext(InputMappingContextRight, 1);
+					UE_LOG(LogTemp, Warning, TEXT("Right Hand Mapping Context Bound"));
+					InputSystem->AddMappingContext(InputMappingContextRight, 0);
 					break;
 				default:
 					break;

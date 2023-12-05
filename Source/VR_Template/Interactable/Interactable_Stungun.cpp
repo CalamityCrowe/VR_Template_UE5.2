@@ -7,17 +7,27 @@
 #include "Kismet/GameplayStatics.h"
 #include "VR_Template/VR_Components/VR_GrabComponent.h"
 
+#include "Components/InputComponent.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
+#include "InputMappingContext.h"
 
-AInteractable_Stungun::AInteractable_Stungun()
+#include "VR_Template/Player/Inputs/InputConfigData.h"
+#include "VR_Template/VR_Components/VR_GrabComponent.h"
+
+
+AInteractable_Stungun::AInteractable_Stungun() :ABase_Interactable()
 {
+
+
 	FireDirection = CreateOptionalDefaultSubobject<UArrowComponent>(TEXT("Fire Direction"));
 	FireDirection->SetupAttachment(GetMesh());
 	FireDirection->SetRelativeLocation(FVector(0.0f, -3.0f, 5.0f));
 	FireDirection->SetRelativeRotation(FRotator(40, 270, 0));
 
 	LoadDataTable(EObjectType::Gun);
+	LoadHapticEffects(EObjectType::Gun);
 
-	
 
 }
 
@@ -26,21 +36,22 @@ AInteractable_Stungun::AInteractable_Stungun()
 void AInteractable_Stungun::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	GetGrabComponent()->OnGrabbedDelegate.AddUObject(this, &AInteractable_Stungun::BindInteractableInput);
+	GetGrabComponent()->OnDroppedDelegate.AddUObject(this, &AInteractable_Stungun::UnbindInput);
 }
 
 void AInteractable_Stungun::FireStunGun()
 {
 
 	FHitResult hitResult;
-#if WITH_EDITOR
-	GEngine->AddOnScreenDebugMessage(110, 2, FColor::Red, TEXT("AAAAAAAAAAAAA"));
-#endif 
+
+	UE_LOG(LogTemp, Error, TEXT("FIRE STARTED"));
+
 	if (LineTraceMethod(hitResult, FireDirection->GetComponentLocation(), FireDirection->GetForwardVector() * 1000))
 	{
-#if WITH_EDITOR
+		UE_LOG(LogTemp, Error, TEXT("HIT"));
 		GEngine->AddOnScreenDebugMessage(110, 2, FColor::Red, TEXT("HIT"));
-#endif
 		if (ABase_Entity* newEntity = Cast<ABase_Entity>(hitResult.GetActor()))
 		{
 			// do stuff
@@ -56,14 +67,51 @@ void AInteractable_Stungun::FireStunGun()
 
 }
 
+void AInteractable_Stungun::BindInteractableInput()
+{
+	ABase_Interactable::BindInteractableInput();
+	if (const APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0))
+	{
+
+		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PC->InputComponent))
+		{
+			switch (GetGrabComponent()->GetHeldByHand())
+			{
+			case EControllerHand::Left:
+				UE_LOG(LogTemp, Warning, TEXT("LEFT Fire Bound"));
+				EnhancedInputComponent->BindAction(m_FireActions->InputLeftTrigger, ETriggerEvent::Triggered, this, &AInteractable_Stungun::FireStunGun);
+				break;
+			case EControllerHand::Right:
+				if (m_FireActions->InputRightTrigger != nullptr)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("RIGHT Fire Bound"));
+					EnhancedInputComponent->BindAction(m_FireActions->InputRightTrigger, ETriggerEvent::Triggered, this, &AInteractable_Stungun::FireStunGun);
+				}
+				else
+				{
+					UE_LOG(LogTemp, Error, TEXT("RIGHT Fire not bound"));
+				}
+				break;
+			}
+
+
+		}
+	}
+}
+
+void AInteractable_Stungun::UnbindInput()
+{
+	ABase_Interactable::UnbindInput();
+
+}
+
 bool AInteractable_Stungun::LineTraceMethod(FHitResult& OutHit, const FVector& StartLocation, const FVector& EndLocation)
 {
 	FCollisionQueryParams CollisionParams;
 	CollisionParams.AddIgnoredActor(this);
 
-#if WITH_EDITOR
+
 	DrawDebugLine(GetWorld(), StartLocation, StartLocation + EndLocation, FColor(128, 0, 128), false, 4.f, 10.f, 5.f);
-#endif
 
 	return (GetWorld()->LineTraceSingleByChannel(OutHit, StartLocation, StartLocation + EndLocation, ECC_Visibility, CollisionParams)); // performs a line trace between the starting point and where it should end
 

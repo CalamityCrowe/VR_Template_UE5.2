@@ -24,6 +24,7 @@ UVR_GrabComponent::UVR_GrabComponent()
 
 	bisHeld = false;
 
+
 	grabType = GrabTypes::None;
 	// ...
 }
@@ -66,22 +67,22 @@ void UVR_GrabComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 void UVR_GrabComponent::HandleOnGrabbed()
 {
 	// calls the delegate 
-	if (OnGrabbedDelegate.ExecuteIfBound())
+
+
+	if (OnGrabbedDelegate.IsBound())
 	{
-#if WITH_EDITOR
-		GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::Emerald, TEXT("On Grabbed Delegate Called"));
-#endif
+		OnGrabbedDelegate.Broadcast();
+		UE_LOG(LogTemp, Warning, TEXT("On Grabbed Delegate Called"));
 	}
 }
 
 void UVR_GrabComponent::HandleOnDropped()
 {
 
-	if (OnDroppedDelegate.ExecuteIfBound())
+	if (OnDroppedDelegate.IsBound())
 	{
-#if WITH_EDITOR
-		GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::Emerald, TEXT("On Dropped Delegate Called"));
-#endif	
+		OnDroppedDelegate.Broadcast();
+		UE_LOG(LogTemp, Warning, TEXT("On Dropped Delegate Called"));
 	}
 }
 
@@ -89,9 +90,7 @@ void UVR_GrabComponent::HandleOnDropped()
 
 bool UVR_GrabComponent::TryGrab(UMotionControllerComponent* MotionController)
 {
-#if WITH_EDITOR
-	GEngine->AddOnScreenDebugMessage(2, 10, FColor::Blue, TEXT("I Am in Try Grab"));
-#endif
+	UE_LOG(LogTemp, Warning, TEXT("Try Grab Called"));
 	switch (grabType)
 	{
 	case GrabTypes::None:
@@ -101,9 +100,7 @@ bool UVR_GrabComponent::TryGrab(UMotionControllerComponent* MotionController)
 		SetPrimativeCompPhysics(false);
 		AttachParentToController(MotionController);
 		bisHeld = true;
-#if WITH_EDITOR
-		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Blue, TEXT("Held Free"));
-#endif
+		UE_LOG(LogTemp, Warning, TEXT("Held Free"));
 		break;
 
 	}
@@ -115,7 +112,7 @@ bool UVR_GrabComponent::TryGrab(UMotionControllerComponent* MotionController)
 
 		const FRotator invertedRotation = UKismetMathLibrary::NegateRotator(GetRelativeRotation());
 
-		SetRelativeRotation(invertedRotation, false, nullptr, ETeleportType::TeleportPhysics);
+		SetRelativeRotation(invertedRotation); // sets the rotation of the object to the inverse of the rotation of the object
 
 		const FVector ParentLocation = GetAttachParent()->GetComponentLocation(); // gets the location of the parent
 
@@ -123,10 +120,10 @@ bool UVR_GrabComponent::TryGrab(UMotionControllerComponent* MotionController)
 
 		newLocation = MotionController->GetComponentLocation() + newLocation; // sets the new location based on the motion controllers location + an offset
 
-		SetWorldLocation(newLocation, false, nullptr, ETeleportType::TeleportPhysics); // sets the world location of the object to the new location
-#if WITH_EDITOR
-		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Blue, TEXT("Held Snap"));
-#endif
+		SetWorldLocation(newLocation); // sets the world location of the object to the new location
+
+		//SetWorldLocation(newLocation, false, nullptr, ETeleportType::TeleportPhysics); // sets the world location of the object to the new location
+		UE_LOG(LogTemp, Warning, TEXT("Held Snap"));
 
 		break;
 	}
@@ -139,9 +136,7 @@ bool UVR_GrabComponent::TryGrab(UMotionControllerComponent* MotionController)
 
 	if (bisHeld == false)
 	{
-#if WITH_EDITOR
-		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Blue, TEXT("Not Held"));
-#endif
+		UE_LOG(LogTemp, Warning, TEXT("Not Held"));
 		return false; // basically says that the object is not held by the user
 	}
 	MotionControllerReference = MotionController; // assigns a reference to the motion controller
@@ -152,11 +147,10 @@ bool UVR_GrabComponent::TryGrab(UMotionControllerComponent* MotionController)
 	if (APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0))
 	{
 		PC->PlayHapticEffect(OnGrabHapticFeedback, GetHeldByHand(), 1, false);  // plays the haptic feedback effect on the controller
+		UE_LOG(LogTemp, Warning, TEXT("Haptic Effect Played"));
 
 	}
-#if WITH_EDITOR
-	GEngine->AddOnScreenDebugMessage(-0, 1, FColor::Blue, TEXT("Held"));
-#endif
+	UE_LOG(LogTemp, Warning, TEXT("Held"));
 	return true;
 }
 
@@ -175,16 +169,12 @@ bool UVR_GrabComponent::TryRelease()
 		if (bisSimulatedOnDrop)
 		{
 			SetPrimativeCompPhysics(true);
-#if WITH_EDITOR
-			GEngine->AddOnScreenDebugMessage(50, 20, FColor::Silver, TEXT("Simulated Physics"));
-#endif
+			UE_LOG(LogTemp, Warning, TEXT("Released From Hand"));
 		}
 		else
 		{
 			GetAttachParent()->DetachFromComponent(*detachRules);
-#if WITH_EDITOR
-			GEngine->AddOnScreenDebugMessage(64, 10, FColor::Green, TEXT("Released From Hand AAAAAAAAAAAAAAAAAAAAAAAA"));
-#endif
+			UE_LOG(LogTemp, Warning, TEXT("Released From Hand"));
 		}
 
 		bisHeld = false;
@@ -207,6 +197,7 @@ bool UVR_GrabComponent::TryRelease()
 
 void UVR_GrabComponent::SetShouldSimulateDrop()
 {
+
 	if (UPrimitiveComponent* PrimComponent = Cast<UPrimitiveComponent>(GetAttachParent()))
 	{
 		if (PrimComponent->IsAnySimulatingPhysics())
@@ -222,24 +213,23 @@ void UVR_GrabComponent::SetPrimativeCompPhysics(bool isSimulated)
 	{
 		PrimComponent->SetSimulatePhysics(isSimulated);  // sets the physics of the component
 	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No Primitive Component Found For Setting Comp Physics"));
+	}
+
 }
 
 EControllerHand UVR_GrabComponent::GetHeldByHand()
 {
 	if (MotionControllerReference->MotionSource == FName(TEXT("Left"))) // checks if it is the left hand that has grabbed the object
 	{
-#if WITH_EDITOR
-
-		GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::Cyan, TEXT("Left Hand"));
-#endif
+		UE_LOG(LogTemp, Warning, TEXT("Left Hand"));
 		return EControllerHand::Left;  // returns the value of the left hand 
 	}
 	else
 	{
-#if WITH_EDITOR
-
-		GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::Cyan, TEXT("Right Hand"));
-#endif
+		UE_LOG(LogTemp, Warning, TEXT("Right Hand"));
 		return EControllerHand::Right; // returns the value of the right hand
 	}
 }
@@ -249,9 +239,8 @@ void UVR_GrabComponent::AttachParentToController(UMotionControllerComponent* Mot
 
 	if (GetAttachParent()->AttachToComponent(MotionController, FAttachmentTransformRules::KeepWorldTransform, FName(TEXT("None"))))
 	{
-#if WITH_EDITOR
-		GEngine->AddOnScreenDebugMessage(10, 10, FColor::Yellow, TEXT("I am Attached"));
-#endif
+		UE_LOG(LogTemp, Warning, TEXT("Attached To Controller"));
+
 	}
 }
 

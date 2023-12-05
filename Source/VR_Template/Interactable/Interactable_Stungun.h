@@ -22,13 +22,19 @@ public:
 protected:
 
 	virtual void BeginPlay() override;
-
+	UFUNCTION()
 	void FireStunGun();
+
+	virtual void BindInteractableInput() override;
+
+	virtual void UnbindInput() override;
 
 private:
 
 	bool LineTraceMethod(FHitResult& OutHit,const FVector& StartLocation, const FVector& EndLocation);
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Arrow", meta = (AllowPrivateAccess = true))
 	TObjectPtr<class UArrowComponent> FireDirection;
+
+
 
 };

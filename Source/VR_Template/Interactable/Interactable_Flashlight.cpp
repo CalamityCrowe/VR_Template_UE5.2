@@ -35,17 +35,17 @@ AInteractable_Flashlight::AInteractable_Flashlight()
 
 	// used for loading in the objects based on their type
 	LoadDataTable(EObjectType::Light);
-
+	LoadHapticEffects(EObjectType::Light);
 
 
 }
 
 void AInteractable_Flashlight::BeginPlay()
 {
-	ABase_Interactable::BeginPlay();
+	Super::BeginPlay();
 
-	GetGrabComponent()->OnGrabbedDelegate.BindUObject(this, &AInteractable_Flashlight::BindInteractableInput);
-	GetGrabComponent()->OnDroppedDelegate.BindUObject(this, &AInteractable_Flashlight::UnbindInput);
+	GetGrabComponent()->OnGrabbedDelegate.AddUObject(this, &AInteractable_Flashlight::BindInteractableInput);
+	GetGrabComponent()->OnDroppedDelegate.AddUObject(this, &AInteractable_Flashlight::UnbindInput);
 }
 
 void AInteractable_Flashlight::Tick(float Delta)
@@ -87,7 +87,7 @@ void AInteractable_Flashlight::BindInteractableInput()
 			{
 				EnhancedInputComponent->BindAction(m_FireActions->InputLeftTrigger, ETriggerEvent::Triggered, this, &AInteractable_Flashlight::ToggleFlashlight);
 			}
-			else
+			else if (GetGrabComponent()->GetHeldByHand() == EControllerHand::Right)
 			{
 				EnhancedInputComponent->BindAction(m_FireActions->InputRightTrigger, ETriggerEvent::Triggered, this, &AInteractable_Flashlight::ToggleFlashlight);
 

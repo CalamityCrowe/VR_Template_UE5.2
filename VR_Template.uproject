@@ -17,22 +17,36 @@
 	],
 	"Plugins": [
 		{
+			"Name": "XRVisualization",
+			"Enabled": false
+		},
+		{
+			"Name": "ResonanceAudio",
+			"Enabled": true
+		},
+		{
 			"Name": "OpenXR",
 			"Enabled": true,
 			"SupportedTargetPlatforms": [
 				"Win64",
 				"Linux",
 				"Android",
-				"HoloLens"
+				"HoloLens",
+				"PS5"
 			]
 		},
 		{
-			"Name": "OculusVR",
-			"Enabled": true,
+			"Name": "SteamVR",
+			"Enabled": false,
 			"SupportedTargetPlatforms": [
+				"Win32",
 				"Win64",
-				"Android"
+				"Linux"
 			]
+		},
+		{
+			"Name": "EditorScriptingUtilities",
+			"Enabled": true
 		},
 		{
 			"Name": "ModelingToolsEditorMode",
@@ -48,6 +62,17 @@
 		},
 		{
 			"Name": "Volumetrics",
+			"Enabled": true
+		},
+		{
+			"Name": "FireAnt",
+			"Enabled": true,
+			"SupportedTargetPlatforms": [
+				"PS5"
+			]
+		},
+		{
+			"Name": "AudioReflectionsPS5",
 			"Enabled": true
 		}
 	],

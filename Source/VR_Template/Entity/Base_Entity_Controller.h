@@ -6,6 +6,8 @@
 #include "AIController.h"
 #include "Base_Entity_Controller.generated.h"
 
+class ABase_Entity;
+
 /**
  *
  */
@@ -27,5 +29,12 @@ public: // for the functions
 
 
 protected: // for variables
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+	TObjectPtr<AActor> TargetActorReference;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI")
+	TObjectPtr<ABase_Entity> ControlledPawnReference; // for the pawn reference
+
 
 };

@@ -39,7 +39,7 @@ public:
 
 protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Entity", meta = (AllowPrivateAccess = true))
-	TEnumAsByte<EEntityState> EntityState;
+	EEntityState EntityState;
 
 	UFUNCTION(BlueprintCallable, Category = "Entity")
 	void HandleAnimations(); 

@@ -8,8 +8,8 @@
 
 
 // NEED TO DECLARE A CUSTOM EVENT DISPATCHER FOR THE ON GRABBED AND DROPPED FUNCTIONS
-DECLARE_DELEGATE(FOnGrabbedDelegate);
-DECLARE_DELEGATE(FOnDroppedDelegate);
+DECLARE_MULTICAST_DELEGATE(FOnGrabbedDelegate);
+DECLARE_MULTICAST_DELEGATE(FOnDroppedDelegate);
 
 UENUM()
 enum class GrabTypes : uint8
@@ -40,7 +40,7 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	EControllerHand GetHeldByHand();
-
+	
 	FOnGrabbedDelegate OnGrabbedDelegate;
 	FOnDroppedDelegate OnDroppedDelegate;
 

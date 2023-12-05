@@ -8,8 +8,11 @@ public class VR_TemplateEditorTarget : TargetRules
 	public VR_TemplateEditorTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Editor;
-		DefaultBuildSettings = BuildSettingsVersion.V2;
-		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_2;
-		ExtraModuleNames.AddRange( new string[] { "VR_Template" } );
+		DefaultBuildSettings = BuildSettingsVersion.Latest;
+		IncludeOrderVersion = EngineIncludeOrderVersion.Latest;
+		bWarningsAsErrors = true;
+        bOverrideBuildEnvironment = true;
+
+        ExtraModuleNames.AddRange( new string[] { "VR_Template" } );
 	}
 }

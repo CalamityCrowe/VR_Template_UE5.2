@@ -19,5 +19,7 @@ public:
 public: 
 	virtual void StartPlay() override; 
 
+protected:
+	virtual void Tick(float) override; 
 
 };

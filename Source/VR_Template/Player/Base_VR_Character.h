@@ -21,7 +21,9 @@ private:
 #pragma region Function Decleration
 	void AllignColliderToHMD();
 	UFUNCTION()
-	void MovePlayer(const FInputActionValue& Value);
+	void VerticalMovement(const FInputActionValue& Value);
+	UFUNCTION()
+	void HorizontalMovement(const FInputActionValue& Value);
 	UFUNCTION()
 	void TurnPlayer(const FInputActionValue& Value);
 	UFUNCTION()
@@ -33,6 +35,8 @@ private:
 	UFUNCTION()
 	void ReleaseObjectRight(const FInputActionValue& Value);
 #pragma endregion
+
+
 
 #pragma region Variable Decleration
 	UPROPERTY(Category = "Camera", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
@@ -81,5 +85,7 @@ public:
 
 	UFUNCTION()
 	class UVR_GrabComponent* GetGrabComponentNearController(UMotionControllerComponent* controllerReference);
+
+
 
 };

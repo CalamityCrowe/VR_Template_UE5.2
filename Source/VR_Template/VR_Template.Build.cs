@@ -6,11 +6,19 @@ public class VR_Template : ModuleRules
 {
     public VR_Template(ReadOnlyTargetRules Target) : base(Target)
     {
+        bAllowConfidentialPlatformDefines = true;
+
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
         PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "NavigationSystem" });
 
         PrivateDependencyModuleNames.AddRange(new string[] { "HeadMountedDisplay" });
+
+        //if (Target.Platform == UnrealTargetPlatform.PS5) 
+        //{
+        //    PrivateDependencyModuleNames.Add("FlexibleScaledRasterization");
+
+        //}
 
         // Uncomment if you are using Slate UI
         // PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });

@@ -14,12 +14,15 @@ ABase_Entity::ABase_Entity()
 	auto LoadedMesh = ConstructorHelpers::FObjectFinder<USkeletalMesh>(TEXT("SkeletalMesh'/Game/UndeadPack/Lich/Mesh/SK_Lich.SK_Lich'"));
 	GetMesh()->SetSkeletalMesh(LoadedMesh.Object);
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-	auto AnimationBP = ConstructorHelpers::FObjectFinder<UAnimBlueprint>(TEXT("AnimBlueprint'/Game/UndeadPack/Lich/Animations/ABP_Lich.ABP_Lich'"));
-	GetMesh()->SetAnimInstanceClass(AnimationBP.Object->GeneratedClass);
+	//else
+		//UE_LOG(LogTemp, Error, TEXT("ENTITY DOTH NOT EXSHISTH"))
+
+	//	FString path = FPaths::GetPath("ABP_Lich");
+		//UE_LOG(LogTemp, Warning, TEXT("%s"), *path);
 	GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, -90.0f));
 
-	GetMesh()->SetRelativeRotation(FRotator(0.0f, 90.0f, 0.0f));
-
+	GetMesh()->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
+	
 	EntityState = EEntityState::Idle;
 	Health = 100.0f;
 
@@ -36,26 +39,26 @@ void ABase_Entity::BeginPlay()
 
 	if(StunCurve != NULL)
 	{
-		StunTimeline = NewObject<UTimelineComponent>(this, FName("TimelineAnimation"));
-		StunTimeline->CreationMethod = EComponentCreationMethod::UserConstructionScript;
-		this->BlueprintCreatedComponents.Add(StunTimeline);
-		StunTimeline->SetNetAddressable();
+		//StunTimeline = NewObject<UTimelineComponent>(this, FName("TimelineAnimation"));
+		//StunTimeline->CreationMethod = EComponentCreationMethod::UserConstructionScript;
+		//this->BlueprintCreatedComponents.Add(StunTimeline);
+		//StunTimeline->SetNetAddressable();
 
-		StunTimeline->SetPropertySetObject(this);
-		StunTimeline->SetDirectionPropertyName(FName("TimelineDirection"));
+		//StunTimeline->SetPropertySetObject(this);
+		//StunTimeline->SetDirectionPropertyName(FName("TimelineDirection"));
 
-		StunTimeline->SetLooping(false);
-		StunTimeline->SetTimelineLength(5.0f);
-		StunTimeline->SetTimelineLengthMode(ETimelineLengthMode::TL_LastKeyFrame);
+		//StunTimeline->SetLooping(false);
+		//StunTimeline->SetTimelineLength(5.0f);
+		//StunTimeline->SetTimelineLengthMode(ETimelineLengthMode::TL_LastKeyFrame);
 
-		StunTimeline->SetPlaybackPosition(0.0f, false);
+		//StunTimeline->SetPlaybackPosition(0.0f, false);
 
-		onTimelineCallback.BindUFunction(this, FName{ TEXT("TimelineCallback") });
-		onTimelineFinishedCallback.BindUFunction(this, FName{ TEXT("TimelineFinishedCallback") });
-		StunTimeline->AddInterpFloat(StunCurve, onTimelineCallback);
-		StunTimeline->SetTimelineFinishedFunc(onTimelineFinishedCallback);
+		//onTimelineCallback.BindUFunction(this, FName{ TEXT("TimelineCallback") });
+		//onTimelineFinishedCallback.BindUFunction(this, FName{ TEXT("TimeLineFinishedCallback") });
+		//StunTimeline->AddInterpFloat(StunCurve, onTimelineCallback);
+		//StunTimeline->SetTimelineFinishedFunc(onTimelineFinishedCallback);
 
-		StunTimeline->RegisterComponent();
+		//StunTimeline->RegisterComponent();
 	}
 
 

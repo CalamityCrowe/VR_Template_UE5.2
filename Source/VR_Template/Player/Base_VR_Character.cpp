@@ -23,6 +23,8 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
 
+
+
 #pragma endregion
 
 // Sets default values
@@ -53,7 +55,7 @@ ABase_VR_Character::ABase_VR_Character()
 	HandLeft->SetSkeletalMesh(MeshAsset.Object);
 	HandLeft->SetRelativeLocation(FVector(-2.98126, -3.5, 4.561753));
 	HandLeft->SetRelativeRotation(FRotator(-25, -179.999908, 89.99998));
-	HandLeft->bisMirrored = true;
+	HandLeft->Mirror = true;
 
 
 	MeshAsset = ConstructorHelpers::FObjectFinder<USkeletalMesh>(TEXT("SkeletalMesh'/Game/Characters/MannequinsXR/Meshes/SKM_MannyXR_right.SKM_MannyXR_right'"));
@@ -62,7 +64,7 @@ ABase_VR_Character::ABase_VR_Character()
 	HandRight->SetSkeletalMesh(MeshAsset.Object);
 	HandRight->SetRelativeLocation(FVector(-2.98126, 3.5, 4.561753));
 	HandRight->SetRelativeRotation(FRotator(-25, 0, 89.999999));
-	HandRight->bisMirrored = false;
+	HandRight->Mirror = false;
 
 
 }
@@ -71,7 +73,18 @@ ABase_VR_Character::ABase_VR_Character()
 void ABase_VR_Character::BeginPlay()
 {
 	Super::BeginPlay();
+#if PLATFORM_WINDOWS
+	for (int i = 0; i < 10; i++) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Running on Windows"));
+	}
 
+#elif PLATFORM_PS5
+	for (int i = 0; i < 10; i++)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Running on other device"));
+	}
+#endif
 }
 
 // Called every frame
@@ -79,6 +92,11 @@ void ABase_VR_Character::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	AllignColliderToHMD(); // used for alligning the headset to the collision when moving
+
+
+
+
+	//UE_LOG(LogTemp, Warning, TEXT("Actor Location: %s"), *GetActorLocation().ToString());
 }
 
 // Called to bind functionality to input
@@ -125,7 +143,8 @@ void ABase_VR_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 		if (UInputConfigData* PlayerActions = Cast<UInputConfigData>(InputActions))
 		{
-			PEI->BindAction(PlayerActions->InputLeftAnalog, ETriggerEvent::Triggered, this, &ABase_VR_Character::MovePlayer); // binds the movement to the player 
+			PEI->BindAction(PlayerActions->InputLeftAnalog_X, ETriggerEvent::Triggered, this, &ABase_VR_Character::HorizontalMovement); // binds the movement to the player 
+			PEI->BindAction(PlayerActions->InputLeftAnalog_Y, ETriggerEvent::Triggered, this, &ABase_VR_Character::VerticalMovement); // binds the movement to the player 
 			PEI->BindAction(PlayerActions->InputRightAnalog, ETriggerEvent::Triggered, this, &ABase_VR_Character::TurnPlayer); // binds the rotation to the player 
 
 #pragma region Grab Components
@@ -133,6 +152,8 @@ void ABase_VR_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 			PEI->BindAction(PlayerActions->InputLeftGrip, ETriggerEvent::Completed, this, &ABase_VR_Character::ReleaseObjectLeft);
 			PEI->BindAction(PlayerActions->InputRightGrip, ETriggerEvent::Started, this, &ABase_VR_Character::GrabObjectRight);
 			PEI->BindAction(PlayerActions->InputRightGrip, ETriggerEvent::Completed, this, &ABase_VR_Character::ReleaseObjectRight);
+
+
 #pragma endregion
 
 		}
@@ -156,36 +177,39 @@ void ABase_VR_Character::AllignColliderToHMD()
 	}
 }
 
-void ABase_VR_Character::MovePlayer(const FInputActionValue& Value)
+void ABase_VR_Character::VerticalMovement(const FInputActionValue& Value)
 {
-	FVector2D MovementVector = Value.Get<FVector2D>(); // gets the axis value from the input value
+	if (Controller != nullptr)
+	{
+		float MovementScale = Value.Get<float>(); // gets the axis value from the input value
 
-#if WITH_EDITOR
-	GEngine->AddOnScreenDebugMessage(0, 0.1f, FColor::Yellow, FString::Printf(TEXT("CONTROLLER: %f , %f"), MovementVector.X, MovementVector.Y));
-#endif
+		GEngine->AddOnScreenDebugMessage(0, 0.1f, FColor::Yellow, FString::Printf(TEXT("CONTROLLER Y: %f "), MovementScale));
 
-	// applies the movement to the characters movement components based on the forward vector
-	AddMovementInput(Camera->GetForwardVector(), MovementVector.Y);
-	AddMovementInput(Camera->GetRightVector(), MovementVector.X);
+		AddMovementInput(Camera->GetForwardVector(), MovementScale/2); // applies the movement to the characters movement components based on the up vector
+	}
+}
 
-#if WITH_EDITOR
-	GEngine->AddOnScreenDebugMessage(0, 0.1f, FColor::Yellow, FString::Printf(TEXT("CONTROLLER NULL")));
-#endif
+void ABase_VR_Character::HorizontalMovement(const FInputActionValue& Value)
+{
+	if (Controller != nullptr)
+	{
+		float MovementScale = Value.Get<float>(); // gets the axis value from the input value 
+
+		GEngine->AddOnScreenDebugMessage(0, 0.1f, FColor::Yellow, FString::Printf(TEXT("CONTROLLER X: %f "), MovementScale));
+
+		AddMovementInput(Camera->GetRightVector(), MovementScale /2); // applies the movement to the characters movement components based on the right vector
+	}
 }
 
 void ABase_VR_Character::TurnPlayer(const FInputActionValue& Value)
 {
 	if (Controller != nullptr) // checks if the controller is valid
 	{
-		const FVector2D TurnRate = Value.Get<FVector2D>(); // gets the vector 2d from the input action 
+		const float TurnRate = Value.Get<float>(); // gets the vector 2d from the input action 
 
-		if (TurnRate.Y != 0) // checks if the y axis is not 0, this means that the mouse or whatever the input is has moved slightly for it to register a vertical input
+		if (TurnRate != 0)  // checks if the x axis is not 0, this means that the mouse or whatever the input is has moved slightly for it to register a horizontal input
 		{
-			AddControllerPitchInput(TurnRate.Y); // applies the vertical input of the mouse into the controller pitch input
-		}
-		if (TurnRate.X != 0)  // checks if the x axis is not 0, this means that the mouse or whatever the input is has moved slightly for it to register a horizontal input
-		{
-			AddControllerYawInput(TurnRate.X); // applies the horizontal input of the mouse into the controller yaw input
+			AddControllerYawInput(TurnRate /2); // applies the horizontal input of the mouse into the controller yaw input
 		}
 	}
 }
@@ -221,9 +245,9 @@ void ABase_VR_Character::ReleaseObjectLeft(const FInputActionValue& Value)
 		if (HeldLeft->TryRelease()) // checks if try release is true 
 		{
 			HeldLeft = nullptr; // sets the held left to nullptr
-#if WITH_EDITOR
+
 			GEngine->AddOnScreenDebugMessage(100, 20, FColor::Yellow, TEXT("Left Release"));
-#endif
+
 		}
 	}
 }
@@ -235,9 +259,9 @@ void ABase_VR_Character::ReleaseObjectRight(const FInputActionValue& Value)
 		if (HeldRight->TryRelease()) // checks if try release is true 
 		{
 			HeldRight = nullptr; // sets the held right to nullptr
-#if WITH_EDITOR
+
 			GEngine->AddOnScreenDebugMessage(100, 20, FColor::Purple, TEXT("Right Release"));
-#endif
+
 		}
 	}
 }
