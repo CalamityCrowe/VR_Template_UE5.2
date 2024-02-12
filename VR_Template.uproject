@@ -63,17 +63,6 @@
 		{
 			"Name": "Volumetrics",
 			"Enabled": true
-		},
-		{
-			"Name": "FireAnt",
-			"Enabled": true,
-			"SupportedTargetPlatforms": [
-				"PS5"
-			]
-		},
-		{
-			"Name": "AudioReflectionsPS5",
-			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [
