@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "{154F59C9-44B1-C8A1-3FB9-26A7F659DBBF}",
+	"EngineAssociation": "UE5.2.1",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -62,6 +62,17 @@
 		{
 			"Name": "Volumetrics",
 			"Enabled": true
+		},
+		{
+			"Name": "AudioReflectionsPS5",
+			"Enabled": true
+		},
+		{
+			"Name": "FireAnt",
+			"Enabled": true,
+			"SupportedTargetPlatforms": [
+				"PS5"
+			]
 		}
 	],
 	"TargetPlatforms": [

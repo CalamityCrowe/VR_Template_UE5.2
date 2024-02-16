@@ -8,6 +8,7 @@
 
 class USoundCue;
 class UCapsuleComponent;
+class USplineComponent;
 
 UCLASS()
 class VR_TEMPLATE_API AAudio_Actor : public AActor
@@ -34,16 +35,25 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Audio", meta = (AllowPrivateAccess = true))
 	TObjectPtr<UAudioComponent> AudioPlayer;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Audio", meta = (AllowPrivateAccess = true))
-	TObjectPtr<USoundCue> SoundEffect;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Actor Reference", meta = (AllowPrivateAccess = true))
 	TObjectPtr<AAudio_Actor> NextActor;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Actor Reference", meta = (AllowPrivateAccess = true))
+	TObjectPtr<USplineComponent> SplineReference;
 
 
 	UPROPERTY(EditAnywhere, Category = "bools", meta = (AllowPrivateAccess = true));
-	bool bCollected;
+	bool bActive;
 	UPROPERTY(EditAnywhere, Category = "bools", meta = (AllowPrivateAccess = true));
 	bool bLast;
+	UPROPERTY(EditAnywhere, Category = "bools", meta = (AllowPrivateAccess = true));
+	bool bMoveable;
 
+	int CurrentSplineIndex;
+
+	UFUNCTION()
+	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+
+	void ActivateActor();
 };
