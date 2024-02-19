@@ -73,6 +73,10 @@
 			"SupportedTargetPlatforms": [
 				"PS5"
 			]
+		},
+		{
+			"Name": "Audio3D",
+			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [
