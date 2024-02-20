@@ -2,8 +2,7 @@
 
 
 #include "SplineActor.h"
-#include "Components/SplineMeshComponent.h"
-
+#include "Components/SplineComponent.h"
 
 // Sets default values
 ASplineActor::ASplineActor()
@@ -12,7 +11,7 @@ ASplineActor::ASplineActor()
 	PrimaryActorTick.bCanEverTick = true;
 
 
-	SplineMesh = CreateOptionalDefaultSubobject<USplineMeshComponent>(TEXT("Spline Mesh"));
+	SplineMesh = CreateOptionalDefaultSubobject<USplineComponent>(TEXT("Spline Mesh"));
 	RootComponent = SplineMesh; 
 
 }

@@ -8,6 +8,8 @@
 #include "Components/SplineComponent.h"
 #include "VR_Template/Player/Base_VR_Character.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "VR_Template/SplineActor.h"
+#include "Components/SplineComponent.h"
 
 // Sets default values
 AAudio_Actor::AAudio_Actor()
@@ -36,6 +38,8 @@ AAudio_Actor::AAudio_Actor()
 	bMoveable = false;
 
 	CurrentSplineIndex = 0;
+
+	InterpSpeed = 100;
 }
 
 // Called when the game starts or when spawned
@@ -52,10 +56,10 @@ void AAudio_Actor::Tick(float DeltaTime)
 
 	if (bMoveable && SplineReference && bActive)
 	{
-		if (GetActorLocation().Length() - SplineReference->GetTransformAtSplinePoint(CurrentSplineIndex, ESplineCoordinateSpace::World).GetLocation().Length() < 20)
+		if (abs(SplineReference->GetSplineMesh()->GetTransformAtSplinePoint(CurrentSplineIndex, ESplineCoordinateSpace::World).GetLocation().Length()) - abs(GetActorLocation().Length()) == 0)
 		{
 			CurrentSplineIndex++;
-			if (CurrentSplineIndex > SplineReference->GetNumberOfSplinePoints())
+			if (CurrentSplineIndex > SplineReference->GetSplineMesh()->GetNumberOfSplinePoints())
 			{
 				CurrentSplineIndex = 0;
 			}
@@ -63,9 +67,9 @@ void AAudio_Actor::Tick(float DeltaTime)
 		else
 		{
 			FVector CurrentLocation = GetActorLocation();
-			FVector TargetLocation = SplineReference->GetTransformAtSplinePoint(CurrentSplineIndex, ESplineCoordinateSpace::World).GetLocation();
-			UKismetMathLibrary::VInterpTo(CurrentLocation, TargetLocation, DeltaTime, 5.0f);
-
+			FVector TargetLocation = SplineReference->GetSplineMesh()->GetTransformAtSplinePoint(CurrentSplineIndex, ESplineCoordinateSpace::World).GetLocation();
+			FVector newLoc = UKismetMathLibrary::VInterpTo_Constant(CurrentLocation, TargetLocation, DeltaTime, InterpSpeed);
+			SetActorLocation(newLoc);
 		}
 	}
 

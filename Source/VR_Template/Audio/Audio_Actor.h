@@ -9,6 +9,7 @@
 class USoundCue;
 class UCapsuleComponent;
 class USplineComponent;
+class ASplineActor;
 
 UCLASS()
 class VR_TEMPLATE_API AAudio_Actor : public AActor
@@ -38,8 +39,8 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Actor Reference", meta = (AllowPrivateAccess = true))
 	TObjectPtr<AAudio_Actor> NextActor;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Actor Reference", meta = (AllowPrivateAccess = true))
-	TObjectPtr<USplineComponent> SplineReference;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Actor Reference", meta = (AllowPrivateAccess = true))
+	TObjectPtr<ASplineActor> SplineReference;
 
 
 	UPROPERTY(EditAnywhere, Category = "bools", meta = (AllowPrivateAccess = true));
@@ -48,6 +49,8 @@ private:
 	bool bLast;
 	UPROPERTY(EditAnywhere, Category = "bools", meta = (AllowPrivateAccess = true));
 	bool bMoveable;
+	UPROPERTY(EditAnywhere, Category = "Speed", meta = (AllowPrivateAccess = true));
+	float InterpSpeed; 
 
 	int CurrentSplineIndex;
 

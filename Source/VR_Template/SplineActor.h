@@ -6,7 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "SplineActor.generated.h"
 
-class USplineMeshComponent;
+class USplineComponent;
 
 UCLASS()
 class VR_TEMPLATE_API ASplineActor : public AActor
@@ -26,8 +26,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
-	TObjectPtr<USplineMeshComponent> SplineMesh;
+	TObjectPtr<USplineComponent> SplineMesh;
 
 public:
-	TObjectPtr<USplineMeshComponent> GetSplineMesh() const { return SplineMesh; }
+	TObjectPtr<USplineComponent> GetSplineMesh() const { return SplineMesh; }
 };

@@ -31,7 +31,8 @@
 				"Win64",
 				"Linux",
 				"Android",
-				"HoloLens"
+				"HoloLens",
+				"PS5"
 			]
 		},
 		{
