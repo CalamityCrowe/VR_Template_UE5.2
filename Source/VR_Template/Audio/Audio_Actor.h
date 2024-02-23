@@ -10,6 +10,7 @@ class USoundCue;
 class UCapsuleComponent;
 class USplineComponent;
 class ASplineActor;
+class UNiagaraComponent; 
 
 UCLASS()
 class VR_TEMPLATE_API AAudio_Actor : public AActor
@@ -42,6 +43,9 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Actor Reference", meta = (AllowPrivateAccess = true))
 	TObjectPtr<ASplineActor> SplineReference;
 
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Niagara",meta = (AllowPrivateAccess = true))
+	TObjectPtr<UNiagaraComponent> NiagaraComponent;
+
 
 	UPROPERTY(EditAnywhere, Category = "bools", meta = (AllowPrivateAccess = true));
 	bool bActive;
@@ -50,9 +54,10 @@ private:
 	UPROPERTY(EditAnywhere, Category = "bools", meta = (AllowPrivateAccess = true));
 	bool bMoveable;
 	UPROPERTY(EditAnywhere, Category = "Speed", meta = (AllowPrivateAccess = true));
-	float InterpSpeed; 
+	float InterpSpeed;
 
-	int CurrentSplineIndex;
+
+	float Time; 
 
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

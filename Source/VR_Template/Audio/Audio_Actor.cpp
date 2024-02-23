@@ -10,6 +10,8 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "VR_Template/SplineActor.h"
 #include "Components/SplineComponent.h"
+#include "NiagaraComponent.h"
+
 
 // Sets default values
 AAudio_Actor::AAudio_Actor()
@@ -29,15 +31,14 @@ AAudio_Actor::AAudio_Actor()
 	AudioPlayer = CreateOptionalDefaultSubobject<UAudioComponent>(TEXT("Audio Player"));
 	AudioPlayer->SetupAttachment(RootComponent);
 
-	auto SoundFile = ConstructorHelpers::FObjectFinder<USoundBase>(TEXT("SoundCue'/Game/Assets/SoundCue.SoundCue'"));
-	AudioPlayer->SetSound(SoundFile.Object);
+	NiagaraComponent = CreateOptionalDefaultSubobject<UNiagaraComponent>(TEXT("Niagara Component"));
+	NiagaraComponent->SetupAttachment(RootComponent);
 
 
 	bLast = false;
 	bActive = false;
 	bMoveable = false;
 
-	CurrentSplineIndex = 0;
 
 	InterpSpeed = 100;
 }
@@ -46,7 +47,20 @@ AAudio_Actor::AAudio_Actor()
 void AAudio_Actor::BeginPlay()
 {
 	Super::BeginPlay();
-
+	if (!bActive)
+	{
+		Mesh->SetVisibility(false);
+		Collider->Deactivate();
+		AudioPlayer->Stop();
+		NiagaraComponent->Deactivate();
+	}
+	else
+	{
+		if (AudioPlayer->GetSound()) // checks if there is a sound file set on the audio component
+		{
+			AudioPlayer->Play(); // plays the audio 
+		}
+	}
 }
 
 // Called every frame
@@ -54,23 +68,28 @@ void AAudio_Actor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+
 	if (bMoveable && SplineReference && bActive)
 	{
-		if (abs(SplineReference->GetSplineMesh()->GetTransformAtSplinePoint(CurrentSplineIndex, ESplineCoordinateSpace::World).GetLocation().Length()) - abs(GetActorLocation().Length()) == 0)
-		{
-			CurrentSplineIndex++;
-			if (CurrentSplineIndex > SplineReference->GetSplineMesh()->GetNumberOfSplinePoints())
-			{
-				CurrentSplineIndex = 0;
-			}
-		}
-		else
-		{
-			FVector CurrentLocation = GetActorLocation();
-			FVector TargetLocation = SplineReference->GetSplineMesh()->GetTransformAtSplinePoint(CurrentSplineIndex, ESplineCoordinateSpace::World).GetLocation();
-			FVector newLoc = UKismetMathLibrary::VInterpTo_Constant(CurrentLocation, TargetLocation, DeltaTime, InterpSpeed);
-			SetActorLocation(newLoc);
-		}
+
+		Time = (Time >= 1) ? 0 : Time += (DeltaTime / InterpSpeed);
+		FVector newLocation = SplineReference->GetSplineMesh()->GetLocationAtTime(Time, ESplineCoordinateSpace::World);
+		SetActorLocation(newLocation);
+		//if (abs(SplineReference->GetSplineMesh()->GetTransformAtSplinePoint(CurrentSplineIndex, ESplineCoordinateSpace::World).GetLocation().Length()) - abs(GetActorLocation().Length()) == 0)
+		//{
+		//	CurrentSplineIndex++;
+		//	if (CurrentSplineIndex > SplineReference->GetSplineMesh()->GetNumberOfSplinePoints())
+		//	{
+		//		CurrentSplineIndex = 0;
+		//	}
+		//}
+		//else
+		//{
+		//	FVector CurrentLocation = GetActorLocation();
+		//	FVector TargetLocation = SplineReference->GetSplineMesh()->GetTransformAtSplinePoint(CurrentSplineIndex, ESplineCoordinateSpace::World).GetLocation();
+		//	FVector newLoc = UKismetMathLibrary::VInterpTo_Constant(CurrentLocation, TargetLocation, DeltaTime, InterpSpeed);
+		//	SetActorLocation(newLoc);
+		//}
 	}
 
 }
@@ -98,6 +117,7 @@ void AAudio_Actor::ActivateActor()
 	Mesh->SetVisibility(true);
 	Collider->Activate(true);
 	AudioPlayer->Activate(true);
+	NiagaraComponent->Activate(true);
 	bActive = true;
 }
 

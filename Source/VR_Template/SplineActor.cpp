@@ -12,7 +12,9 @@ ASplineActor::ASplineActor()
 
 
 	SplineMesh = CreateOptionalDefaultSubobject<USplineComponent>(TEXT("Spline Mesh"));
-	RootComponent = SplineMesh; 
+	RootComponent = SplineMesh;
+
+	SplineMesh->SetClosedLoop(true);
 
 }
 

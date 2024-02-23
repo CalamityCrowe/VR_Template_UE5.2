@@ -17,7 +17,8 @@ public class VR_Template : ModuleRules
             "InputCore",
             "EnhancedInput", 
             "NavigationSystem",
-            "CableComponent"
+            "CableComponent",
+            "Niagara"
         });
 
         PrivateDependencyModuleNames.AddRange(new string[] { "HeadMountedDisplay" });
