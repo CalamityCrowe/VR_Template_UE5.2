@@ -92,17 +92,15 @@ void ABase_Interactable::FindObjectData(EObjectType newObj)
 	}
 	if (FoundRow != nullptr)
 	{
+		m_ObjectTag = FoundRow->ObjectType; // this is used to determine the type of object at the found row
+		Mesh->SetStaticMesh(FoundRow->ObjectMesh); // this is used to set the mesh of the object at the found row
+		SetActorScale3D(FoundRow->ObjectScale); // this is used to set the scale of the object at the found row
+		GrabPoint->SetRelativeScale3D(FoundRow->GrabPointScale); // this is used to set the scale of the grab point at the found row
 
-		UE_LOG(LogTemp, Warning, TEXT("Found Row"));
-		m_ObjectTag = FoundRow->ObjectType;
-		Mesh->SetStaticMesh(FoundRow->ObjectMesh);
-		SetActorScale3D(FoundRow->ObjectScale);
-		GrabPoint->SetRelativeScale3D(FoundRow->GrabPointScale);
-
-		switch (m_ObjectTag)
+		switch (m_ObjectTag) // this is used to determine the grab type of the object at the found row
 		{
-		case EObjectType::None:
-			GrabPoint->SetGrabType(GrabTypes::None);
+		case EObjectType::None: 
+			GrabPoint->SetGrabType(GrabTypes::None); 
 			break;
 
 		case EObjectType::Gun:
@@ -114,9 +112,9 @@ void ABase_Interactable::FindObjectData(EObjectType newObj)
 			GrabPoint->SetGrabType(GrabTypes::Free);
 			break;
 		}
-		InputMappingContextLeft = FoundRow->ObjectInputMapLeft;
-		InputMappingContextRight = FoundRow->ObjectInputMapRight;
-		m_FireActions = FoundRow->ObjectFireInput;
+		InputMappingContextLeft = FoundRow->ObjectInputMapLeft; // this is used to set the input mapping context for the left hand at the found row
+		InputMappingContextRight = FoundRow->ObjectInputMapRight; // this is used to set the input mapping context for the right hand at the found row
+		m_FireActions = FoundRow->ObjectFireInput; // this is used to set the fire action for the object at the found row
 	}
 }
 
@@ -145,9 +143,14 @@ void ABase_Interactable::FindHapticData(EObjectType newObj)
 	}
 }
 
-void ABase_Interactable::BindInteractableInput()
+void ABase_Interactable::BindInteractableInput() 
 {
-
+	// THIS NEEDS FIXED TO HAVE THE INPUT SYSTEM WORKING ON GRAB
+	// as of right now the input doesn't get set correctly and this is due to the player not getting passed in to assign it to the correct hands input
+	// this is a problem with the input system and needs to be fixed
+	// this is a temporary fix to get the input system working
+	// this is a problem with the input system and needs to be fixed
+	// this is a temporary fix to get the input system working
 	if (APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0))
 	{
 		EnableInput(PC);
@@ -158,11 +161,9 @@ void ABase_Interactable::BindInteractableInput()
 				switch (GrabPoint->GetHeldByHand())
 				{
 				case EControllerHand::Left:
-					UE_LOG(LogTemp, Warning, TEXT("Left Hand Mapping Context Bound"));
 					InputSystem->AddMappingContext(InputMappingContextLeft, 0);
 					break;
 				case EControllerHand::Right:
-					UE_LOG(LogTemp, Warning, TEXT("Right Hand Mapping Context Bound"));
 					InputSystem->AddMappingContext(InputMappingContextRight, 0);
 					break;
 				default:
@@ -177,8 +178,8 @@ void ABase_Interactable::BindInteractableInput()
 
 void ABase_Interactable::UnbindInput()
 {
-
-	GEngine->AddOnScreenDebugMessage(0, 2.f, FColor::Red, TEXT("Detached Component, Base Interactable.cpp"));
+	 // this needs checked to make sure it does work as intended
+	// this might be the same problem as the bind input function where it needs the actual player in it first
 	if (APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0))
 	{
 		DisableInput(PC);

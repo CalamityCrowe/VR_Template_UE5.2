@@ -130,9 +130,9 @@ protected:
 	TObjectPtr<UDataTable> ObjectData;
 
 	UFUNCTION()
-	virtual void BindInteractableInput();
+	virtual void BindInteractableInput(); // this is what needs changed, it just needs the player reference passed in to fix it
 	UFUNCTION()
-	virtual void UnbindInput();
+	virtual void UnbindInput(); // this is what needs changed, it just needs the player reference passed in to fix it
 
 
 	void LoadDataTable(EObjectType);

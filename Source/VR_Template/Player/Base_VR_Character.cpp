@@ -79,7 +79,7 @@ void ABase_VR_Character::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("Running on Windows"));
 	}
 
-#elif PLATFORM_PS5
+#elif PLATFORM_PS5 
 	for (int i = 0; i < 10; i++)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Running on other device"));
@@ -148,10 +148,10 @@ void ABase_VR_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 			PEI->BindAction(PlayerActions->InputRightAnalog, ETriggerEvent::Triggered, this, &ABase_VR_Character::TurnPlayer); // binds the rotation to the player 
 
 #pragma region Grab Components
-			PEI->BindAction(PlayerActions->InputLeftGrip, ETriggerEvent::Started, this, &ABase_VR_Character::GrabObjectLeft);
-			PEI->BindAction(PlayerActions->InputLeftGrip, ETriggerEvent::Completed, this, &ABase_VR_Character::ReleaseObjectLeft);
-			PEI->BindAction(PlayerActions->InputRightGrip, ETriggerEvent::Started, this, &ABase_VR_Character::GrabObjectRight);
-			PEI->BindAction(PlayerActions->InputRightGrip, ETriggerEvent::Completed, this, &ABase_VR_Character::ReleaseObjectRight);
+			PEI->BindAction(PlayerActions->InputLeftGrip, ETriggerEvent::Started, this, &ABase_VR_Character::GrabObjectLeft); // binds the left grip to the player
+			PEI->BindAction(PlayerActions->InputLeftGrip, ETriggerEvent::Completed, this, &ABase_VR_Character::ReleaseObjectLeft); // binds the left grip to the player
+			PEI->BindAction(PlayerActions->InputRightGrip, ETriggerEvent::Started, this, &ABase_VR_Character::GrabObjectRight); // binds the right grip to the player
+			PEI->BindAction(PlayerActions->InputRightGrip, ETriggerEvent::Completed, this, &ABase_VR_Character::ReleaseObjectRight); // binds the right grip to the player
 
 
 #pragma endregion
@@ -183,8 +183,6 @@ void ABase_VR_Character::VerticalMovement(const FInputActionValue& Value)
 	{
 		float MovementScale = Value.Get<float>(); // gets the axis value from the input value
 
-		GEngine->AddOnScreenDebugMessage(0, 0.1f, FColor::Yellow, FString::Printf(TEXT("CONTROLLER Y: %f "), MovementScale));
-
 		AddMovementInput(Camera->GetForwardVector(), MovementScale/2); // applies the movement to the characters movement components based on the up vector
 	}
 }
@@ -194,8 +192,6 @@ void ABase_VR_Character::HorizontalMovement(const FInputActionValue& Value)
 	if (Controller != nullptr)
 	{
 		float MovementScale = Value.Get<float>(); // gets the axis value from the input value 
-
-		GEngine->AddOnScreenDebugMessage(0, 0.1f, FColor::Yellow, FString::Printf(TEXT("CONTROLLER X: %f "), MovementScale));
 
 		AddMovementInput(Camera->GetRightVector(), MovementScale /2); // applies the movement to the characters movement components based on the right vector
 	}
@@ -245,9 +241,6 @@ void ABase_VR_Character::ReleaseObjectLeft(const FInputActionValue& Value)
 		if (HeldLeft->TryRelease()) // checks if try release is true 
 		{
 			HeldLeft = nullptr; // sets the held left to nullptr
-
-			GEngine->AddOnScreenDebugMessage(100, 20, FColor::Yellow, TEXT("Left Release"));
-
 		}
 	}
 }
@@ -259,18 +252,16 @@ void ABase_VR_Character::ReleaseObjectRight(const FInputActionValue& Value)
 		if (HeldRight->TryRelease()) // checks if try release is true 
 		{
 			HeldRight = nullptr; // sets the held right to nullptr
-
-			GEngine->AddOnScreenDebugMessage(100, 20, FColor::Purple, TEXT("Right Release"));
-
 		}
 	}
 }
 
+
 UVR_GrabComponent* ABase_VR_Character::GetGrabComponentNearController(UMotionControllerComponent* controllerReference)
 {
-	UVR_GrabComponent* LocalGrabComponent = nullptr;
+	UVR_GrabComponent* LocalGrabComponent = nullptr; // creates a local grab component and sets it to null
 
-	FHitResult hitResult;
+	FHitResult hitResult; // creates a hit result
 
 	FVector LocalGripPos = controllerReference->GetComponentLocation();
 
@@ -278,6 +269,7 @@ UVR_GrabComponent* ABase_VR_Character::GetGrabComponentNearController(UMotionCon
 	traceObjects.Add(UEngineTypes::ConvertToObjectType(ECC_PhysicsBody));
 	const TArray<AActor*> ignoreActor{ this };
 
+	
 	bool bHasHit = UKismetSystemLibrary::SphereTraceSingleForObjects(GetWorld(), LocalGripPos, LocalGripPos, GrabRadius, traceObjects, false, ignoreActor, EDrawDebugTrace::Persistent, hitResult, true);
 
 	if (bHasHit) // checks if the sphere trace has hit something

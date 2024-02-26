@@ -11,6 +11,7 @@
 #include "VR_Template/SplineActor.h"
 #include "Components/SplineComponent.h"
 #include "NiagaraComponent.h"
+#include <VR_Template/Level/CustomVRLevelScript.h>
 
 
 // Sets default values
@@ -49,10 +50,10 @@ void AAudio_Actor::BeginPlay()
 	Super::BeginPlay();
 	if (!bActive)
 	{
-		Mesh->SetVisibility(false);
-		Collider->Deactivate();
-		AudioPlayer->Stop();
-		NiagaraComponent->Deactivate();
+		Mesh->SetVisibility(false); // sets the visibility of the mesh to false
+		Collider->Deactivate(); // deactivates the collider
+		AudioPlayer->Stop();	// stops the audio from playing
+		NiagaraComponent->Deactivate(); // deactivates the niagara component
 	}
 	else
 	{
@@ -69,27 +70,11 @@ void AAudio_Actor::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 
-	if (bMoveable && SplineReference && bActive)
+	if (bMoveable && SplineReference && bActive) // checks if the actor is moveable, has a spline reference and is active
 	{
-
-		Time = (Time >= 1) ? 0 : Time += (DeltaTime / InterpSpeed);
-		FVector newLocation = SplineReference->GetSplineMesh()->GetLocationAtTime(Time, ESplineCoordinateSpace::World);
-		SetActorLocation(newLocation);
-		//if (abs(SplineReference->GetSplineMesh()->GetTransformAtSplinePoint(CurrentSplineIndex, ESplineCoordinateSpace::World).GetLocation().Length()) - abs(GetActorLocation().Length()) == 0)
-		//{
-		//	CurrentSplineIndex++;
-		//	if (CurrentSplineIndex > SplineReference->GetSplineMesh()->GetNumberOfSplinePoints())
-		//	{
-		//		CurrentSplineIndex = 0;
-		//	}
-		//}
-		//else
-		//{
-		//	FVector CurrentLocation = GetActorLocation();
-		//	FVector TargetLocation = SplineReference->GetSplineMesh()->GetTransformAtSplinePoint(CurrentSplineIndex, ESplineCoordinateSpace::World).GetLocation();
-		//	FVector newLoc = UKismetMathLibrary::VInterpTo_Constant(CurrentLocation, TargetLocation, DeltaTime, InterpSpeed);
-		//	SetActorLocation(newLoc);
-		//}
+		Time = (Time >= SplineReference->GetSplineMesh()->Duration) ? 0 : Time += (DeltaTime); // checks if the time is greater than the duration of the spline mesh, if it is it sets the time to 0, if not it adds the delta time to the time
+		FVector newLocation = SplineReference->GetSplineMesh()->GetLocationAtTime(Time, ESplineCoordinateSpace::World); // gets the location of the spline mesh at the current time
+		SetActorLocation(newLocation); // sets the actor location to the new location
 	}
 
 }
@@ -99,11 +84,18 @@ void AAudio_Actor::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* O
 {
 	if (ABase_VR_Character* tempPlayer = Cast<ABase_VR_Character>(OtherActor))
 	{
-		if (bLast == false)
+		if (bLast == false) // checks if the actor is not the last audio actor
 		{
-			NextActor->ActivateActor();
+			NextActor->ActivateActor(); // activates the next actor to go to
 		}
-		Destroy();
+		else // if the actor is the last audio actor
+		{
+			if (ACustomVRLevelScript* tempLevel = Cast<ACustomVRLevelScript>(GetLevel())) // checks if the current level is a custom level script
+			{
+				tempLevel->LevelFinished(); // calls the level finished event in the blueprints
+			}
+		}
+		Destroy(); // destroys the current actor
 	}
 }
 
@@ -114,10 +106,10 @@ void AAudio_Actor::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* O
 /// </summary>
 void AAudio_Actor::ActivateActor()
 {
-	Mesh->SetVisibility(true);
-	Collider->Activate(true);
-	AudioPlayer->Activate(true);
-	NiagaraComponent->Activate(true);
-	bActive = true;
+	Mesh->SetVisibility(true); // sets the visibility of the mesh to true
+	Collider->Activate(true); // activates the collider
+	AudioPlayer->Activate(true); // activates the audio player
+	NiagaraComponent->Activate(true); // activates the niagara component
+	bActive = true; // sets the active boolean to true so it can move if it needs to move
 }
 

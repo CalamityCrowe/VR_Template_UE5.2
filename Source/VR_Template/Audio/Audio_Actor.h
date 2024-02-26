@@ -38,7 +38,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Audio", meta = (AllowPrivateAccess = true))
 	TObjectPtr<UAudioComponent> AudioPlayer;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Actor Reference", meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Actor Reference", meta = (AllowPrivateAccess = true))
 	TObjectPtr<AAudio_Actor> NextActor;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Actor Reference", meta = (AllowPrivateAccess = true))
 	TObjectPtr<ASplineActor> SplineReference;
