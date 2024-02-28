@@ -12,7 +12,7 @@
 #include "Components/SplineComponent.h"
 #include "NiagaraComponent.h"
 #include <VR_Template/Level/CustomVRLevelScript.h>
-
+#include "Components/PointLightComponent.h"
 
 // Sets default values
 AAudio_Actor::AAudio_Actor()
@@ -34,12 +34,11 @@ AAudio_Actor::AAudio_Actor()
 
 	NiagaraComponent = CreateOptionalDefaultSubobject<UNiagaraComponent>(TEXT("Niagara Component"));
 	NiagaraComponent->SetupAttachment(RootComponent);
-
+	NiagaraComponent->SetRelativeLocation(FVector(0, 0, 0));
 
 	bLast = false;
 	bActive = false;
 	bMoveable = false;
-
 
 	InterpSpeed = 100;
 }
@@ -68,7 +67,6 @@ void AAudio_Actor::BeginPlay()
 void AAudio_Actor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 
 	if (bMoveable && SplineReference && bActive) // checks if the actor is moveable, has a spline reference and is active
 	{

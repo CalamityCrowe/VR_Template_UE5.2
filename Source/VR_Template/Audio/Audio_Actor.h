@@ -11,6 +11,7 @@ class UCapsuleComponent;
 class USplineComponent;
 class ASplineActor;
 class UNiagaraComponent; 
+class UPointLightComponent;
 
 UCLASS()
 class VR_TEMPLATE_API AAudio_Actor : public AActor
@@ -43,8 +44,9 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Actor Reference", meta = (AllowPrivateAccess = true))
 	TObjectPtr<ASplineActor> SplineReference;
 
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Niagara",meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Effects",meta = (AllowPrivateAccess = true))
 	TObjectPtr<UNiagaraComponent> NiagaraComponent;
+
 
 
 	UPROPERTY(EditAnywhere, Category = "bools", meta = (AllowPrivateAccess = true));
