@@ -48,20 +48,17 @@ ABase_VR_Character::ABase_VR_Character()
 
 	LeftController->SetupAttachment(VROrigin); RightController->SetupAttachment(VROrigin);
 
-	auto MeshAsset = ConstructorHelpers::FObjectFinder<USkeletalMesh>(TEXT("SkeletalMesh'/Game/Characters/MannequinsXR/Meshes/SKM_MannyXR_left.SKM_MannyXR_left'"));
+
 
 	HandLeft = CreateOptionalDefaultSubobject<UMannequin_Hands>(TEXT("Left Hand Mesh"));
 	HandLeft->SetupAttachment(LeftController);
-	HandLeft->SetSkeletalMesh(MeshAsset.Object);
 	HandLeft->SetRelativeLocation(FVector(-2.98126, -3.5, 4.561753));
 	HandLeft->SetRelativeRotation(FRotator(-25, -179.999908, 89.99998));
 	HandLeft->Mirror = true;
 
 
-	MeshAsset = ConstructorHelpers::FObjectFinder<USkeletalMesh>(TEXT("SkeletalMesh'/Game/Characters/MannequinsXR/Meshes/SKM_MannyXR_right.SKM_MannyXR_right'"));
 	HandRight = CreateOptionalDefaultSubobject<UMannequin_Hands>(TEXT("Right Hand Mesh"));
 	HandRight->SetupAttachment(RightController);
-	HandRight->SetSkeletalMesh(MeshAsset.Object);
 	HandRight->SetRelativeLocation(FVector(-2.98126, 3.5, 4.561753));
 	HandRight->SetRelativeRotation(FRotator(-25, 0, 89.999999));
 	HandRight->Mirror = false;

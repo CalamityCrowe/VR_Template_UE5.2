@@ -11,9 +11,9 @@ ABase_Entity::ABase_Entity()
 	PrimaryActorTick.bCanEverTick = true;
 
 
-	auto LoadedMesh = ConstructorHelpers::FObjectFinder<USkeletalMesh>(TEXT("SkeletalMesh'/Game/UndeadPack/Lich/Mesh/SK_Lich.SK_Lich'"));
-	GetMesh()->SetSkeletalMesh(LoadedMesh.Object);
-	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+	//auto LoadedMesh = ConstructorHelpers::FObjectFinder<USkeletalMesh>(TEXT("SkeletalMesh'/Game/UndeadPack/Lich/Mesh/SK_Lich.SK_Lich'"));
+	//GetMesh()->SetSkeletalMesh(LoadedMesh.Object);
+	//GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 	//else
 		//UE_LOG(LogTemp, Error, TEXT("ENTITY DOTH NOT EXSHISTH"))
 
@@ -26,8 +26,8 @@ ABase_Entity::ABase_Entity()
 	EntityState = EEntityState::Idle;
 	Health = 100.0f;
 
-	auto CurveAsset = ConstructorHelpers::FObjectFinder<UCurveFloat>(TEXT("CurveFloat'/Game/Data_Tables/Curves/StunCurve.StunCurve'"));
-	StunCurve = CurveAsset.Object;
+	//auto CurveAsset = ConstructorHelpers::FObjectFinder<UCurveFloat>(TEXT("CurveFloat'/Game/Data_Tables/Curves/StunCurve.StunCurve'"));
+	//StunCurve = CurveAsset.Object;
 }
 
 // Called when the game starts or when spawned

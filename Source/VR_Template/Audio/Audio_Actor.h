@@ -31,8 +31,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 private:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Mesh", meta = (AllowPrivateAccess = true))
-	TObjectPtr<UStaticMeshComponent> Mesh;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Collider", meta = (AllowPrivateAccess = true))
 	TObjectPtr<UCapsuleComponent>Collider;
 

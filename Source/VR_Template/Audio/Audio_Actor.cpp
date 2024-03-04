@@ -23,12 +23,6 @@ AAudio_Actor::AAudio_Actor()
 	Collider = CreateOptionalDefaultSubobject<UCapsuleComponent>(TEXT("Collider"));
 	RootComponent = Collider;
 
-	Mesh = CreateOptionalDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	Mesh->SetupAttachment(RootComponent);
-
-	auto MeshAsset = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("StaticMesh'/Game/Assets/SM_Cube.SM_Cube'"));
-	Mesh->SetStaticMesh(MeshAsset.Object);
-
 	AudioPlayer = CreateOptionalDefaultSubobject<UAudioComponent>(TEXT("Audio Player"));
 	AudioPlayer->SetupAttachment(RootComponent);
 
@@ -41,6 +35,8 @@ AAudio_Actor::AAudio_Actor()
 	bMoveable = false;
 
 	InterpSpeed = 100;
+	Collider->OnComponentBeginOverlap.AddDynamic(this, &AAudio_Actor::OnOverlapBegin);
+
 }
 
 // Called when the game starts or when spawned
@@ -49,7 +45,6 @@ void AAudio_Actor::BeginPlay()
 	Super::BeginPlay();
 	if (!bActive)
 	{
-		Mesh->SetVisibility(false); // sets the visibility of the mesh to false
 		Collider->Deactivate(); // deactivates the collider
 		AudioPlayer->Stop();	// stops the audio from playing
 		NiagaraComponent->Deactivate(); // deactivates the niagara component
@@ -96,7 +91,6 @@ void AAudio_Actor::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* O
 		Destroy(); // destroys the current actor
 	}
 }
-
 /// <summary>
 /// This handle the activation of the next actor references that the current actor is connected to.
 /// 
@@ -104,10 +98,10 @@ void AAudio_Actor::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* O
 /// </summary>
 void AAudio_Actor::ActivateActor()
 {
-	Mesh->SetVisibility(true); // sets the visibility of the mesh to true
 	Collider->Activate(true); // activates the collider
 	AudioPlayer->Activate(true); // activates the audio player
 	NiagaraComponent->Activate(true); // activates the niagara component
 	bActive = true; // sets the active boolean to true so it can move if it needs to move
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Activated")); // debug message to show that the actor has been activated
 }
 
