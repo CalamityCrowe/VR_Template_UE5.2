@@ -35,6 +35,8 @@ AAudio_Actor::AAudio_Actor()
 	bMoveable = false;
 
 	InterpSpeed = 100;
+
+
 	Collider->OnComponentBeginOverlap.AddDynamic(this, &AAudio_Actor::OnOverlapBegin);
 
 }
@@ -68,6 +70,8 @@ void AAudio_Actor::Tick(float DeltaTime)
 		Time = (Time >= SplineReference->GetSplineMesh()->Duration) ? 0 : Time += (DeltaTime); // checks if the time is greater than the duration of the spline mesh, if it is it sets the time to 0, if not it adds the delta time to the time
 		FVector newLocation = SplineReference->GetSplineMesh()->GetLocationAtTime(Time, ESplineCoordinateSpace::World); // gets the location of the spline mesh at the current time
 		SetActorLocation(newLocation); // sets the actor location to the new location
+
+		newLocation.Normalize(); // gets the length of the new location
 	}
 
 }
@@ -77,18 +81,21 @@ void AAudio_Actor::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* O
 {
 	if (ABase_VR_Character* tempPlayer = Cast<ABase_VR_Character>(OtherActor))
 	{
-		if (bLast == false) // checks if the actor is not the last audio actor
+		if(bActive)
 		{
-			NextActor->ActivateActor(); // activates the next actor to go to
-		}
-		else // if the actor is the last audio actor
-		{
-			if (ACustomVRLevelScript* tempLevel = Cast<ACustomVRLevelScript>(GetLevel())) // checks if the current level is a custom level script
+			if (bLast == false) // checks if the actor is not the last audio actor
 			{
-				tempLevel->LevelFinished(); // calls the level finished event in the blueprints
+				NextActor->ActivateActor(); // activates the next actor to go to
 			}
+			else // if the actor is the last audio actor
+			{
+				if (ACustomVRLevelScript* tempLevel = Cast<ACustomVRLevelScript>(GetLevel())) // checks if the current level is a custom level script
+				{
+					tempLevel->LevelFinished(); // calls the level finished event in the blueprints
+				}
+			}
+			Destroy(); // destroys the current actor
 		}
-		Destroy(); // destroys the current actor
 	}
 }
 /// <summary>
@@ -98,10 +105,13 @@ void AAudio_Actor::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* O
 /// </summary>
 void AAudio_Actor::ActivateActor()
 {
-	Collider->Activate(true); // activates the collider
-	AudioPlayer->Activate(true); // activates the audio player
-	NiagaraComponent->Activate(true); // activates the niagara component
-	bActive = true; // sets the active boolean to true so it can move if it needs to move
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Activated")); // debug message to show that the actor has been activated
+	if(IsValid(this))
+	{
+		Collider->Activate(true); // activates the collider
+		AudioPlayer->Activate(true); // activates the audio player
+		NiagaraComponent->Activate(true); // activates the niagara component
+		bActive = true; // sets the active boolean to true so it can move if it needs to move
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Activated")); // debug message to show that the actor has been activated	
+	}
 }
 

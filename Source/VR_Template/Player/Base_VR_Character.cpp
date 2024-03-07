@@ -180,7 +180,7 @@ void ABase_VR_Character::VerticalMovement(const FInputActionValue& Value)
 	{
 		float MovementScale = Value.Get<float>(); // gets the axis value from the input value
 
-		AddMovementInput(Camera->GetForwardVector(), MovementScale/2); // applies the movement to the characters movement components based on the up vector
+		AddMovementInput(Camera->GetForwardVector(), MovementScale * WalkSpeedScale); // applies the movement to the characters movement components based on the up vector
 	}
 }
 
@@ -190,7 +190,7 @@ void ABase_VR_Character::HorizontalMovement(const FInputActionValue& Value)
 	{
 		float MovementScale = Value.Get<float>(); // gets the axis value from the input value 
 
-		AddMovementInput(Camera->GetRightVector(), MovementScale /2); // applies the movement to the characters movement components based on the right vector
+		AddMovementInput(Camera->GetRightVector(), MovementScale * WalkSpeedScale); // applies the movement to the characters movement components based on the right vector
 	}
 }
 
@@ -202,7 +202,7 @@ void ABase_VR_Character::TurnPlayer(const FInputActionValue& Value)
 
 		if (TurnRate != 0)  // checks if the x axis is not 0, this means that the mouse or whatever the input is has moved slightly for it to register a horizontal input
 		{
-			AddControllerYawInput(TurnRate /2); // applies the horizontal input of the mouse into the controller yaw input
+			AddControllerYawInput(TurnRate * TurnScale); // applies the horizontal input of the mouse into the controller yaw input
 		}
 	}
 }

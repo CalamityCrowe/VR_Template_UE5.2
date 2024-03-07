@@ -59,6 +59,10 @@ private:
 	TObjectPtr<UVR_GrabComponent> HeldLeft;
 #pragma endregion
 
+	UPROPERTY(Category = "Movement", EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
+	float WalkSpeedScale;
+	UPROPERTY(Category = "Movement", EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
+	float TurnScale; 
 
 protected:
 	// Called when the game starts or when spawned
