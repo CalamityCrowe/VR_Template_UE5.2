@@ -71,16 +71,14 @@ void ABase_VR_Character::BeginPlay()
 {
 	Super::BeginPlay();
 #if PLATFORM_WINDOWS
-	for (int i = 0; i < 10; i++) 
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Running on Windows"));
-	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Running on Windows"));
+
 
 #elif PLATFORM_PS5 
-	for (int i = 0; i < 10; i++)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Running on other device"));
-	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Running on other device"));
+
 #endif
 }
 
@@ -266,7 +264,7 @@ UVR_GrabComponent* ABase_VR_Character::GetGrabComponentNearController(UMotionCon
 	traceObjects.Add(UEngineTypes::ConvertToObjectType(ECC_PhysicsBody));
 	const TArray<AActor*> ignoreActor{ this };
 
-	
+
 	bool bHasHit = UKismetSystemLibrary::SphereTraceSingleForObjects(GetWorld(), LocalGripPos, LocalGripPos, GrabRadius, traceObjects, false, ignoreActor, EDrawDebugTrace::Persistent, hitResult, true);
 
 	if (bHasHit) // checks if the sphere trace has hit something
