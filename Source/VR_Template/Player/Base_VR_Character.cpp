@@ -141,7 +141,8 @@ void ABase_VR_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 			PEI->BindAction(PlayerActions->InputLeftAnalog_X, ETriggerEvent::Triggered, this, &ABase_VR_Character::HorizontalMovement); // binds the movement to the player 
 			PEI->BindAction(PlayerActions->InputLeftAnalog_Y, ETriggerEvent::Triggered, this, &ABase_VR_Character::VerticalMovement); // binds the movement to the player 
 			PEI->BindAction(PlayerActions->InputRightAnalog, ETriggerEvent::Triggered, this, &ABase_VR_Character::TurnPlayer); // binds the rotation to the player 
-
+			PEI->BindAction(PlayerActions->InputRightAnalog, ETriggerEvent::Started, this, &ABase_VR_Character::SnapTurn); // binds the rotation to the player 
+			PEI->BindAction(PlayerActions->InputRightAnalog_Press, ETriggerEvent::Started, this, &ABase_VR_Character::ToggleSnapTurn); // binds the rotation to the player
 #pragma region Grab Components
 			PEI->BindAction(PlayerActions->InputLeftGrip, ETriggerEvent::Started, this, &ABase_VR_Character::GrabObjectLeft); // binds the left grip to the player
 			PEI->BindAction(PlayerActions->InputLeftGrip, ETriggerEvent::Completed, this, &ABase_VR_Character::ReleaseObjectLeft); // binds the left grip to the player
@@ -196,14 +197,34 @@ void ABase_VR_Character::TurnPlayer(const FInputActionValue& Value)
 {
 	if (Controller != nullptr) // checks if the controller is valid
 	{
-		const float TurnRate = Value.Get<float>(); // gets the vector 2d from the input action 
-
-		if (TurnRate != 0)  // checks if the x axis is not 0, this means that the mouse or whatever the input is has moved slightly for it to register a horizontal input
+		const float TurnRate = Value.Get<float>(); // gets the vector 2d from the input action
+		if (bSnapTurning == false)
 		{
-			AddControllerYawInput(TurnRate * TurnScale); // applies the horizontal input of the mouse into the controller yaw input
+			if (TurnRate != 0)  // checks if the x axis is not 0, this means that the mouse or whatever the input is has moved slightly for it to register a horizontal input
+			{
+				AddControllerYawInput(TurnRate * TurnScale); // applies the horizontal input of the mouse into the controller yaw input
+			}
 		}
 	}
 }
+
+void ABase_VR_Character::SnapTurn(const FInputActionValue& Value)
+{
+	if (Controller != nullptr)
+	{
+		const float TurnRate = Value.Get<float>(); // gets the vector 2d from the input action
+		if (bSnapTurning == true)
+		{
+			if (TurnRate > 0)
+				AddControllerYawInput(1 * SnapTurnScale); // applies the horizontal input of the mouse into the controller yaw input
+			else
+				AddControllerYawInput(-1 * SnapTurnScale); // applies the horizontal input of the mouse into the controller yaw input
+
+		}
+	}
+}
+
+
 
 void ABase_VR_Character::GrabObjectLeft(const FInputActionValue& Value)
 {

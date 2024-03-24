@@ -27,6 +27,9 @@ public:
 	TObjectPtr<UInputAction>InputRightAnalog;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TObjectPtr<UInputAction>InputRightAnalog_Press;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UInputAction>InputFaceButton_A;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UInputAction>InputFaceButton_B;

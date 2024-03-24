@@ -27,6 +27,14 @@ private:
 	UFUNCTION()
 	void TurnPlayer(const FInputActionValue& Value);
 	UFUNCTION()
+	void SnapTurn(const FInputActionValue& Value);
+	UFUNCTION()
+	void ToggleSnapTurn(const FInputActionValue& Value)
+	{
+		bSnapTurning = !bSnapTurning;
+	}
+
+	UFUNCTION()
 	void GrabObjectLeft(const FInputActionValue& Value);
 	UFUNCTION()
 	void GrabObjectRight(const FInputActionValue& Value);
@@ -62,7 +70,11 @@ private:
 	UPROPERTY(Category = "Movement", EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	float WalkSpeedScale;
 	UPROPERTY(Category = "Movement", EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
-	float TurnScale; 
+	float TurnScale;
+	UPROPERTY(Category = "Movement", EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true, ClampMin = "10", ClampMax = "90.0", UIMin = "10.0", UIMax = "90.0"))
+	float SnapTurnScale;
+
+	bool bSnapTurning;
 
 protected:
 	// Called when the game starts or when spawned
