@@ -30,7 +30,6 @@ void AVR_Menu_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-
 	if (APlayerController* PC = Cast<APlayerController>(GetController())) // tries to grab an instance of the player controller
 	{
 		if (ULocalPlayer* LocalPlayer = PC->GetLocalPlayer()) // gets the local player from the controller
@@ -42,7 +41,4 @@ void AVR_Menu_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 			}
 		}
 	}
-
-
-
 }
