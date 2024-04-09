@@ -45,6 +45,7 @@ AAudio_Actor::AAudio_Actor()
 void AAudio_Actor::BeginPlay()
 {
 	Super::BeginPlay();
+	PrintLog = true; // sets the print log boolean to true
 	if (!bActive)
 	{
 		Collider->Deactivate(); // deactivates the collider
@@ -64,6 +65,24 @@ void AAudio_Actor::BeginPlay()
 void AAudio_Actor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (bActive)
+	{
+		TimeToReach += DeltaTime;
+
+	}
+	if (Destroyed)
+	{
+		despawnTimer += DeltaTime;
+		if (PrintLog == true) // checks if the print log boolean is true
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Time To Reach Target %.2f"), TimeToReach); // prints the time to reach the target
+			PrintLog = false; // sets the print log boolean to false
+		}
+		if (despawnTimer > 5) // checks if the despawn timer is greater than 5
+		{
+			Destroy();
+		}
+	}
 
 	if (bMoveable && SplineReference && bActive) // checks if the actor is moveable, has a spline reference and is active
 	{
@@ -81,8 +100,12 @@ void AAudio_Actor::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* O
 {
 	if (ABase_VR_Character* tempPlayer = Cast<ABase_VR_Character>(OtherActor))
 	{
-		if(bActive)
+		if (bActive)
 		{
+			Collider->Deactivate(); // deactivates the collider
+			AudioPlayer->Deactivate(); // deactivates the audio player
+			NiagaraComponent->Deactivate(); // deactivates the niagara component
+
 			if (bLast == false) // checks if the actor is not the last audio actor
 			{
 				NextActor->ActivateActor(); // activates the next actor to go to
@@ -94,7 +117,8 @@ void AAudio_Actor::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* O
 					tempLevel->LevelFinished(); // calls the level finished event in the blueprints
 				}
 			}
-			Destroy(); // destroys the current actor
+			Destroyed = true; // sets the destroyed boolean to true
+			bActive = false; 
 		}
 	}
 }
@@ -105,7 +129,7 @@ void AAudio_Actor::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* O
 /// </summary>
 void AAudio_Actor::ActivateActor()
 {
-	if(IsValid(this))
+	if (IsValid(this))
 	{
 		Collider->Activate(true); // activates the collider
 		AudioPlayer->Activate(true); // activates the audio player

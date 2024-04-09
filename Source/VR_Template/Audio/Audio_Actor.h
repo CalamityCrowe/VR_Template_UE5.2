@@ -10,7 +10,7 @@ class USoundCue;
 class UCapsuleComponent;
 class USplineComponent;
 class ASplineActor;
-class UNiagaraComponent; 
+class UNiagaraComponent;
 class UPointLightComponent;
 
 UCLASS()
@@ -30,6 +30,11 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void LogTime(); 
+
+	
+
 private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Collider", meta = (AllowPrivateAccess = true))
@@ -43,12 +48,12 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Actor Reference", meta = (AllowPrivateAccess = true))
 	TObjectPtr<ASplineActor> SplineReference;
 
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Effects",meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Effects", meta = (AllowPrivateAccess = true))
 	TObjectPtr<UNiagaraComponent> NiagaraComponent;
 
 
 
-	UPROPERTY(EditAnywhere, Category = "bools", meta = (AllowPrivateAccess = true));
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "bools", meta = (AllowPrivateAccess = true));
 	bool bActive;
 	UPROPERTY(EditAnywhere, Category = "bools", meta = (AllowPrivateAccess = true));
 	bool bLast;
@@ -57,8 +62,18 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Speed", meta = (AllowPrivateAccess = true));
 	float InterpSpeed;
 
+	bool Destroyed;
 
-	float Time; 
+	bool PrintLog; 
+
+	float despawnTimer;
+
+
+
+	float Time;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	float TimeToReach;
 
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

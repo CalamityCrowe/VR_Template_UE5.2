@@ -24,6 +24,7 @@ ABaseVrGamemode::ABaseVrGamemode()
 	//auto player = ConstructorHelpers::FObjectFinder<ABase_VR_Character>(TEXT("Blueprint'/Game/My_VR_Character/PlayerCharacter.PLayerCharacter'"));
 
 	//GameStateClass = ABaseVRGameState::StaticClass();
+
 }
 
 void ABaseVrGamemode::StartPlay()

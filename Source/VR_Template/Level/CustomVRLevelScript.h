@@ -25,4 +25,19 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void LevelFinished(); 
 
+
+	void AddTimeStamp(float TimeStamp);
+
+	UFUNCTION(BlueprintCallable)
+	void PrintTotalTime(); 
+private: 
+	TArray<float> TimeStamps;
+
+	
+	float TotalTime = 0.0f;
+
+	UPROPERTY(EditDefaultsOnly,Category = "Level Reference", meta = (AllowPrivateAccess = true))
+	TSoftObjectPtr<UWorld> LevelReference;
+
+
 };
