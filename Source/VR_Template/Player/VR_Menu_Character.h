@@ -9,6 +9,10 @@
 /**
  * 
  */
+
+class UWidgetInteractionComponent;
+class UNiagaraComponent;
+
 UCLASS()
 class VR_TEMPLATE_API AVR_Menu_Character : public ABase_VR_Character
 {
@@ -23,6 +27,34 @@ public:
 
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
+private:
+
+/*
+* to do
+* Take the widget interaction stuff and move it to code
+* add the niagara system  to each of the hands
+* have it render from each hand correctly
+* 
+*/
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Widget Interaction", meta = (AllowPrivateAccess = true))
+	TObjectPtr<UWidgetInteractionComponent> LeftWidgetInteractionComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Widget Interaction", meta = (AllowPrivateAccess = true))
+	TObjectPtr<UWidgetInteractionComponent> RightWidgetInteractionComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Widget Particle", meta = (AllowPrivateAccess = true))
+	TObjectPtr<UNiagaraComponent> LeftHandParticle;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Widget Particle", meta = (AllowPrivateAccess = true))
+	TObjectPtr<UNiagaraComponent> RightHandParticle;
+
+
+	UFUNCTION()
+	void RightTriggerPressed();
+	UFUNCTION()
+	void LeftTriggerPressed();
+
+	void HandleRightWidget(); 
+	void HandleLeftWidget();
 
 
 };

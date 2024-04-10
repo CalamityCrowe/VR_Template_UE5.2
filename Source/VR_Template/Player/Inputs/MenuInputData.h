@@ -8,19 +8,23 @@
 #include "MenuInputData.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class VR_TEMPLATE_API UMenuInputData : public UDataAsset
 {
 	GENERATED_BODY()
-public: 
+public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UInputAction>IA_LeftAnalogDown;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TObjectPtr<UInputAction>IA_LeftAnalogUp; 
+	TObjectPtr<UInputAction>IA_LeftAnalogUp;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UInputAction>IA_FaceButton_A;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TObjectPtr<UInputAction>IA_RightTrigger;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TObjectPtr<UInputAction>IA_LeftTrigger;
 };

@@ -92,6 +92,8 @@ protected:
 	float LocalNearestDistance;
 #pragma endregion
 
+	UMannequin_Hands* GetLeftHandMesh() { return HandLeft; };
+	UMannequin_Hands* GetRightHandMesh() { return HandRight; };
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

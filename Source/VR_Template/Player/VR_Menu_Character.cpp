@@ -7,11 +7,26 @@
 #include "EnhancedInputSubsystems.h"
 #include "Inputs/MenuInputData.h"
 #include "Components/InputComponent.h"
+#include "Components/WidgetInteractionComponent.h"
+#include "NiagaraComponent.h"
+#include "VR_Template/VR_Components/Mannequin_Hands.h"
+
+
 
 
 AVR_Menu_Character::AVR_Menu_Character()
 {
+	LeftWidgetInteractionComponent = CreateOptionalDefaultSubobject<UWidgetInteractionComponent>(TEXT("Left Interaction"));
+	LeftWidgetInteractionComponent->SetupAttachment(GetLeftHandMesh());
 
+	RightWidgetInteractionComponent = CreateOptionalDefaultSubobject<UWidgetInteractionComponent>(TEXT("Right Interaction"));
+	RightWidgetInteractionComponent->SetupAttachment(GetRightHandMesh());
+
+	LeftHandParticle = CreateOptionalDefaultSubobject<UNiagaraComponent>(TEXT("Laser"));
+	LeftHandParticle->SetupAttachment(LeftWidgetInteractionComponent);
+
+	RightHandParticle = CreateOptionalDefaultSubobject<UNiagaraComponent>(TEXT("Raser"));
+	RightHandParticle->SetupAttachment(RightWidgetInteractionComponent);
 
 }
 
@@ -24,6 +39,8 @@ void AVR_Menu_Character::BeginPlay()
 void AVR_Menu_Character::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+	HandleLeftWidget();
+	HandleRightWidget();
 }
 
 void AVR_Menu_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -41,4 +58,71 @@ void AVR_Menu_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 			}
 		}
 	}
+
+	if (UEnhancedInputComponent* PEI = Cast<UEnhancedInputComponent>(PlayerInputComponent)) // attempts to cast to the enhanced input system
+	{
+		if (UMenuInputData* MenuActions = Cast<UMenuInputData>(InputActions))
+		{
+			PEI->BindAction(MenuActions->IA_RightTrigger, ETriggerEvent::Started, this, &AVR_Menu_Character::RightTriggerPressed);
+			PEI->BindAction(MenuActions->IA_LeftTrigger, ETriggerEvent::Started, this, &AVR_Menu_Character::LeftTriggerPressed);
+		}
+	}
+}
+
+void AVR_Menu_Character::RightTriggerPressed()
+{
+	if (RightWidgetInteractionComponent)
+	{
+		RightWidgetInteractionComponent->PressPointerKey(EKeys::LeftMouseButton);
+	}
+}
+
+void AVR_Menu_Character::LeftTriggerPressed()
+{
+	if (LeftWidgetInteractionComponent)
+	{
+		LeftWidgetInteractionComponent->PressPointerKey(EKeys::LeftMouseButton);
+	}
+
+}
+
+void AVR_Menu_Character::HandleRightWidget()
+{
+	if (RightWidgetInteractionComponent->IsOverHitTestVisibleWidget())
+	{
+		FHitResult HitResult = RightWidgetInteractionComponent->GetLastHitResult();
+		if (RightHandParticle->IsActive() == false)
+		{
+			RightHandParticle->Activate();
+		}
+		RightHandParticle->SetNiagaraVariableVec3("EndPoint", HitResult.ImpactPoint);
+	}
+	else
+	{
+		if (RightHandParticle->IsActive())
+		{
+			RightHandParticle->Deactivate();
+		}
+	}
+}
+
+void AVR_Menu_Character::HandleLeftWidget()
+{
+	if (LeftWidgetInteractionComponent->IsOverHitTestVisibleWidget())
+	{
+		FHitResult HitResult = LeftWidgetInteractionComponent->GetLastHitResult();
+		if (LeftHandParticle->IsActive() == false)
+		{
+			LeftHandParticle->Activate();
+		}
+		LeftHandParticle->SetNiagaraVariableVec3("EndPoint", HitResult.ImpactPoint);
+	}
+	else
+	{
+		if (LeftHandParticle->IsActive())
+		{
+			LeftHandParticle->Deactivate();
+		}
+	}
+
 }
