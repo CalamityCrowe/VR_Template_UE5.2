@@ -7,7 +7,7 @@
 
 #include "Base_VR_Character.generated.h"
 
-
+class UCameraComponent;
 
 UCLASS()
 class VR_TEMPLATE_API ABase_VR_Character : public ACharacter
@@ -17,23 +17,27 @@ class VR_TEMPLATE_API ABase_VR_Character : public ACharacter
 public:
 	// Sets default values for this pawn's properties
 	ABase_VR_Character();
-private:
+	~ABase_VR_Character();
+protected:
 #pragma region Function Decleration
 	void AllignColliderToHMD();
 	UFUNCTION()
-	void VerticalMovement(const FInputActionValue& Value);
+	virtual void VerticalMovement(const FInputActionValue& Value);
 	UFUNCTION()
-	void HorizontalMovement(const FInputActionValue& Value);
+	virtual  void HorizontalMovement(const FInputActionValue& Value);
 	UFUNCTION()
-	void TurnPlayer(const FInputActionValue& Value);
+	virtual void TurnPlayer(const FInputActionValue& Value);
 	UFUNCTION()
-	void SnapTurn(const FInputActionValue& Value);
+	virtual void SnapTurn(const FInputActionValue& Value);
 	UFUNCTION()
-	void ToggleSnapTurn(const FInputActionValue& Value)
+	virtual  void ToggleSnapTurn(const FInputActionValue& Value)
 	{
 		bSnapTurning = !bSnapTurning;
 	}
 
+	UCameraComponent* GetCamera() { return Camera; }
+
+private:
 	UFUNCTION()
 	void GrabObjectLeft(const FInputActionValue& Value);
 	UFUNCTION()
@@ -48,7 +52,7 @@ private:
 
 #pragma region Variable Decleration
 	UPROPERTY(Category = "Camera", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
-	TObjectPtr<class UCameraComponent> Camera;
+	TObjectPtr<UCameraComponent> Camera;
 
 
 	UPROPERTY(Category = "VR Orign", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
@@ -66,7 +70,7 @@ private:
 	UPROPERTY(Category = "Motion Controllers", EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	TObjectPtr<UVR_GrabComponent> HeldLeft;
 #pragma endregion
-
+protected:
 	UPROPERTY(Category = "Movement", EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	float WalkSpeedScale;
 	UPROPERTY(Category = "Movement", EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))

@@ -66,6 +66,10 @@ ABase_VR_Character::ABase_VR_Character()
 
 }
 
+ABase_VR_Character::~ABase_VR_Character()
+{
+}
+
 // Called when the game starts or when spawned
 void ABase_VR_Character::BeginPlay()
 {
@@ -175,6 +179,7 @@ void ABase_VR_Character::AllignColliderToHMD()
 
 void ABase_VR_Character::VerticalMovement(const FInputActionValue& Value)
 {
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Vertical Movement: %f"), Value.Get<float>()));
 	if (Controller != nullptr)
 	{
 		float MovementScale = Value.Get<float>(); // gets the axis value from the input value
