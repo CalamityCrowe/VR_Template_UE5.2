@@ -66,8 +66,15 @@ private:
 	UFUNCTION()
 	void LeftTriggerPressed();
 
+	UFUNCTION()
+	void LeftTriggerReleased();
+	UFUNCTION()
+	void RightTriggerReleased();
+
 	void HandleRightWidget();
 	void HandleLeftWidget();
 
+
+	float Timer; 
 
 };

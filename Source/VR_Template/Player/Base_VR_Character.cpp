@@ -68,6 +68,7 @@ ABase_VR_Character::ABase_VR_Character()
 
 ABase_VR_Character::~ABase_VR_Character()
 {
+
 }
 
 // Called when the game starts or when spawned

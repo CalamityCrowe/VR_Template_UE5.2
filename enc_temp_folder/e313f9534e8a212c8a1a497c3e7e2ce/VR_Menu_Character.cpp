@@ -49,7 +49,7 @@ void AVR_Menu_Character::Tick(float DeltaSeconds)
 	HandleRightWidget();
 	AllignColliderToHMD(); // used for alligning the headset to the collision when moving
 
-	Timer += DeltaSeconds/4;
+	Timer += DeltaSeconds;
 	if (Timer >= 1.f)
 	{
 		Timer = 0.0f;
