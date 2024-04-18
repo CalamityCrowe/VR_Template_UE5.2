@@ -22,6 +22,7 @@
 
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
+#include <HeadMountedDisplayFunctionLibrary.h>
 
 
 
@@ -85,6 +86,9 @@ void ABase_VR_Character::BeginPlay()
 	UE_LOG(LogTemp, Warning, TEXT("Running on other device"));
 
 #endif
+
+	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition(0, EOrientPositionSelector::Orientation); // resets the orientation and position of the player
+
 }
 
 // Called every frame
@@ -180,7 +184,6 @@ void ABase_VR_Character::AllignColliderToHMD()
 
 void ABase_VR_Character::VerticalMovement(const FInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Vertical Movement: %f"), Value.Get<float>()));
 	if (Controller != nullptr)
 	{
 		float MovementScale = Value.Get<float>(); // gets the axis value from the input value

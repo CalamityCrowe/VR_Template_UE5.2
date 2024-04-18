@@ -112,13 +112,21 @@ void AAudio_Actor::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* O
 			}
 			else // if the actor is the last audio actor
 			{
-				if (ACustomVRLevelScript* tempLevel = Cast<ACustomVRLevelScript>(GetLevel())) // checks if the current level is a custom level script
+				GEngine->AddOnScreenDebugMessage(-1, 600, FColor::Green, TEXT("Level Finished"));
+				ULevel* CurrentLevel = GetWorld()->GetCurrentLevel(); // gets the current level
+				if (CurrentLevel) // checks if the current level is valid
 				{
-					tempLevel->LevelFinished(); // calls the level finished event in the blueprints
+					for (AActor* actor : CurrentLevel->Actors)  // loops through all the actors in the current level
+					{
+						if (ACustomVRLevelScript* level = Cast<ACustomVRLevelScript>(actor))  // checks if the actor is a custom level script
+						{
+							level->LevelFinished(); // calls the level finished event in the blueprints
+						}
+					}
 				}
 			}
 			Destroyed = true; // sets the destroyed boolean to true
-			bActive = false; 
+			bActive = false;
 		}
 	}
 }

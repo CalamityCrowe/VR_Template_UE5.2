@@ -11,6 +11,7 @@
 #include "Components/InputComponent.h"
 #include "Components/WidgetInteractionComponent.h"
 #include "VR_Template/VR_Components/Mannequin_Hands.h"
+#include "HeadMountedDisplayFunctionLibrary.h"
 
 #include "NiagaraComponent.h"
 
@@ -28,7 +29,7 @@ AVR_Menu_Character::AVR_Menu_Character() : ABase_VR_Character()
 
 	RightHandParticle = CreateOptionalDefaultSubobject<UNiagaraComponent>(TEXT("Raser"));
 	RightHandParticle->SetupAttachment(RightWidgetInteractionComponent);
-	Timer = 0; 
+	Timer = 0;
 }
 
 AVR_Menu_Character::~AVR_Menu_Character()
@@ -39,6 +40,7 @@ AVR_Menu_Character::~AVR_Menu_Character()
 void AVR_Menu_Character::BeginPlay()
 {
 	Super::BeginPlay();
+	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition(0, EOrientPositionSelector::Orientation); // resets the orientation and position of the player
 
 }
 
@@ -49,7 +51,7 @@ void AVR_Menu_Character::Tick(float DeltaSeconds)
 	HandleRightWidget();
 	AllignColliderToHMD(); // used for alligning the headset to the collision when moving
 
-	Timer += DeltaSeconds/4;
+	Timer += DeltaSeconds / 4;
 	if (Timer >= 1.f)
 	{
 		Timer = 0.0f;
@@ -162,7 +164,7 @@ void AVR_Menu_Character::HandleRightWidget()
 		FVector HandForward = RightWidgetInteractionComponent->GetForwardVector() * RightWidgetInteractionComponent->InteractionDistance; // gets the forward vector of the player
 		RightHandParticle->SetNiagaraVariableVec3("EndPoint", HandLocation + HandForward); // sets the end point of the particle to the player
 	}
-	RightHandParticle->SetNiagaraVariableFloat("Time", Timer); 
+	RightHandParticle->SetNiagaraVariableFloat("Time", Timer);
 }
 
 void AVR_Menu_Character::HandleLeftWidget()
@@ -178,6 +180,6 @@ void AVR_Menu_Character::HandleLeftWidget()
 		FVector HandForward = LeftWidgetInteractionComponent->GetForwardVector() * LeftWidgetInteractionComponent->InteractionDistance; // gets the forward vector of the player
 		LeftHandParticle->SetNiagaraVariableVec3("EndPoint", HandLocation + HandForward);
 	}
-	LeftHandParticle->SetNiagaraVariableFloat("Time", Timer); 
+	LeftHandParticle->SetNiagaraVariableFloat("Time", Timer);
 
 }
