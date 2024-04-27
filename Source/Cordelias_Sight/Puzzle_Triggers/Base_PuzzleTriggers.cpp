@@ -18,7 +18,6 @@ ABase_PuzzleTriggers::ABase_PuzzleTriggers()
 	Collider->SetBoxExtent(FVector(100, 100, 100), true);
 	Collider->SetLineThickness(2.5f);
 	Collider->ShapeColor = FColor(128, 0, 255);
-
 	TargetToCatch = 3; // this is the target for the number of objects to get into the puzzle
 
 }
