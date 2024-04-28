@@ -9,8 +9,8 @@
 
 AGuide_Hook::AGuide_Hook()
 {
-	LoadDataTable(EObjectType::Moveable);
-	LoadHapticEffects(EObjectType::Moveable);
+	//LoadDataTable(EObjectType::Moveable);
+	//LoadHapticEffects(EObjectType::Moveable);
 }
 
 void AGuide_Hook::BeginPlay()

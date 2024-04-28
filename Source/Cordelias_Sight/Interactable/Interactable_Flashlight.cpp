@@ -34,8 +34,8 @@ AInteractable_Flashlight::AInteractable_Flashlight()
 	bLightOn = true;
 
 	// used for loading in the objects based on their type
-	LoadDataTable(EObjectType::Light);
-	LoadHapticEffects(EObjectType::Light);
+	//LoadDataTable(EObjectType::Light);
+	//LoadHapticEffects(EObjectType::Light);
 
 
 }

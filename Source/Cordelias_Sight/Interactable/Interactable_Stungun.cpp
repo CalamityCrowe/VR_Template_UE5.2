@@ -24,8 +24,8 @@ AInteractable_Stungun::AInteractable_Stungun() :ABase_Interactable()
 	FireDirection->SetRelativeLocation(FVector(0.0f, -3.0f, 5.0f));
 	FireDirection->SetRelativeRotation(FRotator(40, 270, 0));
 
-	LoadDataTable(EObjectType::Gun);
-	LoadHapticEffects(EObjectType::Gun);
+	//LoadDataTable(EObjectType::Gun);
+	//LoadHapticEffects(EObjectType::Gun);
 
 
 }
