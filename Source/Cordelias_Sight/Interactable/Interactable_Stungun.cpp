@@ -3,7 +3,6 @@
 
 #include "Interactable_Stungun.h"
 #include "Components/ArrowComponent.h"
-#include "Cordelias_Sight/Entity/Base_Entity.h"
 #include "Kismet/GameplayStatics.h"
 #include "Cordelias_Sight/VR_Components/VR_GrabComponent.h"
 
@@ -52,10 +51,7 @@ void AInteractable_Stungun::FireStunGun()
 	{
 		UE_LOG(LogTemp, Error, TEXT("HIT"));
 		GEngine->AddOnScreenDebugMessage(110, 2, FColor::Red, TEXT("HIT"));
-		if (ABase_Entity* newEntity = Cast<ABase_Entity>(hitResult.GetActor()))
-		{
-			// do stuff
-		}
+
 	}
 	if (APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0))
 	{
